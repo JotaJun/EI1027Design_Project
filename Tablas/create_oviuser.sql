@@ -1,0 +1,10 @@
+CREATE TABLE OVIUser(
+	dni 			VARCHAR(9),
+	legalGuardian	VARCHAR(20),
+	
+	CONSTRAINT pk_OVIUser PRIMARY KEY(dni),
+	CONSTRAINT fk_OVIUser_Account FOREIGN KEY(dni)
+				REFERENCES User(dni)
+				ON UPDATE CASCADE
+				ON DELETE CASCADE
+);
