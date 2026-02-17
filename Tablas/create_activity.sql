@@ -8,7 +8,7 @@ CREATE TABLE Activity(
     description     VARCHAR(500)    NOT NULL,
     address         VARCHAR(50)     NOT NULL,
     capacity        INTEGER         NOT NULL,
-    sponsor         VARCHAR(30),
+    sponsor         VARCHAR(50),
     CONSTRAINT fk_activity_instructor FOREIGN KEY (instructorDni)
         REFERENCES Instructor(dni)
         ON DELETE RESTRICT
