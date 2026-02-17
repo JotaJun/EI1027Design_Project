@@ -5,7 +5,7 @@ CREATE TABLE Activity(
     title           VARCHAR(50)     NOT NULL,
     typeActivity    VARCHAR(20)     NOT NULL,
     activityDate    DATE            NOT NULL,
-    description     TEXT            NOT NULL,
+    description     VARCHAR(500)    NOT NULL,
     address         VARCHAR(50)     NOT NULL,
     capacity        INTEGER         NOT NULL,
     sponsor         VARCHAR(30),
