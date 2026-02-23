@@ -5,7 +5,7 @@ CREATE TABLE AssistanceRequest(
 	dniOviUser	VARCHAR(9)			NOT NULL,
 	
 	CONSTRAINT fk_OVIUser_dni FOREIGN KEY (dniOviUser)
-			REFERENCES OVIUser(dni)
+			REFERENCES OviUser(dni)
 			ON UPDATE CASCADE
 			ON DELETE CASCADE
 );
