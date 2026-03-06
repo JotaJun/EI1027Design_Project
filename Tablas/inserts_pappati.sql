@@ -3,4 +3,5 @@ INSERT INTO PapPati (dni, stafftype, available, training, experience, urlCv) VAL
 ('50505050E', 'PATI', FALSE, 'Grado en Psicología Clínica', 'Especialista en mediación juvenil', 'https://drive.net/s/marcos-ruiz-2026'),
 ('60606060F', 'PAP', TRUE, 'Técnico Superior en Integración', 'Prácticas en centros de acogida', 'https://docs.servidor.es/cv/sara-v.pdf'),
 ('70707070G', 'PATI', TRUE, 'Grado en Educación Social', '10 años de experiencia en sector público', 'https://web.profesionales.com/javi-gomez'),
-('80808080K', 'PAP', TRUE, 'Certificado Profesional Nivel 3', '2 años voluntariado internacional', 'https://nube.org/usuarios/noa-mtz-cv.pdf');
+('80808080K', 'PAP', TRUE, 'Certificado Profesional Nivel 3', '2 años voluntariado internacional', 'https://nube.org/usuarios/noa-mtz-cv.pdf'),
+('90909090W', 'PAP', FALSE, 'Grado en Educación Social', 'Prácticas en centros de acogida', 'https://storage.cloud.com/cvs/fatima-r.pdf');
