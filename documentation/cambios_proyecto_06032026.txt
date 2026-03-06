@@ -1,0 +1,16 @@
+cambios diagrama de clases:
+Agregar campos extra en PAP/PATI para cambiar búsqueda de 'userPreferences' en AssistanceRequest.
+ - experience --> cambiarlo a AÑOS de experiencia
+ - En ACCOUNT, serparar address en --> (Ciudad, calle)
+ - En PAP/PATI training buscar varios predefinidos para que sea más justo la búsqueda.
+	- Lo mejor para assistance request y PAP/PATI, hacer OTRA TABLA para poner las training (ya que es un atributo multievaluado)
+ - En AssistanceRequest poner fecha de cuanto tiempo quiere que dure (en meses) y cuando inicia. Poner estos campos en PAP/PATI
+
+
+CAMBIOS EN SITEMAP:
+
+ - Ser más específicos (ramificar más)
+	- Por ejemplo, El técnico, cuando va a aprobar una solicitud de registro, debería ser algo más así:
+		- Técnico --> listado pendientes registro --> Información registro específico --> Aprobar (un html para decir que se ha podido aprobar) ó Denegar (html con cuadro de texto para explicar motivo denegación) --> (caso denegar) HTML denegado correcto.
+
+ - Así con el resto hay que revisar
