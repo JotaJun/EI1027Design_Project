@@ -6,6 +6,8 @@ Agregar campos extra en PAP/PATI para cambiar búsqueda de 'userPreferences' en 
 	- Lo mejor para assistance request y PAP/PATI, hacer OTRA TABLA para poner las training (ya que es un atributo multievaluado)
  - En AssistanceRequest poner fecha de cuanto tiempo quiere que dure (en meses) y cuando inicia. Poner estos campos en PAP/PATI
 
+ACTUALIZACIÓN: no vamos a poner cuando inicia, ya que si el PAP/PATI NO ESTÁ DISPONIBLE, se entiende que no podrá.
+
 
 CAMBIOS EN SITEMAP:
 
