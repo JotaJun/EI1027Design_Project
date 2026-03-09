@@ -11,5 +11,5 @@ CREATE TABLE PapPati (
 		REFERENCES Account(dni)
 		  ON UPDATE CASCADE
 		  ON DELETE CASCADE,
-    CONSTRAINT 	chk_stafftype CHECK (stafftype IN ('PAP', 'PATI')),
+    CONSTRAINT 	chk_stafftype CHECK (stafftype IN ('PAP', 'PATI'))
 );

@@ -18,6 +18,6 @@ CREATE TABLE Account(
 	CONSTRAINT chk_phone CHECK(phoneNumber ~ '^[0-9]{9}$'),
 	CONSTRAINT chk_zipCode CHECK(zipCode ~ '^[0-9]{5}$'),
 	CONSTRAINT chk_email CHECK(email LIKE '%@%.%'),
-	CONSTRAINT chk_gender CHECK(gender IN('M','F')),
+	CONSTRAINT chk_gender CHECK(gender IN('M','F', 'X')),
 	CONSTRAINT chk_password CHECK(LENGTH(password) >=8)
 );
