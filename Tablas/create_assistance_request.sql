@@ -4,16 +4,15 @@ CREATE TABLE AssistanceRequest(
 	-- PARAMETROS BUSQUEDA
 	-- DE AQUÍ
 		-- Los que permitan nulos implicará que no importa como restricción
-	assistantType		VARCHAR(4)		NOT NULL,
-	gender				VARCHAR(1),
-	city				VARCHAR(30),
-	yearsExperience		INTEGER,
-	specifiedTrainings	VARCHAR(100),
-		
+	assistantType			VARCHAR(4)		NOT NULL,
+	gender					VARCHAR(1),
+	city					VARCHAR(30),
+	yearsExperience			INTEGER,
+	specifiedTrainings		VARCHAR(100),
+	initialDateRequired		DATE			NOT NULL,
+	monthsRequired			INTEGER			NOT NULL,	
 	
 	-- FIN PARAMETROS BUSQUEDA
-	monthsRequired		INTEGER			NOT NULL,	-- Será visible al PAP/PATI en su bandeja de conversaciones que le han iniciado
-	startingDate		DATE			NOT NULL,	-- Esta fecha será visible al PAP/PATI en su bandeja de conversaciones que le han iniciado
 	-- HASTA AQUÍ AGREGAR A UML
 	dniOviUser	VARCHAR(9)			NOT NULL,
 

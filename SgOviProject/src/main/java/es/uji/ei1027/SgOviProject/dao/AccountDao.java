@@ -35,7 +35,7 @@ public class AccountDao {
         jdbcTemplate.update("DELETE FROM Account WHERE dni=?", account.getDni());
     }
 
-    // Actualiza to_do MENOS dni
+    // Actualiza to.do MENOS dni
     public void updateAccount(Account account) {
         jdbcTemplate.update("UPDATE Account SET name=?, surname=?, birthday=?, password=?, email=?, phoneNumber=?, city=?, street=?, zipCode=?, gender=? WHERE dni=?",
                 account.getName(), account.getSurname(), account.getBirthday(),
