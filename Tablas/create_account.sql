@@ -9,7 +9,7 @@ CREATE TABLE Account(
 	city 			VARCHAR(30) NOT NULL,	-- Cambiar UML
 	street			VARCHAR(30) NOT NULL,	-- Cambiar UML
 	zipCode			VARCHAR(5)	NOT NULL,	-- Cambiar UML
-	gender			VARCHAR(1), 
+	gender			VARCHAR(1)	NOT NULL, 
 	
 	CONSTRAINT pk_Account PRIMARY KEY(dni),
 	CONSTRAINT un_Account_email UNIQUE(email), 
