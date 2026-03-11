@@ -1,0 +1,7 @@
+- Modificar UML cuando vaya magic:
+
+- Crear una tabla Tutor
+ - Tendrá que tener tabla intermedia con OviUser para almacenar las firmas pendientes
+
+- MUY IMPORTANTE:
+ - CAMBIAR DISEÑO LÓGICO PARA QUE ESTÉ ACORDE AL NUEVO UML
