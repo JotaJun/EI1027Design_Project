@@ -54,7 +54,6 @@ public class AssistanceRequestDao {
         Number key = keyHolder.getKey();
 
         if (key == null) {
-            // ¡Lanzamos la excepción en lugar de devolver 0!
             throw new DataRetrievalFailureException("Error al recuperar el ID autogenerado para AssistanceRequest.");
         }
 
