@@ -1,6 +1,6 @@
 CREATE TABLE AssistanceRequest(
 	idApRequest 					SERIAL PRIMARY KEY,
-	dateRequest DATE				NOT NULL,
+	dateRequest 			DATE	DEFAULT CURRENT_DATE NOT NULL,
 	-- PARAMETROS BUSQUEDA
 	-- DE AQUÍ
 		-- Los que permitan nulos implicará que no importa como restricción
