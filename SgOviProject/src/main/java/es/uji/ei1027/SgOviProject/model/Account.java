@@ -10,5 +10,4 @@ public class Account {
     private LocalDate birthday;
     private String password;
     private String email;
-    Private
 }
