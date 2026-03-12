@@ -1,8 +1,10 @@
 package es.uji.ei1027.SgOviProject.services;
 
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
+import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
 import es.uji.ei1027.SgOviProject.model.Account;
+import es.uji.ei1027.SgOviProject.model.OviUser;
 import es.uji.ei1027.SgOviProject.model.PapPati;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -31,6 +33,8 @@ public class ImplAccountRegisterSvc implements  IntAccountRegisterSvc{
 
         papPatiDao.addPapPati(papPati);
     }
+
+
 
     @Override
     public void addOviUser(Account account, OviUser oviUser) {
