@@ -41,4 +41,9 @@ public class CommunicationDao {
         jdbcTemplate.update("UPDATE Communication SET information=? WHERE idCandidacy=?", information, idCandidacy);
     }
 
+    /* Listar la comunicacion */
+
+    public void getCommunication(int idCandidacy) {
+        jdbcTemplate.queryForObject("select * from Communication where idCandidacy=?", new CommunicationRowMapper(),idCandidacy);
+    }
 }

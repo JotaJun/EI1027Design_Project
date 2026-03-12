@@ -2,6 +2,7 @@ package es.uji.ei1027.SgOviProject.dao;
 
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -39,5 +40,26 @@ public class OviUserDao {
 
     public void updateOviUser(String dni, String legalGuardian) {
         jdbcTemplate.update("UPDATE OviUser SET legalGuardian=? WHERE dni=?", legalGuardian, dni);
+    }
+
+
+    /* Listar uno o varios usuarios */
+    public void getOviUser(OviUser oviUser) {
+        try {
+            jdbcTemplate.queryForObject("SELECT from OviUser WHERE dni=?", new OviUserRowMapper(), oviUser.getDni());
+
+        }catch (EmptyResultDataAccessException e){
+            e.printStackTrace();
+
+        }
+    }
+
+    public void getOviUsers() {
+        try{
+            jdbcTemplate.query("SELECT * FROM OviUser", new OviUserRowMapper());
+
+        } catch (EmptyResultDataAccessException e){
+            e.printStackTrace();
+        }
     }
 }
