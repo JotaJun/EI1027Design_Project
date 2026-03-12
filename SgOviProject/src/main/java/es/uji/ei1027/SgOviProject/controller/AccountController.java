@@ -46,8 +46,8 @@ public class AccountController {
     /* Operaciones para borrar */
 
     @RequestMapping(value="/delete/{name}")
-    public String deleteAccount(@PathVariable String name, Model model) {
-        accountDao.deleteAccount(name);
+    public String deleteAccount(@PathVariable String name,String dni, Model model) {
+        accountDao.deleteAccount(dni);
         return "redirect:/account/list";
     }
 }
