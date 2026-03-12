@@ -1,6 +1,8 @@
 package es.uji.ei1027.SgOviProject.model;
 
 
+import es.uji.ei1027.SgOviProject.enums.Gender;
+
 import java.time.LocalDate;
 
 public class Account {
@@ -14,13 +16,13 @@ public class Account {
     private String city;
     private String street;
     private String zipCode;
-    private String gender;
+    private Gender gender;
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 

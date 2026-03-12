@@ -1,7 +1,7 @@
 CREATE TABLE Account(
 	dni 			VARCHAR(9),
-	name			VARCHAR(20) NOT NULL,
-	surname			VARCHAR(20) NOT NULL,
+	name			VARCHAR(30) NOT NULL,
+	surname			VARCHAR(50) NOT NULL,
 	birthday		DATE 		NOT NULL,
 	password		VARCHAR(100) NOT NULL,
 	email			VARCHAR(30) NOT NULL,

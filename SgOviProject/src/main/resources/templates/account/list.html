@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org" lang="es">
+<head>
+    <title>SgOvi - Lista Cuentas</title>
+    <meta charset="UTF-8" />
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.8/dist/css/bootstrap.min.css" />
+</head>
+<body>
+<h1>Listado cuentas registradas</h1>
+<div class="table-responsive">
+    <table class="table table-striped table-hover">
+        <thead class="thead-light">
+            <tr>
+                <th>DNI</th>
+                <th>Nombre</th>
+                <th>Apellidos</th>
+                <th>Nacimiento</th>
+                <th>Contraseña</th>
+                <th>Email</th>
+                <th>Teléfono</th>
+                <th>Ciudad</th>
+                <th>Calle</th>
+                <th>CP</th>
+                <th>Género</th>
+                <td></td>
+                <td></td>
+            </tr>
+            </thead>
+            <tbody>
+            <tr th:each="cuenta: ${accounts}">
+                <td th:text="${cuenta.dni}"></td>
+                <td th:text="${cuenta.name}"></td>
+                <td th:text="${cuenta.surname}"></td>
+                <td th:text="${cuenta.birthday}"></td>
+                <td th:text="${cuenta.password}"></td>
+                <td th:text="${cuenta.email}"></td>
+                <td th:text="${cuenta.phoneNumber}"></td>
+                <td th:text="${cuenta.city}"></td>
+                <td th:text="${cuenta.street}"></td>
+                <td th:text="${cuenta.zipCode}"></td>
+                <td th:text="${cuenta.gender}"></td>
+                <td>
+                    <a th:href="@{/account/update/{dni}(dni=${cuenta.dni})}" class="btn btn-sm btn-primary">Edita</a>
+                </td>
+                <td>
+                    <a th:href="@{/account/delete/{dni}(dni=${cuenta.dni})}" class="btn btn-sm btn-danger">Esborra</a>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+</div>
+<a href="add" class="btn btn-success">Añadir cuenta</a>
+<br><br>
+<a href="/">Volver</a>
+</body>
+</html>

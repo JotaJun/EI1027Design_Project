@@ -22,7 +22,6 @@ public class AccountController {
         this.accountDao = accountDao;
     }
 
-    /* Operaciones para listar */
 
     @RequestMapping("/list")
     public String listAccounts(Model model) {
@@ -30,7 +29,6 @@ public class AccountController {
         return "account/list";
     }
 
-    /* Operaciones para añadir */
 
     @RequestMapping(value="add")
     public String addAccount(Model model) {
@@ -48,15 +46,13 @@ public class AccountController {
 
     }
 
-    /* Operaciones para actualizar */
-
     @RequestMapping(value="/update/{dni}")
     public String editAccount(@PathVariable String dni, Model model) {
         model.addAttribute("account", accountDao.getAccount(dni));
         return "account/update";
     }
 
-    @RequestMapping(value="/update", method = RequestMethod.GET)
+    @RequestMapping(value="/update", method = RequestMethod.POST)
     public String processUpdateSubmit(@ModelAttribute("account") Account account, BindingResult result) {
         if (result.hasErrors()) {
             return "account/update";
@@ -64,8 +60,6 @@ public class AccountController {
         accountDao.updateAccount(account);
         return "redirect:/account/list";
     }
-
-    /* Operaciones para borrar */
 
     @RequestMapping(value="/delete/{dni}")
     public String processDelete(@PathVariable String dni, Model model) {

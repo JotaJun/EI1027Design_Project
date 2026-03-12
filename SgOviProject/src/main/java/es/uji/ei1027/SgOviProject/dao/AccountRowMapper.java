@@ -1,5 +1,6 @@
 package es.uji.ei1027.SgOviProject.dao;
 
+import es.uji.ei1027.SgOviProject.enums.Gender;
 import es.uji.ei1027.SgOviProject.model.Account;
 
 import org.springframework.jdbc.core.RowMapper;
@@ -20,7 +21,13 @@ public final class AccountRowMapper  implements RowMapper<Account> {
         account.setCity(rs.getString("city"));
         account.setStreet(rs.getString("street"));
         account.setZipCode(rs.getString("zipCode"));
-        account.setGender(rs.getString("gender"));
+
+        String genderStr = rs.getString("gender");
+        if (genderStr != null && !genderStr.trim().isEmpty()) {
+            account.setGender(Gender.valueOf(genderStr));
+        }else{
+            throw new SQLException();
+        }
 
         return account;
 

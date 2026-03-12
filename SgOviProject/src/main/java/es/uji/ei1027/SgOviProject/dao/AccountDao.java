@@ -24,7 +24,7 @@ public class AccountDao {
         jdbcTemplate.update("INSERT INTO Account(dni, name, surname, birthday, password, email, phoneNumber, city, street, zipCode, gender) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 account.getDni(), account.getName(), account.getSurname(), account.getBirthday(),
                 account.getPassword(), account.getEmail(), account.getPhoneNumber(),
-                account.getCity(), account.getStreet(), account.getZipCode(), account.getGender());
+                account.getCity(), account.getStreet(), account.getZipCode(), account.getGender().name());
     }
 
     public void deleteAccount(String dni) {
@@ -40,7 +40,7 @@ public class AccountDao {
         jdbcTemplate.update("UPDATE Account SET name=?, surname=?, birthday=?, password=?, email=?, phoneNumber=?, city=?, street=?, zipCode=?, gender=? WHERE dni=?",
                 account.getName(), account.getSurname(), account.getBirthday(),
                 account.getPassword(), account.getEmail(), account.getPhoneNumber(),
-                account.getCity(), account.getStreet(), account.getZipCode(), account.getGender(),
+                account.getCity(), account.getStreet(), account.getZipCode(), account.getGender().name(),
                 account.getDni());
     }
 
