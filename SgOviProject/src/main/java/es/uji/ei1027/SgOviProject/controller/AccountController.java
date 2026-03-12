@@ -50,9 +50,9 @@ public class AccountController {
 
     /* Operaciones para actualizar */
 
-    @RequestMapping(value="/update/{name}")
-    public String editAccount(@PathVariable String name, Model model) {
-        model.addAttribute("account", accountDao.getAccount(name));
+    @RequestMapping(value="/update/{dni}")
+    public String editAccount(@PathVariable String dni, Model model) {
+        model.addAttribute("account", accountDao.getAccount(dni));
         return "account/update";
     }
 
@@ -67,8 +67,8 @@ public class AccountController {
 
     /* Operaciones para borrar */
 
-    @RequestMapping(value="/delete/{name}")
-    public String processDelete(@PathVariable String name, String dni, Model model) {
+    @RequestMapping(value="/delete/{dni}")
+    public String processDelete(@PathVariable String dni, Model model) {
         accountDao.deleteAccount(dni);
         return "redirect:/account/list";
     }
