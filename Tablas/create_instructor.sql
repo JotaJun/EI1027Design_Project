@@ -3,8 +3,8 @@ CREATE TABLE Instructor(
 	expertise		VARCHAR(30) NOT NULL,
 	
 	CONSTRAINT pk_Instructor PRIMARY KEY(dni),
-	CONSTRAINT fk_Instructor_Account FOREIGN KEY(dni)
-				REFERENCES User(dni)
+	CONSTRAINT fk_Account FOREIGN KEY(dni)
+				REFERENCES Account(dni)
 				ON UPDATE CASCADE
 				ON DELETE CASCADE
 );
