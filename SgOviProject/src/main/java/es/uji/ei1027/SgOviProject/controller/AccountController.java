@@ -2,9 +2,11 @@ package es.uji.ei1027.SgOviProject.controller;
 
 
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
+import es.uji.ei1027.SgOviProject.model.Account;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
@@ -20,7 +22,32 @@ public class AccountController {
     /* Operaciones para listar */
 
     @RequestMapping("/list")
-    public String listAccount(Model model) {
+    public String listAccounts(Model model) {
+        model.addAttribute("accounts", accountDao.getAccounts());
         return "account/list";
+    }
+
+    /* Operaciones para añadir */
+
+    @RequestMapping(value="add")
+    public String addAccount(Model model) {
+        model.addAttribute("account", new Account());
+        return "account/add";
+    }
+
+    /* Operaciones para actualizar */
+
+    @RequestMapping(value="/update/{name}")
+    public String editAccount(@PathVariable String name, Model model) {
+        model.addAttribute("account", accountDao.getAccount(name));
+        return "account/update";
+    }
+
+    /* Operaciones para borrar */
+
+    @RequestMapping(value="/delete/{name}")
+    public String deleteAccount(@PathVariable String name, Model model) {
+        accountDao.deleteAccount(name);
+        return "redirect:/account/list";
     }
 }

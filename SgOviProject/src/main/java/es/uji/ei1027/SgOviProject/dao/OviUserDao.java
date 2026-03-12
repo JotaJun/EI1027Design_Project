@@ -7,6 +7,8 @@ import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class OviUserDao {
@@ -44,22 +46,22 @@ public class OviUserDao {
 
 
     /* Listar uno o varios usuarios */
-    public void getOviUser(OviUser oviUser) {
+    public OviUser getOviUser(OviUser oviUser) {
         try {
-            jdbcTemplate.queryForObject("SELECT from OviUser WHERE dni=?", new OviUserRowMapper(), oviUser.getDni());
+            return jdbcTemplate.queryForObject("SELECT from OviUser WHERE dni=?", new OviUserRowMapper(), oviUser.getDni());
 
         }catch (EmptyResultDataAccessException e){
-            e.printStackTrace();
+            return null;
 
         }
     }
 
-    public void getOviUsers() {
+    public List<OviUser> getOviUsers() {
         try{
-            jdbcTemplate.query("SELECT * FROM OviUser", new OviUserRowMapper());
+            return jdbcTemplate.query("SELECT * FROM OviUser", new OviUserRowMapper());
 
         } catch (EmptyResultDataAccessException e){
-            e.printStackTrace();
+            return new ArrayList<OviUser>();
         }
     }
 }

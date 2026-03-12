@@ -2,6 +2,7 @@ package es.uji.ei1027.SgOviProject.dao;
 
 
 import es.uji.ei1027.SgOviProject.model.Communication;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
@@ -43,7 +44,12 @@ public class CommunicationDao {
 
     /* Listar la comunicacion */
 
-    public void getCommunication(int idCandidacy) {
-        jdbcTemplate.queryForObject("select * from Communication where idCandidacy=?", new CommunicationRowMapper(),idCandidacy);
+    public Communication getCommunication(int idCandidacy) {
+        try{
+            return jdbcTemplate.queryForObject("select * from Communication where idCandidacy=?", new CommunicationRowMapper(),idCandidacy);
+
+        }catch(EmptyResultDataAccessException e){
+            return null;
+        }
     }
 }

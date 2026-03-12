@@ -10,6 +10,8 @@ import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
 import java.time.LocalDate;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class CandidacyDao {
@@ -48,30 +50,30 @@ public class CandidacyDao {
 
     /* Listar una o todas las candidaturas */
 
-    public void getCandidacyById(int idCandidacy) {
+    public Candidacy getCandidacyById(int idCandidacy) {
         try {
-            jdbcTemplate.queryForObject("SELECT * from candidacy where idCandidacy = ?", new CandidacyRowMapper(), idCandidacy);
+            return jdbcTemplate.queryForObject("SELECT * from candidacy where idCandidacy = ?", new CandidacyRowMapper(), idCandidacy);
 
         }catch (EmptyResultDataAccessException e){
-            e.printStackTrace();
+            return null;
         }
     }
 
-    public void getCandidacyByDniPapPati(String dniPapPati) {
+    public Candidacy getCandidacyByDniPapPati(String dniPapPati) {
         try{
-            jdbcTemplate.queryForObject("SELECT * from candidacy where dniPapPati = ?", new CandidacyRowMapper(), dniPapPati);
+            return jdbcTemplate.queryForObject("SELECT * from candidacy where dniPapPati = ?", new CandidacyRowMapper(), dniPapPati);
 
         } catch(EmptyResultDataAccessException e){
-            e.printStackTrace();
+            return null;
         }
     }
 
-    public void getCandidacies(){
+    public List<Candidacy> getCandidacies(){
         try{
-            jdbcTemplate.query("SELECT * from candidacy", new CandidacyRowMapper());
+            return jdbcTemplate.query("SELECT * from candidacy", new CandidacyRowMapper());
 
         } catch(EmptyResultDataAccessException e){
-            e.printStackTrace();
+            return new ArrayList<Candidacy>();
         }
     }
 }
