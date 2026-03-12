@@ -1,4 +1,4 @@
-CREATE TABLE ActivityAssitance(
+CREATE TABLE ActivityAssistance(
     idActivityAssistance        SERIAL PRIMARY KEY,
     creationDate                DATE DEFAULT CURRENT_DATE NOT NULL,
     attended                    BOOLEAN DEFAULT FALSE NOT NULL,
@@ -7,7 +7,7 @@ CREATE TABLE ActivityAssitance(
     dniPapPati                  VARCHAR(9),
 
     CONSTRAINT fk_activity_id FOREIGN KEY (idActivity)
-        REFERENCES Activity(idActivity)
+        REFERENCES Activity(id)
         ON UPDATE CASCADE
         ON DELETE RESTRICT,
     CONSTRAINT fk_oviUser_dni FOREIGN KEY (dniOviUser)

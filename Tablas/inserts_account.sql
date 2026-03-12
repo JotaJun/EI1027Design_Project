@@ -19,7 +19,7 @@ INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber,
 ('77777777Q', 'Lucas', 'Méndez Pau', '1980-12-01', 'userOviPass1', 'lucas.m@email.com', '666777888', 'Almassora', 'Calle Sol 4', '12550', 'M'),
 ('88888888R', 'Lucía', 'Ramos Ortiz', '2005-08-25', 'userOviPass2', 'lramos@gmail.com', '677888999', 'Castelló', 'Av. Valencia 40', '12006', 'F'),
 ('99999999S', 'Hugo', 'Blasco Solá', '2011-11-30', 'userOviPass3', 'hblasco@outlook.es', '688999000', 'Vila-real', 'Plaza Tetuán 2', '12540', 'M'),
-('10101010A', 'Ariel', 'Gómez Ferrando', '2006-05-10', 'userOviPass4', 'ariel.g@icloud.com', '699000111', 'Castelló', 'Calle Enmedio 15', '12001', NULL),
+('10101010A', 'Ariel', 'Gómez Ferrando', '2006-05-10', 'userOviPass4', 'ariel.g@icloud.com', '699000111', 'Castelló', 'Calle Enmedio 15', '12001', 'X'),
 ('20202020B', 'Pau', 'Vidal Marín', '2009-01-05', 'userOviPass5', 'pvidal@protonmail.com', '601234567', 'Almassora', 'Carrer Major 33', '12550', 'M'),
 ('30303030C', 'Elena', 'Moltó Ibáñez', '1998-12-12', 'userOviPass6', 'emolto@uji.es', '602345678', 'Castelló', 'Calle Herrero 8', '12002', 'F');
 

@@ -1,11 +1,15 @@
 \i create_account.sql
+
 \i create_oviuser.sql
 \i create_pap_pati.sql
 \i create_instructor.sql
-\i create_candidacy.sql
+
 \i create_activity.sql
 \i create_assistance_request.sql
+
+\i create_candidacy.sql
 \i create_activity_assistance.sql
+
 \i create_contract.sql
 \i create_communication.sql
 

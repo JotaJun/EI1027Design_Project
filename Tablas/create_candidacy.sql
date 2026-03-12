@@ -12,6 +12,6 @@ CREATE TABLE Candidacy(
     CONSTRAINT fk_papPati_dni FOREIGN KEY (dniPapPati)
         REFERENCES PapPati(dni)
         ON UPDATE CASCADE
-        ON DELETE CASCADE
+        ON DELETE CASCADE,
     CONSTRAINT chk_status CHECK(candidacyStatus IN ('pending, accepted, rejected'))
 );
