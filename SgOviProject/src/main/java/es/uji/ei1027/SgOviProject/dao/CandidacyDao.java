@@ -1,7 +1,6 @@
 package es.uji.ei1027.SgOviProject.dao;
 
-
-import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
+import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.model.Candidacy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -25,54 +24,63 @@ public class CandidacyDao {
 
     /* Añadir candidatura */
     public void addCandidacy(Candidacy candidacy) {
-        jdbcTemplate.update("INSERT INTO Candidacy VALUES(?, ?, ?, ? ,?)",
-                candidacy.getIdCandidacy(), candidacy.getStatus(), candidacy.getDateLastModified(), candidacy.getDniPapPati(), candidacy.getDateLastModified());
-
+        jdbcTemplate.update("INSERT INTO Candidacy (dateLastModified, candidacyStatus, idApRequest, dniPapPati) VALUES(?, ?, ?, ?)",
+                candidacy.getDateLastModified(),
+                candidacy.getStatus().name().toLowerCase(), // Enum a minúscula para BD
+                candidacy.getIdApRequest(),
+                candidacy.getDniPapPati());
     }
 
     /* Borrar una candidatura con el objeto o con su id */
     public void deleteCandidacy(Candidacy candidacy) {
-        jdbcTemplate.update("DELETE from Candidacy where idCandidacy = ?", candidacy.getIdCandidacy());
+        jdbcTemplate.update("DELETE FROM Candidacy WHERE idCandidacy=?", candidacy.getIdCandidacy());
     }
 
-    public void deleteCandidacy(String idCandidacy) {
-        jdbcTemplate.update("DELETE from Candidacy where idCandidacy = ?", idCandidacy);
+    public void deleteCandidacy(int idCandidacy) {
+        jdbcTemplate.update("DELETE FROM Candidacy WHERE idCandidacy=?", idCandidacy);
     }
 
-    /* Actualizar una candidatura con el objeto o con su id */
+    /* Actualizar una candidatura */
     public void updateCandidacy(Candidacy candidacy) {
-        jdbcTemplate.update("UPDATE Candidacy SET status=?, dateLastModified=?", candidacy.getStatus(), candidacy.getDateLastModified());
+        jdbcTemplate.update("UPDATE Candidacy SET dateLastModified=?, candidacyStatus=?, idApRequest=?, dniPapPati=? WHERE idCandidacy=?",
+                candidacy.getDateLastModified(),
+                candidacy.getStatus().name().toLowerCase(),
+                candidacy.getIdApRequest(),
+                candidacy.getDniPapPati(),
+                candidacy.getIdCandidacy());
     }
 
-    public void updateCandidacy(String idCandidacy, CandidacyStatus status, LocalDate dateLastModified) {
-        jdbcTemplate.update("UPDATE Candidacy SET status=?, dateLastModified=?", status, dateLastModified);
+    public void updateCandidacyStatus(int idCandidacy, Status status, LocalDate dateLastModified) {
+        jdbcTemplate.update("UPDATE Candidacy SET candidacyStatus=?, dateLastModified=? WHERE idCandidacy=?",
+                status.name().toLowerCase(),
+                dateLastModified,
+                idCandidacy);
     }
 
-    /* Listar una o todas las candidaturas */
-
+    /* Buscar una candidatura */
     public Candidacy getCandidacyById(int idCandidacy) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * from candidacy where idCandidacy = ?", new CandidacyRowMapper(), idCandidacy);
-
-        }catch (EmptyResultDataAccessException e){
+            return jdbcTemplate.queryForObject("SELECT * FROM Candidacy WHERE idCandidacy=?",
+                    new CandidacyRowMapper(), idCandidacy);
+        } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
 
-    public Candidacy getCandidacyByDniPapPati(String dniPapPati) {
-        try{
-            return jdbcTemplate.queryForObject("SELECT * from candidacy where dniPapPati = ?", new CandidacyRowMapper(), dniPapPati);
-
-        } catch(EmptyResultDataAccessException e){
-            return null;
+    /* Listar candidaturas de un PapPati */
+    public List<Candidacy> getCandidaciesByDniPapPati(String dniPapPati) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM Candidacy WHERE dniPapPati=?",
+                    new CandidacyRowMapper(), dniPapPati);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Candidacy>();
         }
     }
 
-    public List<Candidacy> getCandidacies(){
-        try{
-            return jdbcTemplate.query("SELECT * from candidacy", new CandidacyRowMapper());
-
-        } catch(EmptyResultDataAccessException e){
+    public List<Candidacy> getCandidacies() {
+        try {
+            return jdbcTemplate.query("SELECT * FROM Candidacy", new CandidacyRowMapper());
+        } catch (EmptyResultDataAccessException e) {
             return new ArrayList<Candidacy>();
         }
     }

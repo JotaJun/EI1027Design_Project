@@ -1,6 +1,6 @@
 package es.uji.ei1027.SgOviProject.enums;
 
-public enum CandidacyStatus {
+public enum Status {
     PENDING,
     ACCEPTED,
     REJECTED

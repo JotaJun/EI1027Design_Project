@@ -3,17 +3,17 @@ package es.uji.ei1027.SgOviProject.model;
 import java.time.LocalDate;
 
 public class Communication {
+    private int idCommunication;
     private int idCandidacy;
     private LocalDate dateCommunication;
     private String information;
 
-    @Override
-    public String toString() {
-        return "Communication{" +
-                "idCandidacy=" + idCandidacy +
-                ", dateCommunication=" + dateCommunication +
-                ", information='" + information + '\'' +
-                '}';
+    public int getIdCommunication() {
+        return idCommunication;
+    }
+
+    public void setIdCommunication(int idCommunication) {
+        this.idCommunication = idCommunication;
     }
 
     public int getIdCandidacy() {
@@ -38,5 +38,15 @@ public class Communication {
 
     public void setInformation(String information) {
         this.information = information;
+    }
+
+    @Override
+    public String toString() {
+        return "Communication{" +
+                "idCommunication=" + idCommunication +
+                ", idCandidacy=" + idCandidacy +
+                ", dateCommunication=" + dateCommunication +
+                ", information='" + information + '\'' +
+                '}';
     }
 }

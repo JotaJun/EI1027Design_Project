@@ -1,11 +1,13 @@
 package es.uji.ei1027.SgOviProject.model;
 
 import es.uji.ei1027.SgOviProject.enums.StaffType;
+import es.uji.ei1027.SgOviProject.enums.Status;
 
 import java.time.LocalDate;
 
 public class PapPati {
     private String dni;
+    private Status status;
     private StaffType staffType;
     private LocalDate initialAvailableDate;
     private LocalDate lastAvailableDate;
@@ -19,6 +21,14 @@ public class PapPati {
 
     public void setDni(String dni) {
         this.dni = dni;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
     }
 
     public StaffType getStaffType() {
@@ -73,7 +83,8 @@ public class PapPati {
     public String toString() {
         return "PapPati{" +
                 "dni='" + dni + '\'' +
-                ", staffType='" + staffType + '\'' +
+                ", status=" + status +
+                ", staffType=" + staffType +
                 ", initialAvailableDate=" + initialAvailableDate +
                 ", lastAvailableDate=" + lastAvailableDate +
                 ", training='" + training + '\'' +

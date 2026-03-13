@@ -11,7 +11,7 @@ public final class OviUserRowMapper implements RowMapper<OviUser> {
     public OviUser mapRow(ResultSet rs, int rowNum) throws SQLException {
         OviUser oviUser = new OviUser();
         oviUser.setDni(rs.getString("dni"));
-        oviUser.setLegalGuardian(rs.getString("legalGuardian"));
+        oviUser.setDniLegalGuardian(rs.getString("dniLegalGuardian"));
         return oviUser;
     }
 }

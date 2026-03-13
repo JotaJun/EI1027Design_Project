@@ -11,9 +11,12 @@ public final class CommunicationRowMapper implements RowMapper<Communication> {
     @Override
     public Communication mapRow(ResultSet rs, int rowNum) throws SQLException {
         Communication communication = new Communication();
+
+        communication.setIdCommunication(rs.getInt("idCommunication"));
         communication.setIdCandidacy(rs.getInt("idCandidacy"));
         communication.setDateCommunication(rs.getObject("dateCommunication", LocalDate.class));
         communication.setInformation(rs.getString("information"));
+
         return communication;
     }
 }

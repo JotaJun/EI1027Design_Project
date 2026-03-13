@@ -25,32 +25,30 @@ public class AssistanceRequestDao {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    // !!! Mirar como funciona un SERIAL !!!
+    // Manera que ha recomendado Gemini para recuperar el ID, preguntar Lledó
     public int addAssistanceRequest(AssistanceRequest request) {
-
-        // 1. Creamos el contenedor que atrapará la llave generada por PostgreSQL
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
-        // 2. Ejecutamos el update usando un PreparedStatementCreator (con una función lambda)
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO AssistanceRequest(dateRequest, assistantType, gender, city, yearsExperience, specifiedTrainings, initialDateRequired, monthsRequired, dniOviUser) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS); // ¡IMPORTANTE! Pedimos las claves
+                    "INSERT INTO AssistanceRequest(creationDate, assistantType, gender, city, yearsExperience, specifiedTrainings, initialDateRequired, monthsRequired, dniOviUser, approvedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
 
-            ps.setObject(1, request.getDateRequest());
+            ps.setObject(1, request.getCreationDate());
             ps.setString(2, request.getAssistantType().name());
             ps.setString(3, request.getGender());
             ps.setString(4, request.getCity());
-            ps.setObject(5, request.getYearsExperience());
+            ps.setObject(5, request.getYearsExperience(), java.sql.Types.INTEGER);
             ps.setString(6, request.getSpecifiedTrainings());
             ps.setObject(7, request.getInitialDateRequired());
             ps.setInt(8, request.getMonthsRequired());
             ps.setString(9, request.getDniOviUser());
+            ps.setBoolean(10, request.isApprovedByGuardian());
+            ps.setString(11, request.getDniLegalGuardian());
 
             return ps;
-        }, keyHolder); // Le pasamos el KeyHolder como segundo parámetro
+        }, keyHolder);
 
-        // 3. Extraemos el ID del KeyHolder
         Number key = keyHolder.getKey();
 
         if (key == null) {
@@ -72,8 +70,8 @@ public class AssistanceRequestDao {
     }
 
     public void updateAssistanceRequest(AssistanceRequest request) {
-        jdbcTemplate.update("UPDATE AssistanceRequest SET dateRequest=?, assistantType=?, gender=?, city=?, yearsExperience=?, specifiedTrainings=?, initialDateRequired=?, monthsRequired=?, dniOviUser=? WHERE idApRequest=?",
-                request.getDateRequest(),
+        jdbcTemplate.update("UPDATE AssistanceRequest SET creationDate=?, assistantType=?, gender=?, city=?, yearsExperience=?, specifiedTrainings=?, initialDateRequired=?, monthsRequired=?, dniOviUser=?, approvedByGuardian=?, dniLegalGuardian=? WHERE idApRequest=?",
+                request.getCreationDate(),
                 request.getAssistantType().name(),
                 request.getGender(),
                 request.getCity(),
@@ -82,7 +80,9 @@ public class AssistanceRequestDao {
                 request.getInitialDateRequired(),
                 request.getMonthsRequired(),
                 request.getDniOviUser(),
-                request.getIdApRequest()); // El ID va al final para el WHERE
+                request.isApprovedByGuardian(),
+                request.getDniLegalGuardian(),
+                request.getIdApRequest());
     }
 
     public AssistanceRequest getAssistanceRequest(int idApRequest) {

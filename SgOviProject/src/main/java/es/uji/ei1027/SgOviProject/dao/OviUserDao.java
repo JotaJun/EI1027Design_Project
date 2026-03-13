@@ -22,45 +22,53 @@ public class OviUserDao {
 
     /* Añadir un usuario */
     public void addOviUser(OviUser oviUser) {
-        jdbcTemplate.update("INSERT into OviUser VALUES(?, ?)",  oviUser.getDni(), oviUser.getLegalGuardian());
+        jdbcTemplate.update("INSERT INTO OviUser(dni, dniLegalGuardian) VALUES(?, ?)",
+                oviUser.getDni(), oviUser.getDniLegalGuardian());
     }
 
     /* Borrar un usuario */
     public void deleteOviUser(OviUser oviUser) {
-        jdbcTemplate.update("DELETE from OviUser where dni=?", oviUser.getDni());
+        jdbcTemplate.update("DELETE FROM OviUser WHERE dni=?", oviUser.getDni());
     }
 
     public void deleteOviUser(String dni) {
-        jdbcTemplate.update("DELETE from OviUser where dni=?", dni);
+        jdbcTemplate.update("DELETE FROM OviUser WHERE dni=?", dni);
     }
 
-    /* Actualizar un usuario (puede ser que el legalGuardian cambie??) */
-
+    /* Actualizar un usuario */
     public void updateOviUser(OviUser oviUser) {
-        jdbcTemplate.update("UPDATE OviUser SET legalGuardian=? WHERE dni=?", oviUser.getLegalGuardian(), oviUser.getDni());
+        jdbcTemplate.update("UPDATE OviUser SET dniLegalGuardian=? WHERE dni=?",
+                oviUser.getDniLegalGuardian(), oviUser.getDni());
     }
 
-    public void updateOviUser(String dni, String legalGuardian) {
-        jdbcTemplate.update("UPDATE OviUser SET legalGuardian=? WHERE dni=?", legalGuardian, dni);
+    public void updateOviUser(String dni, String dniLegalGuardian) {
+        jdbcTemplate.update("UPDATE OviUser SET dniLegalGuardian=? WHERE dni=?", dniLegalGuardian, dni);
     }
 
-
-    /* Listar uno o varios usuarios */
+    /* Listar un usuario pasándole un objeto OviUser */
     public OviUser getOviUser(OviUser oviUser) {
         try {
-            return jdbcTemplate.queryForObject("SELECT from OviUser WHERE dni=?", new OviUserRowMapper(), oviUser.getDni());
-
-        }catch (EmptyResultDataAccessException e){
+            return jdbcTemplate.queryForObject("SELECT * FROM OviUser WHERE dni=?",
+                    new OviUserRowMapper(), oviUser.getDni());
+        } catch (EmptyResultDataAccessException e) {
             return null;
+        }
+    }
 
+    /* Añadido: Listar un usuario pasándole el DNI*/
+    public OviUser getOviUser(String dni) {
+        try {
+            return jdbcTemplate.queryForObject("SELECT * FROM OviUser WHERE dni=?",
+                    new OviUserRowMapper(), dni);
+        } catch (EmptyResultDataAccessException e) {
+            return null;
         }
     }
 
     public List<OviUser> getOviUsers() {
-        try{
+        try {
             return jdbcTemplate.query("SELECT * FROM OviUser", new OviUserRowMapper());
-
-        } catch (EmptyResultDataAccessException e){
+        } catch (EmptyResultDataAccessException e) {
             return new ArrayList<OviUser>();
         }
     }

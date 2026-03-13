@@ -13,7 +13,7 @@ public final class AssistanceRequestRowMapper implements RowMapper<AssistanceReq
         AssistanceRequest request = new AssistanceRequest();
 
         request.setIdApRequest(rs.getInt("idApRequest"));
-        request.setDateRequest(rs.getObject("dateRequest", LocalDate.class));
+        request.setCreationDate(rs.getObject("creationDate", LocalDate.class));
 
         String typeStr = rs.getString("assistantType");
         if (typeStr != null) {
@@ -26,8 +26,9 @@ public final class AssistanceRequestRowMapper implements RowMapper<AssistanceReq
         request.setSpecifiedTrainings(rs.getString("specifiedTrainings"));
         request.setInitialDateRequired(rs.getObject("initialDateRequired", LocalDate.class));
         request.setMonthsRequired(rs.getInt("monthsRequired"));
-
         request.setDniOviUser(rs.getString("dniOviUser"));
+        request.setApprovedByGuardian(rs.getBoolean("approvedByGuardian"));
+        request.setDniLegalGuardian(rs.getString("dniLegalGuardian"));
 
         return request;
     }

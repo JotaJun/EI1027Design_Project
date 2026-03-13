@@ -1,24 +1,25 @@
 package es.uji.ei1027.SgOviProject.model;
 
 import es.uji.ei1027.SgOviProject.enums.StaffType;
-
 import java.time.LocalDate;
 
 public class AssistanceRequest {
     private int idApRequest;
-    private LocalDate dateRequest = LocalDate.now(); // Valor por defecto en Java
+    private LocalDate creationDate = LocalDate.now();
 
     // Parámetros de búsqueda
     private StaffType assistantType;
     private String gender;
     private String city;
-    private Integer yearsExperience; // Integer en vez de int para permitir null
+    private Integer yearsExperience;
     private String specifiedTrainings;
     private LocalDate initialDateRequired;
     private int monthsRequired;
+    // Fin parámetros búsqueda
 
-    // Clave ajena
     private String dniOviUser;
+    private boolean approvedByGuardian;
+    private String dniLegalGuardian;
 
     public int getIdApRequest() {
         return idApRequest;
@@ -28,12 +29,12 @@ public class AssistanceRequest {
         this.idApRequest = idApRequest;
     }
 
-    public LocalDate getDateRequest() {
-        return dateRequest;
+    public LocalDate getCreationDate() {
+        return creationDate;
     }
 
-    public void setDateRequest(LocalDate dateRequest) {
-        this.dateRequest = dateRequest;
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
     }
 
     public StaffType getAssistantType() {
@@ -100,11 +101,27 @@ public class AssistanceRequest {
         this.dniOviUser = dniOviUser;
     }
 
+    public boolean isApprovedByGuardian() {
+        return approvedByGuardian;
+    }
+
+    public void setApprovedByGuardian(boolean approvedByGuardian) {
+        this.approvedByGuardian = approvedByGuardian;
+    }
+
+    public String getDniLegalGuardian() {
+        return dniLegalGuardian;
+    }
+
+    public void setDniLegalGuardian(String dniLegalGuardian) {
+        this.dniLegalGuardian = dniLegalGuardian;
+    }
+
     @Override
     public String toString() {
         return "AssistanceRequest{" +
                 "idApRequest=" + idApRequest +
-                ", dateRequest=" + dateRequest +
+                ", creationDate=" + creationDate +
                 ", assistantType=" + assistantType +
                 ", gender='" + gender + '\'' +
                 ", city='" + city + '\'' +
@@ -113,6 +130,8 @@ public class AssistanceRequest {
                 ", initialDateRequired=" + initialDateRequired +
                 ", monthsRequired=" + monthsRequired +
                 ", dniOviUser='" + dniOviUser + '\'' +
+                ", approvedByGuardian=" + approvedByGuardian +
+                ", dniLegalGuardian='" + dniLegalGuardian + '\'' +
                 '}';
     }
 }

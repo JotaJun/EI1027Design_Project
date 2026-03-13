@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject.dao;
 
 import es.uji.ei1027.SgOviProject.enums.StaffType;
+import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.model.PapPati;
 import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
@@ -12,6 +13,11 @@ public final class PapPatiRowMapper implements RowMapper<PapPati> {
     public PapPati mapRow(ResultSet rs, int rowNum) throws SQLException {
         PapPati papPati = new PapPati();
         papPati.setDni(rs.getString("dni"));
+
+        String statusStr = rs.getString("status");
+        if (statusStr != null) {
+            papPati.setStatus(Status.valueOf(statusStr));
+        }
 
         String typeStr = rs.getString("stafftype");
         if (typeStr != null) {

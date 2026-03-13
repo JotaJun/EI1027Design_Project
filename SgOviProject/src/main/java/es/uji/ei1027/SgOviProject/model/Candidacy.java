@@ -1,39 +1,28 @@
 package es.uji.ei1027.SgOviProject.model;
-import es.uji.ei1027.SgOviProject.enums.*;
 
+import es.uji.ei1027.SgOviProject.enums.Status;
 import java.time.LocalDate;
 
 public class Candidacy {
-    private String idCandidacy;
-    private CandidacyStatus status;
+    private int idCandidacy;
+    private Status status;
     private LocalDate dateLastModified;
     private int idApRequest;
     private String dniPapPati;
 
-    @Override
-    public String toString() {
-        return "Candidacy{" +
-                "idCandidacy='" + idCandidacy + '\'' +
-                ", status=" + status +
-                ", date=" + dateLastModified +
-                ", idApRequest=" + idApRequest +
-                ", dniPapPati='" + dniPapPati + '\'' +
-                '}';
-    }
-
-    public String getIdCandidacy() {
+    public int getIdCandidacy() {
         return idCandidacy;
     }
 
-    public void setIdCandidacy(String idCandidacy) {
+    public void setIdCandidacy(int idCandidacy) {
         this.idCandidacy = idCandidacy;
     }
 
-    public CandidacyStatus getStatus() {
+    public Status getStatus() {
         return status;
     }
 
-    public void setStatus(CandidacyStatus status) {
+    public void setStatus(Status status) {
         this.status = status;
     }
 
@@ -41,8 +30,8 @@ public class Candidacy {
         return dateLastModified;
     }
 
-    public void setDateLastModified(LocalDate date) {
-        this.dateLastModified = date;
+    public void setDateLastModified(LocalDate dateLastModified) {
+        this.dateLastModified = dateLastModified;
     }
 
     public int getIdApRequest() {
@@ -61,9 +50,14 @@ public class Candidacy {
         this.dniPapPati = dniPapPati;
     }
 
-
-
-
-
-
+    @Override
+    public String toString() {
+        return "Candidacy{" +
+                "idCandidacy=" + idCandidacy +
+                ", status=" + status +
+                ", dateLastModified=" + dateLastModified +
+                ", idApRequest=" + idApRequest +
+                ", dniPapPati='" + dniPapPati + '\'' +
+                '}';
+    }
 }

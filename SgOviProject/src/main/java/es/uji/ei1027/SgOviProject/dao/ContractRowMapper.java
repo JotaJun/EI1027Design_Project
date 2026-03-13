@@ -11,11 +11,15 @@ public final class ContractRowMapper implements RowMapper<Contract> {
     @Override
     public Contract mapRow(ResultSet rs, int rowNum) throws SQLException {
         Contract contract = new Contract();
-        contract.setIdContract(rs.getInt("id_contract"));
-        contract.setStartDate(rs.getObject("start_date", LocalDate.class));
-        contract.setEndDate(rs.getObject("end_date", LocalDate.class));
-        contract.setSalary(rs.getInt("salary"));
+
+        contract.setIdContract(rs.getInt("idContract"));
+        contract.setIdCandidacy(rs.getInt("idCandidacy"));
+        contract.setStartDate(rs.getObject("startDate", LocalDate.class));
+        contract.setEndDate(rs.getObject("endDate", LocalDate.class));
+        contract.setHourlySalary(rs.getDouble("hourlySalary"));
         contract.setSchedule(rs.getString("schedule"));
+        contract.setSignedByGuardian(rs.getBoolean("signedByGuardian"));
+        contract.setDniLegalGuardian(rs.getString("dniLegalGuardian"));
 
         return contract;
     }

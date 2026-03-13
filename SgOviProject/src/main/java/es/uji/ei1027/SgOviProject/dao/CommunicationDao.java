@@ -1,55 +1,78 @@
 package es.uji.ei1027.SgOviProject.dao;
 
-
 import es.uji.ei1027.SgOviProject.model.Communication;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.util.ArrayList;
+import java.util.List;
 
 @Repository
 public class CommunicationDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     /* Añadir una comunicación */
     public void addCommunication(Communication communication) {
-        jdbcTemplate.update("INSERT INTO Communcation VALUES(?, ?, ?)",
-                communication.getDateCommunication(), communication.getInformation());
+        jdbcTemplate.update("INSERT INTO Communication (idCandidacy, dateCommunication, information) VALUES(?, ?, ?)",
+                communication.getIdCandidacy(), communication.getDateCommunication(), communication.getInformation());
     }
 
-    /* Borrar una comunicación con el objeto o con su id */
+    /* Borrar una comunicación por su PK (idCommunication) */
     public void deleteCommunication(Communication communication) {
-        jdbcTemplate.update("DELETE from Communcation where idCandidacy=?", communication.getIdCandidacy());
+        jdbcTemplate.update("DELETE FROM Communication WHERE idCommunication=?", communication.getIdCommunication());
     }
 
-    public void deleteCommunication(int idCandidacy) {
-        jdbcTemplate.update("DELETE from Communcation where idCandidacy=?", idCandidacy);
-
+    public void deleteCommunication(int idCommunication) {
+        jdbcTemplate.update("DELETE FROM Communication WHERE idCommunication=?", idCommunication);
     }
 
-    /* Actualizar la información de los chats */
+    /* Actualizar la comunicación por su PK */
     public void updateCommunication(Communication communication) {
-        jdbcTemplate.update("UPDATE Communication SET information=? WHERE idCandidacy=?", communication.getInformation(), communication.getIdCandidacy());
+        jdbcTemplate.update("UPDATE Communication SET idCandidacy=?, dateCommunication=?, information=? WHERE idCommunication=?",
+                communication.getIdCandidacy(), communication.getDateCommunication(),
+                communication.getInformation(), communication.getIdCommunication());
     }
 
-    public void updateCommunication(int idCandidacy, String information) {
-        jdbcTemplate.update("UPDATE Communication SET information=? WHERE idCandidacy=?", information, idCandidacy);
+    // Actualiza solo la información sabiendo el id de la comunicación
+    public void updateCommunication(int idCommunication, String information) {
+        jdbcTemplate.update("UPDATE Communication SET information=? WHERE idCommunication=?", information, idCommunication);
     }
 
-    /* Listar la comunicacion */
-
-    public Communication getCommunication(int idCandidacy) {
+    /* Listar una comunicación específica por su ID */
+    public Communication getCommunication(int idCommunication) {
         try{
-            return jdbcTemplate.queryForObject("select * from Communication where idCandidacy=?", new CommunicationRowMapper(),idCandidacy);
-
+            return jdbcTemplate.queryForObject("SELECT * FROM Communication WHERE idCommunication=?",
+                    new CommunicationRowMapper(), idCommunication);
         }catch(EmptyResultDataAccessException e){
             return null;
+        }
+    }
+
+    /* Listar TODAS las comunicaciones */
+    public List<Communication> getCommunications() {
+        try {
+            return jdbcTemplate.query("SELECT * FROM Communication", new CommunicationRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Communication>();
+        }
+    }
+
+    /* Listar el historial de chats/comunicaciones de una candidatura en concreto */
+    public List<Communication> getCommunicationsByCandidacy(int idCandidacy) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM Communication WHERE idCandidacy=?",
+                    new CommunicationRowMapper(), idCandidacy);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Communication>();
         }
     }
 }

@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject.dao;
 
 import es.uji.ei1027.SgOviProject.model.Contract;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.stereotype.Repository;
@@ -14,43 +15,49 @@ public class ContractDao {
 
     private JdbcTemplate jdbcTemplate;
 
+    @Autowired // Faltaba esta anotación clave
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     /* Añadir un contrato */
     public void addContract(Contract contract) {
-        jdbcTemplate.update("INSERT INTO Contract (id_contract, start_date, end_date, salary, schedule) VALUES(?, ?, ?, ?, ?)",
-                contract.getIdContract(), contract.getStartDate(), contract.getEndDate(),
-                contract.getSalary(), contract.getSchedule());
+        // No insertamos idContract porque es SERIAL y la BD lo genera solo
+        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, signedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?)",
+                contract.getIdCandidacy(), contract.getStartDate(), contract.getEndDate(),
+                contract.getHourlySalary(), contract.getSchedule(), contract.isSignedByGuardian(),
+                contract.getDniLegalGuardian());
     }
 
     /* Borrar un contrato */
     public void deleteContract(Contract contract) {
-        jdbcTemplate.update("DELETE FROM Contract WHERE id_contract=?", contract.getIdContract());
+        jdbcTemplate.update("DELETE FROM Contract WHERE idContract=?", contract.getIdContract());
     }
 
     public void deleteContract(int idContract) {
-        jdbcTemplate.update("DELETE FROM Contract WHERE id_contract=?", idContract);
+        jdbcTemplate.update("DELETE FROM Contract WHERE idContract=?", idContract);
     }
 
     /* Actualizar un contrato */
     public void updateContract(Contract contract) {
-        jdbcTemplate.update("UPDATE Contract SET start_date=?, end_date=?, salary=?, schedule=? WHERE id_contract=?",
-                contract.getStartDate(), contract.getEndDate(), contract.getSalary(),
-                contract.getSchedule(), contract.getIdContract());
+        jdbcTemplate.update("UPDATE Contract SET idCandidacy=?, startDate=?, endDate=?, hourlySalary=?, schedule=?, signedByGuardian=?, dniLegalGuardian=? WHERE idContract=?",
+                contract.getIdCandidacy(), contract.getStartDate(), contract.getEndDate(),
+                contract.getHourlySalary(), contract.getSchedule(), contract.isSignedByGuardian(),
+                contract.getDniLegalGuardian(),
+                contract.getIdContract()); // El ID va al final para el WHERE
     }
 
-    /*Listar un contrato*/
+    /* Listar un contrato */
     public Contract getContract(int idContract) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM Contract WHERE id_contract=?",
+            return jdbcTemplate.queryForObject("SELECT * FROM Contract WHERE idContract=?",
                     new ContractRowMapper(), idContract);
         } catch (EmptyResultDataAccessException e) {
             return null;
         }
     }
-    /*Listar todos los contratos*/
+
+    /* Listar todos los contratos */
     public List<Contract> getContracts() {
         try {
             return jdbcTemplate.query("SELECT * FROM Contract", new ContractRowMapper());

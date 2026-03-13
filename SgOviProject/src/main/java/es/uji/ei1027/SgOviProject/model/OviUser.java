@@ -3,7 +3,7 @@ package es.uji.ei1027.SgOviProject.model;
 public class OviUser {
 
     private String dni;
-    private String legalGuardian;
+    private String dniLegalGuardian;
 
     public String getDni() {
         return dni;
@@ -13,19 +13,19 @@ public class OviUser {
         this.dni = dni;
     }
 
-    public String getLegalGuardian() {
-        return legalGuardian;
+    public String getDniLegalGuardian() {
+        return dniLegalGuardian;
     }
 
-    public void setLegalGuardian(String legalGuardian) {
-        this.legalGuardian = legalGuardian;
+    public void setDniLegalGuardian(String dniLegalGuardian) {
+        this.dniLegalGuardian = dniLegalGuardian;
     }
 
     @Override
     public String toString() {
         return "OviUser{" +
                 "dni='" + dni + '\'' +
-                ", legalGuardian='" + legalGuardian + '\'' +
+                ", dniLegalGuardian='" + dniLegalGuardian + '\'' +
                 '}';
     }
 }
