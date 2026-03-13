@@ -5,7 +5,7 @@ CREATE TABLE PapPati (
     initialAvailableDate    DATE,                     
     lastAvailableDate       DATE,                     
     training                VARCHAR(100)    NOT NULL,
-    yearsOfperience         INTEGER         NOT NULL,    
+    yearsOfExperience         INTEGER         NOT NULL,    
     urlCv   	              VARCHAR(100)    NOT NULL,
 
 
