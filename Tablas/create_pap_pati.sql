@@ -2,10 +2,10 @@ CREATE TABLE PapPati (
     dni                     VARCHAR(9),
     status                  VARCHAR(10) DEFAULT 'pending' NOT NULL,
     stafftype               VARCHAR(4)     NOT NULL, --reglas de integridad {PAP, PATI}
-    initialAvailableDate    DATE,                     -- Agregar UML, Si NULO --> NO DISPONIBLE
-    lastAvailableDate       DATE,                     -- Agregar UML, Si NULO --> NO DISPONIBLE
+    initialAvailableDate    DATE,                     
+    lastAvailableDate       DATE,                     
     training                VARCHAR(100)    NOT NULL,
-    yearsOfperience         INTEGER         NOT NULL,    -- Cambiar UML
+    yearsOfperience         INTEGER         NOT NULL,    
     urlCv   	              VARCHAR(100)    NOT NULL,
 
 

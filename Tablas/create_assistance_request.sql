@@ -2,7 +2,6 @@ CREATE TABLE AssistanceRequest(
 	idApRequest 					SERIAL PRIMARY KEY,
 	creationDate 			DATE	DEFAULT CURRENT_DATE NOT NULL,
 	-- PARAMETROS BUSQUEDA
-	-- DE AQUÍ
 		-- Los que permitan nulos implicará que no importa como restricción
 	assistantType			VARCHAR(4)		NOT NULL,
 	gender					VARCHAR(1),
@@ -13,7 +12,6 @@ CREATE TABLE AssistanceRequest(
 	monthsRequired			INTEGER			NOT NULL,	
 	
 	-- FIN PARAMETROS BUSQUEDA
-	-- HASTA AQUÍ AGREGAR A UML
 
 	dniOviUser				VARCHAR(9)		NOT NULL,
 	approvedByGuardian		BOOLEAN			DEFAULT FALSE,
