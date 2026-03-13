@@ -7,7 +7,7 @@ CREATE TABLE AssistanceRequest(
 	assistantType			VARCHAR(4)		NOT NULL,
 	gender					VARCHAR(1),
 	city					VARCHAR(30),
-	yearsExperience			INTEGER,
+	yearsOfExperience			INTEGER,
 	specifiedTrainings		VARCHAR(100),
 	initialDateRequired		DATE			NOT NULL,
 	monthsRequired			INTEGER			NOT NULL,	

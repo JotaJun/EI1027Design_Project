@@ -12,7 +12,7 @@ public class PapPati {
     private LocalDate initialAvailableDate;
     private LocalDate lastAvailableDate;
     private String training;
-    private int yearsExperience;
+    private int yearsOfExperience;
     private String urlCv;
 
     public String getDni() {
@@ -63,12 +63,12 @@ public class PapPati {
         this.training = training;
     }
 
-    public int getYearsExperience() {
-        return yearsExperience;
+    public int getYearsOfExperience() {
+        return yearsOfExperience;
     }
 
-    public void setYearsExperience(int yearsExperience) {
-        this.yearsExperience = yearsExperience;
+    public void setYearsOfExperience(int yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
     }
 
     public String getUrlCv() {
@@ -88,7 +88,7 @@ public class PapPati {
                 ", initialAvailableDate=" + initialAvailableDate +
                 ", lastAvailableDate=" + lastAvailableDate +
                 ", training='" + training + '\'' +
-                ", yearsExperience=" + yearsExperience +
+                ", yearsOfExperience=" + yearsOfExperience +
                 ", urlCv='" + urlCv + '\'' +
                 '}';
     }

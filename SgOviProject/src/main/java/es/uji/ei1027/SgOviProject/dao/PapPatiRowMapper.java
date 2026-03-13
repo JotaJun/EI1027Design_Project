@@ -27,7 +27,7 @@ public final class PapPatiRowMapper implements RowMapper<PapPati> {
         papPati.setInitialAvailableDate(rs.getObject("initialAvailableDate", LocalDate.class));
         papPati.setLastAvailableDate(rs.getObject("lastAvailableDate", LocalDate.class));
         papPati.setTraining(rs.getString("training"));
-        papPati.setYearsExperience(rs.getInt("yearsExperience"));
+        papPati.setYearsOfExperience(rs.getInt("yearsOfExperience"));
         papPati.setUrlCv(rs.getString("urlCv"));
 
         return papPati;

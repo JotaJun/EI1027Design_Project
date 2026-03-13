@@ -1,4 +1,4 @@
-INSERT INTO PapPati (dni, stafftype, initialAvailableDate, lastAvailableDate, training, yearsExperience, urlCv) VALUES
+INSERT INTO PapPati (dni, stafftype, initialAvailableDate, lastAvailableDate, training, yearsOfExperience, urlCv) VALUES
 ('40404040D', 'PAP',  '2024-01-01', '2024-12-31', 'Grado en Ciencias del Deporte', 3, 'https://mi-cv.es/mtorres'),
 ('50505050E', 'PATI', NULL,         NULL,         'Grado en Psicología', 5, 'https://mi-cv.es/screspo'),
 ('60606060F', 'PAP',  '2024-01-01', '2024-12-31', 'TAFAD', 2, 'https://mi-cv.es/icastro'),

@@ -5,7 +5,7 @@ CREATE TABLE PapPati (
     initialAvailableDate    DATE,                     -- Agregar UML, Si NULO --> NO DISPONIBLE
     lastAvailableDate       DATE,                     -- Agregar UML, Si NULO --> NO DISPONIBLE
     training                VARCHAR(100)    NOT NULL,
-    yearsExperience         INTEGER         NOT NULL,    -- Cambiar UML
+    yearsOfperience         INTEGER         NOT NULL,    -- Cambiar UML
     urlCv   	              VARCHAR(100)    NOT NULL,
 
 

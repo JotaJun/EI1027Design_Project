@@ -29,7 +29,7 @@ public class PapPatiDao {
                 papPati.getInitialAvailableDate(),
                 papPati.getLastAvailableDate(),
                 papPati.getTraining(),
-                papPati.getYearsExperience(),
+                papPati.getYearsOfExperience(),
                 papPati.getUrlCv());
     }
 
@@ -49,7 +49,7 @@ public class PapPatiDao {
                 papPati.getInitialAvailableDate(),
                 papPati.getLastAvailableDate(),
                 papPati.getTraining(),
-                papPati.getYearsExperience(),
+                papPati.getYearsOfExperience(),
                 papPati.getUrlCv(),
                 papPati.getDni());
     }
