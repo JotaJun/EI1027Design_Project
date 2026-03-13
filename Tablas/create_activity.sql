@@ -3,7 +3,7 @@ CREATE TABLE Activity(
                                             -- NO HACE FALTA PONER CONSTRAINT PRIMARY KEY
     instructorDni   VARCHAR(9)      NOT NULL,    
     title           VARCHAR(50)     NOT NULL,
-    typeActivity    VARCHAR(20)     NOT NULL,
+    activityType    VARCHAR(20)     NOT NULL,
     activityDate    DATE            NOT NULL,
     description     VARCHAR(500)    NOT NULL,
     address         VARCHAR(50)     NOT NULL,
@@ -13,5 +13,5 @@ CREATE TABLE Activity(
         REFERENCES Instructor(dni)
         ON DELETE RESTRICT
         ON UPDATE CASCADE,
-    CONSTRAINT chk_type_activity CHECK(typeActivity in ('dissemination', 'training'))
+    CONSTRAINT chk_activity_type CHECK(activityType in ('dissemination', 'training'))
 );

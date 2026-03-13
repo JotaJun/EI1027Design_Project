@@ -13,5 +13,5 @@ CREATE TABLE Candidacy(
         REFERENCES PapPati(dni)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT chk_status CHECK(candidacyStatus IN ('pending, accepted, rejected'))
+    CONSTRAINT chk_status CHECK(candidacyStatus IN ('pending', 'accepted', 'rejected'))
 );

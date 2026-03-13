@@ -33,3 +33,10 @@ INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber,
 ('70707070G', 'Julia', 'Navarro Sanz', '1989-04-10', 'passPAP000', 'j.navarro@pap.es', '606789012', 'Castelló', 'Calle Nueva 7', '12001', 'F'),
 ('80808080K', 'Gonzalo', 'Hernández I.', '1983-06-18', 'passPAP111', 'g.hernandez@pap.es', '607890123', 'Castelló', 'Gran Vía 100', '12003', 'M'),
 ('90909090W', 'Fatima', 'Ruiz Costa', '1997-11-20', 'passPAP222', 'fatima.r@pap.es', '608901234', 'Burriana', 'Calle Real 45', '12530', 'F');
+
+-- ==========================================
+-- 4. Cuentas para Tutores Legales (LegalGuardians)
+-- ==========================================
+INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber, city, street, zipCode, gender) VALUES
+('11223344A', 'Pedro', 'Blasco Rius', '1978-04-12', 'passTutor01', 'pblasco@email.com', '610111222', 'Vila-real', 'Plaza Tetuán 2', '12540', 'M'),
+('55667788B', 'Laura', 'Marín Sol', '1982-09-21', 'passTutor02', 'lmarin@email.com', '620222333', 'Almassora', 'Carrer Major 33', '12550', 'F');

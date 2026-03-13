@@ -1,0 +1,147 @@
+%% VER EN mermaid.live
+
+classDiagram
+    direction BT
+
+    %% Enumeraciones
+    class Gender {
+        <<enumeration>>
+        male
+        female
+        undefined
+    }
+    class Status {
+        <<enumeration>>
+        pending
+        accepted
+        rejected
+    }
+    class ActivityType {
+        <<enumeration>>
+        dissemination
+        training
+    }
+    class StaffType {
+        <<enumeration>>
+        PAP
+        PATI
+    }
+
+    %% Jerarquía de Cuentas
+    class Account {
+        -String dni
+        -String name
+        -String surname
+        -date birthday_date
+        -String password
+        -String email
+        -String phoneNumber
+        -String city
+        -String street
+        -String zipCode
+        -Gender gender
+    }
+
+    class PAP_PATI {
+        -StaffType type
+        -Status status
+        -String training
+        -date initialAvailableDate
+        -date lastAvailableDate
+        -int yearsOfExperience
+        -String urlCv
+        +signTo(Activity activity) boolean
+    }
+
+    class Instructor {
+        -String expertise
+        +manageActivity(Activity activity) void
+    }
+
+    class OVIUser {
+        +requestAssistance(String userPreferences) AssistanceRequest
+        +signTo(Activity activity)
+    }
+
+    class LegalGuardian {
+        -String signatureCode
+        +validateAction(String entityId) boolean
+    }
+
+    Account <|-- PAP_PATI
+    Account <|-- Instructor
+    Account <|-- OVIUser
+    Account <|-- LegalGuardian
+
+    %% Clases de Gestión y Lógica de Negocio
+    class Activity {
+        -String idActivity
+        -ActivityType type
+        -String title
+        -String description
+        -date date
+        -int capacity
+        -String address
+        -String sponsor
+    }
+
+    class ActivityAssistance {
+        -String idActivityAssistance
+        -date creationDate
+        -boolean attended
+        -boolean parentalConsent
+    }
+
+    class Candidacy {
+        -String idCandidacy
+        -date lastModified
+        -Status status
+        +startsCommunication() Communication
+        +generateContract(String contractInfo) Contract
+    }
+
+    class AssistanceRequest {
+        -String idApRequest
+        -date creationDate
+        -StaffType assistantType
+        -Gender gender
+        -String city
+        -int yearsOfExperience
+        -String specifiedTrainings
+        -date initialDateRequired
+        -int monthsRequired
+        -boolean guardianApproved
+    }
+
+    class Communication {
+        -String idCommunication
+        -date date
+        -String information
+    }
+
+    class Contract {
+        -String idContract
+        -date startDate
+        -date endDate
+        -double hourlySalary
+        -String schedule
+        -boolean signedByGuardian
+        +generateDocument()
+    }
+
+    %% Relaciones de la mejora (Tutoría)
+    LegalGuardian "0..1" -- "0..*" OVIUser : represents
+    LegalGuardian "0..1" -- "0..*" AssistanceRequest : validates
+    LegalGuardian "0..1" -- "0..*" Contract : signs
+    LegalGuardian "0..1" -- "0..*" ActivityAssistance : consents
+
+    %% Relaciones Originales
+    Instructor "1" -- "0..*" Activity : done by
+    Activity "1" -- "0..*" ActivityAssistance : belongs
+    PAP_PATI "0..1" -- "0..*" ActivityAssistance : assists
+    OVIUser "0..1" -- "0..*" ActivityAssistance : assists
+    OVIUser "1" -- "0..*" AssistanceRequest : makes
+    AssistanceRequest "1" -- "0..*" Candidacy : considers possible
+    PAP_PATI "1" -- "0..*" Candidacy : presents
+    Candidacy "1" -- "0..*" Communication : makes
+    Candidacy "1" -- "0..*" Contract : creates
