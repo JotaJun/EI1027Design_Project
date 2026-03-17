@@ -2,11 +2,13 @@ CREATE TABLE PapPati (
     dni                     VARCHAR(9),
     status                  VARCHAR(10) DEFAULT 'pending' NOT NULL,
     stafftype               VARCHAR(4)     NOT NULL, --reglas de integridad {PAP, PATI}
+    drivingLicense          BOOLEAN        NOT NULL,
     initialAvailableDate    DATE,                     
     lastAvailableDate       DATE,                     
     training                VARCHAR(100)    NOT NULL,
     yearsOfExperience         INTEGER         NOT NULL,    
     urlCv   	              VARCHAR(100)    NOT NULL,
+    deniedReason            VARCHAR(255),
 
 
     CONSTRAINT 	pk_PapPati PRIMARY KEY (dni),
@@ -17,4 +19,5 @@ CREATE TABLE PapPati (
     CONSTRAINT 	chk_stafftype CHECK (stafftype IN ('PAP', 'PATI')),
     CONSTRAINT chk_availableDate CHECK (initialAvailableDate < lastAvailableDate),
     CONSTRAINT chk_status CHECK (status IN ('pending', 'accepted', 'rejected'))
+
 );
