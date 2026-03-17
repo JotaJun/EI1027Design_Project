@@ -46,10 +46,12 @@ classDiagram
         -StaffType type
         -Status status
         -String training
+        -boolean drivingLicense
         -date initialAvailableDate
         -date lastAvailableDate
         -int yearsOfExperience
         -String urlCv
+        -String deniedReason
         +signTo(Activity activity) boolean
     }
 
@@ -106,10 +108,13 @@ classDiagram
         -StaffType assistantType
         -Gender gender
         -String city
+        -boolean drivingLicense
         -int yearsOfExperience
         -String specifiedTrainings
         -date initialDateRequired
         -int monthsRequired
+        -Status status
+        -String deniedReason
         -boolean guardianApproved
     }
 
@@ -121,6 +126,8 @@ classDiagram
 
     class Contract {
         -String idContract
+        -Status status
+        -String deniedReason
         -date startDate
         -date endDate
         -double hourlySalary
