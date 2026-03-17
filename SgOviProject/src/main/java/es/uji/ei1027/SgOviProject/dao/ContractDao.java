@@ -23,10 +23,16 @@ public class ContractDao {
     /* Añadir un contrato */
     public void addContract(Contract contract) {
         // No insertamos idContract porque es SERIAL y la BD lo genera solo
-        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, signedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?)",
-                contract.getIdCandidacy(), contract.getStartDate(), contract.getEndDate(),
-                contract.getHourlySalary(), contract.getSchedule(), contract.isSignedByGuardian(),
-                contract.getDniLegalGuardian());
+        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, signedByGuardian, dniLegalGuardian, status, deniedReason) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                contract.getIdCandidacy(),
+                contract.getStartDate(),
+                contract.getEndDate(),
+                contract.getHourlySalary(),
+                contract.getSchedule(),
+                contract.isSignedByGuardian(),
+                contract.getDniLegalGuardian(),
+                contract.getStatus() != null ? contract.getStatus().name().toLowerCase() : "pending", // Por defecto a pending si es nulo
+                contract.getDeniedReason());
     }
 
     /* Borrar un contrato */
@@ -40,10 +46,16 @@ public class ContractDao {
 
     /* Actualizar un contrato */
     public void updateContract(Contract contract) {
-        jdbcTemplate.update("UPDATE Contract SET idCandidacy=?, startDate=?, endDate=?, hourlySalary=?, schedule=?, signedByGuardian=?, dniLegalGuardian=? WHERE idContract=?",
-                contract.getIdCandidacy(), contract.getStartDate(), contract.getEndDate(),
-                contract.getHourlySalary(), contract.getSchedule(), contract.isSignedByGuardian(),
+        jdbcTemplate.update("UPDATE Contract SET idCandidacy=?, startDate=?, endDate=?, hourlySalary=?, schedule=?, signedByGuardian=?, dniLegalGuardian=?, status=?, deniedReason=? WHERE idContract=?",
+                contract.getIdCandidacy(),
+                contract.getStartDate(),
+                contract.getEndDate(),
+                contract.getHourlySalary(),
+                contract.getSchedule(),
+                contract.isSignedByGuardian(),
                 contract.getDniLegalGuardian(),
+                contract.getStatus().name().toLowerCase(),
+                contract.getDeniedReason(),
                 contract.getIdContract()); // El ID va al final para el WHERE
     }
 

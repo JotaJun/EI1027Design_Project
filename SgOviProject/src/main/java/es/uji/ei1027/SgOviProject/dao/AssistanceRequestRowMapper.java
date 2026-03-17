@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject.dao;
 
 import es.uji.ei1027.SgOviProject.enums.StaffType;
+import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import org.springframework.jdbc.core.RowMapper;
 import java.sql.ResultSet;
@@ -22,10 +23,18 @@ public final class AssistanceRequestRowMapper implements RowMapper<AssistanceReq
 
         request.setGender(rs.getString("gender"));
         request.setCity(rs.getString("city"));
-        request.setYearsExperience(rs.getObject("yearsExperience", Integer.class));
+        request.setDrivingLicense(rs.getObject("drivingLicense", Boolean.class));
+        request.setYearsOfExperience(rs.getObject("yearsOfExperience", Integer.class));
         request.setSpecifiedTrainings(rs.getString("specifiedTrainings"));
         request.setInitialDateRequired(rs.getObject("initialDateRequired", LocalDate.class));
         request.setMonthsRequired(rs.getInt("monthsRequired"));
+
+        String statusStr = rs.getString("status");
+        if (statusStr != null) {
+            request.setStatus(Status.valueOf(statusStr.toUpperCase()));
+        }
+
+        request.setDeniedReason(rs.getString("deniedReason"));
         request.setDniOviUser(rs.getString("dniOviUser"));
         request.setApprovedByGuardian(rs.getBoolean("approvedByGuardian"));
         request.setDniLegalGuardian(rs.getString("dniLegalGuardian"));

@@ -25,26 +25,28 @@ public class AssistanceRequestDao {
         jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    // Manera que ha recomendado Gemini para recuperar el ID, preguntar Lledó
     public int addAssistanceRequest(AssistanceRequest request) {
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO AssistanceRequest(creationDate, assistantType, gender, city, yearsExperience, specifiedTrainings, initialDateRequired, monthsRequired, dniOviUser, approvedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO AssistanceRequest(creationDate, assistantType, gender, city, drivingLicense, yearsOfExperience, specifiedTrainings, initialDateRequired, monthsRequired, status, deniedReason, dniOviUser, approvedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
             ps.setObject(1, request.getCreationDate());
             ps.setString(2, request.getAssistantType().name());
             ps.setString(3, request.getGender());
             ps.setString(4, request.getCity());
-            ps.setObject(5, request.getYearsExperience(), java.sql.Types.INTEGER);
-            ps.setString(6, request.getSpecifiedTrainings());
-            ps.setObject(7, request.getInitialDateRequired());
-            ps.setInt(8, request.getMonthsRequired());
-            ps.setString(9, request.getDniOviUser());
-            ps.setBoolean(10, request.isApprovedByGuardian());
-            ps.setString(11, request.getDniLegalGuardian());
+            ps.setObject(5, request.getDrivingLicense(), java.sql.Types.BOOLEAN);
+            ps.setObject(6, request.getYearsOfExperience(), java.sql.Types.INTEGER);
+            ps.setString(7, request.getSpecifiedTrainings());
+            ps.setObject(8, request.getInitialDateRequired());
+            ps.setInt(9, request.getMonthsRequired());
+            ps.setString(10, request.getStatus() != null ? request.getStatus().name().toLowerCase() : "pending");
+            ps.setString(11, request.getDeniedReason());
+            ps.setString(12, request.getDniOviUser());
+            ps.setBoolean(13, request.isApprovedByGuardian());
+            ps.setString(14, request.getDniLegalGuardian());
 
             return ps;
         }, keyHolder);
@@ -70,15 +72,18 @@ public class AssistanceRequestDao {
     }
 
     public void updateAssistanceRequest(AssistanceRequest request) {
-        jdbcTemplate.update("UPDATE AssistanceRequest SET creationDate=?, assistantType=?, gender=?, city=?, yearsExperience=?, specifiedTrainings=?, initialDateRequired=?, monthsRequired=?, dniOviUser=?, approvedByGuardian=?, dniLegalGuardian=? WHERE idApRequest=?",
+        jdbcTemplate.update("UPDATE AssistanceRequest SET creationDate=?, assistantType=?, gender=?, city=?, drivingLicense=?, yearsOfExperience=?, specifiedTrainings=?, initialDateRequired=?, monthsRequired=?, status=?, deniedReason=?, dniOviUser=?, approvedByGuardian=?, dniLegalGuardian=? WHERE idApRequest=?",
                 request.getCreationDate(),
                 request.getAssistantType().name(),
                 request.getGender(),
                 request.getCity(),
-                request.getYearsExperience(),
+                request.getDrivingLicense(),
+                request.getYearsOfExperience(),
                 request.getSpecifiedTrainings(),
                 request.getInitialDateRequired(),
                 request.getMonthsRequired(),
+                request.getStatus().name().toLowerCase(),
+                request.getDeniedReason(),
                 request.getDniOviUser(),
                 request.isApprovedByGuardian(),
                 request.getDniLegalGuardian(),

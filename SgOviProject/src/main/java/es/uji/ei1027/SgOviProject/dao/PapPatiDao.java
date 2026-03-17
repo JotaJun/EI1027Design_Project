@@ -22,15 +22,17 @@ public class PapPatiDao {
     }
 
     public void addPapPati(PapPati papPati) {
-        jdbcTemplate.update("INSERT INTO PapPati(dni, status, stafftype, initialAvailableDate, lastAvailableDate, training, yearsExperience, urlCv) VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO PapPati(dni, status, stafftype, drivingLicense, initialAvailableDate, lastAvailableDate, training, yearsOfExperience, urlCv, deniedReason) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 papPati.getDni(),
                 papPati.getStatus().name().toLowerCase(), // Enum a minúscula para la BD
                 papPati.getStaffType().name(),
+                papPati.isDrivingLicense(),
                 papPati.getInitialAvailableDate(),
                 papPati.getLastAvailableDate(),
                 papPati.getTraining(),
                 papPati.getYearsOfExperience(),
-                papPati.getUrlCv());
+                papPati.getUrlCv(),
+                papPati.getDeniedReason());
     }
 
     public void deletePapPati(String dni) {
@@ -43,14 +45,16 @@ public class PapPatiDao {
 
     // Actualiza menos clave primaria
     public void updatePapPati(PapPati papPati) {
-        jdbcTemplate.update("UPDATE PapPati SET status=?, stafftype=?, initialAvailableDate=?, lastAvailableDate=?, training=?, yearsExperience=?, urlCv=? WHERE dni=?",
+        jdbcTemplate.update("UPDATE PapPati SET status=?, stafftype=?, drivingLicense=?, initialAvailableDate=?, lastAvailableDate=?, training=?, yearsOfExperience=?, urlCv=?, deniedReason=? WHERE dni=?",
                 papPati.getStatus().name().toLowerCase(), // Enum a minúscula para la BD
                 papPati.getStaffType().name(),
+                papPati.isDrivingLicense(),
                 papPati.getInitialAvailableDate(),
                 papPati.getLastAvailableDate(),
                 papPati.getTraining(),
                 papPati.getYearsOfExperience(),
                 papPati.getUrlCv(),
+                papPati.getDeniedReason(),
                 papPati.getDni());
     }
 

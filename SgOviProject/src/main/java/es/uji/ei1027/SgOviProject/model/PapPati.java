@@ -9,11 +9,13 @@ public class PapPati {
     private String dni;
     private Status status;
     private StaffType staffType;
+    private boolean drivingLicense;
     private LocalDate initialAvailableDate;
     private LocalDate lastAvailableDate;
     private String training;
     private int yearsOfExperience;
     private String urlCv;
+    private String deniedReason;
 
     public String getDni() {
         return dni;
@@ -37,6 +39,14 @@ public class PapPati {
 
     public void setStaffType(StaffType staffType) {
         this.staffType = staffType;
+    }
+
+    public boolean isDrivingLicense() {
+        return drivingLicense;
+    }
+
+    public void setDrivingLicense(boolean drivingLicense) {
+        this.drivingLicense = drivingLicense;
     }
 
     public LocalDate getInitialAvailableDate() {
@@ -79,17 +89,27 @@ public class PapPati {
         this.urlCv = urlCv;
     }
 
+    public String getDeniedReason() {
+        return deniedReason;
+    }
+
+    public void setDeniedReason(String deniedReason) {
+        this.deniedReason = deniedReason;
+    }
+
     @Override
     public String toString() {
         return "PapPati{" +
                 "dni='" + dni + '\'' +
                 ", status=" + status +
                 ", staffType=" + staffType +
+                ", drivingLicense=" + drivingLicense +
                 ", initialAvailableDate=" + initialAvailableDate +
                 ", lastAvailableDate=" + lastAvailableDate +
                 ", training='" + training + '\'' +
                 ", yearsOfExperience=" + yearsOfExperience +
                 ", urlCv='" + urlCv + '\'' +
+                ", deniedReason='" + deniedReason + '\'' +
                 '}';
     }
 }

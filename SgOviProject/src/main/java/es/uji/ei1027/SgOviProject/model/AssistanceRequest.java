@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject.model;
 
 import es.uji.ei1027.SgOviProject.enums.StaffType;
+import es.uji.ei1027.SgOviProject.enums.Status;
 import java.time.LocalDate;
 
 public class AssistanceRequest {
@@ -11,12 +12,15 @@ public class AssistanceRequest {
     private StaffType assistantType;
     private String gender;
     private String city;
-    private Integer yearsExperience;
+    private Boolean drivingLicense;
+    private Integer yearsOfExperience;
     private String specifiedTrainings;
     private LocalDate initialDateRequired;
     private int monthsRequired;
     // Fin parámetros búsqueda
 
+    private Status status;
+    private String deniedReason;
     private String dniOviUser;
     private boolean approvedByGuardian;
     private String dniLegalGuardian;
@@ -61,12 +65,20 @@ public class AssistanceRequest {
         this.city = city;
     }
 
-    public Integer getYearsExperience() {
-        return yearsExperience;
+    public Boolean getDrivingLicense() {
+        return drivingLicense;
     }
 
-    public void setYearsExperience(Integer yearsExperience) {
-        this.yearsExperience = yearsExperience;
+    public void setDrivingLicense(Boolean drivingLicense) {
+        this.drivingLicense = drivingLicense;
+    }
+
+    public Integer getYearsOfExperience() {
+        return yearsOfExperience;
+    }
+
+    public void setYearsOfExperience(Integer yearsOfExperience) {
+        this.yearsOfExperience = yearsOfExperience;
     }
 
     public String getSpecifiedTrainings() {
@@ -91,6 +103,22 @@ public class AssistanceRequest {
 
     public void setMonthsRequired(int monthsRequired) {
         this.monthsRequired = monthsRequired;
+    }
+
+    public Status getStatus() {
+        return status;
+    }
+
+    public void setStatus(Status status) {
+        this.status = status;
+    }
+
+    public String getDeniedReason() {
+        return deniedReason;
+    }
+
+    public void setDeniedReason(String deniedReason) {
+        this.deniedReason = deniedReason;
     }
 
     public String getDniOviUser() {
@@ -125,10 +153,13 @@ public class AssistanceRequest {
                 ", assistantType=" + assistantType +
                 ", gender='" + gender + '\'' +
                 ", city='" + city + '\'' +
-                ", yearsExperience=" + yearsExperience +
+                ", drivingLicense=" + drivingLicense +
+                ", yearsOfExperience=" + yearsOfExperience +
                 ", specifiedTrainings='" + specifiedTrainings + '\'' +
                 ", initialDateRequired=" + initialDateRequired +
                 ", monthsRequired=" + monthsRequired +
+                ", status=" + status +
+                ", deniedReason='" + deniedReason + '\'' +
                 ", dniOviUser='" + dniOviUser + '\'' +
                 ", approvedByGuardian=" + approvedByGuardian +
                 ", dniLegalGuardian='" + dniLegalGuardian + '\'' +

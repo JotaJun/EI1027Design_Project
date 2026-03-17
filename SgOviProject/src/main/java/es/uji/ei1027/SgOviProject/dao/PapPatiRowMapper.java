@@ -16,7 +16,8 @@ public final class PapPatiRowMapper implements RowMapper<PapPati> {
 
         String statusStr = rs.getString("status");
         if (statusStr != null) {
-            papPati.setStatus(Status.valueOf(statusStr));
+            // Se usa toUpperCase() porque en la BD está en minúsculas y Enum.valueOf es sensible a mayúsculas
+            papPati.setStatus(Status.valueOf(statusStr.toUpperCase()));
         }
 
         String typeStr = rs.getString("stafftype");
@@ -24,11 +25,13 @@ public final class PapPatiRowMapper implements RowMapper<PapPati> {
             papPati.setStaffType(StaffType.valueOf(typeStr));
         }
 
+        papPati.setDrivingLicense(rs.getBoolean("drivingLicense"));
         papPati.setInitialAvailableDate(rs.getObject("initialAvailableDate", LocalDate.class));
         papPati.setLastAvailableDate(rs.getObject("lastAvailableDate", LocalDate.class));
         papPati.setTraining(rs.getString("training"));
         papPati.setYearsOfExperience(rs.getInt("yearsOfExperience"));
         papPati.setUrlCv(rs.getString("urlCv"));
+        papPati.setDeniedReason(rs.getString("deniedReason"));
 
         return papPati;
     }
