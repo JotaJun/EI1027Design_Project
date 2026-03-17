@@ -7,10 +7,15 @@ CREATE TABLE Contract(
 	schedule			VARCHAR(500)	NOT NULL,
 	signedByGuardian	BOOLEAN			DEFAULT FALSE,
 	dniLegalGuardian	VARCHAR(9),
-	
-	CONSTRAINT chk_contract_dates CHECK(startDate < endDate),
+    status              VARCHAR(10) DEFAULT 'pending' NOT NULL,
+    deniedReason        VARCHAR(255),
 
-	CONSTRAINT fk_Candidacy_id FOREIGN KEY (idCandidacy)
+
+    CONSTRAINT chk_contract_dates CHECK(startDate < endDate),
+    CONSTRAINT chk_status CHECK (status IN ('pending', 'accepted', 'rejected')),
+
+
+    CONSTRAINT fk_Candidacy_id FOREIGN KEY (idCandidacy)
 			REFERENCES Candidacy(idCandidacy)
 			ON UPDATE CASCADE
 			ON DELETE RESTRICT,

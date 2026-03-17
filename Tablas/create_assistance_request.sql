@@ -6,19 +6,23 @@ CREATE TABLE AssistanceRequest(
 	assistantType			VARCHAR(4)		NOT NULL,
 	gender					VARCHAR(1),
 	city					VARCHAR(30),
-	yearsOfExperience			INTEGER,
+    drivingLicense          BOOLEAN,
+	yearsOfExperience		INTEGER,
 	specifiedTrainings		VARCHAR(100),
 	initialDateRequired		DATE			NOT NULL,
-	monthsRequired			INTEGER			NOT NULL,	
+	monthsRequired			INTEGER			NOT NULL,
 	
 	-- FIN PARAMETROS BUSQUEDA
 
-	dniOviUser				VARCHAR(9)		NOT NULL,
+    status                  VARCHAR(10) DEFAULT 'pending' NOT NULL,
+    deniedReason            VARCHAR(255),
+    dniOviUser				VARCHAR(9)		NOT NULL,
 	approvedByGuardian		BOOLEAN			DEFAULT FALSE,
 	dniLegalGuardian		VARCHAR(9),
 
 
 	CONSTRAINT chk_assistantType CHECK(assistantType IN ('PAP', 'PATI')),
+    CONSTRAINT chk_status CHECK (status IN ('pending', 'accepted', 'rejected')),
 	
 	CONSTRAINT fk_OVIUser_dni FOREIGN KEY (dniOviUser)
 			REFERENCES OviUser(dni)
