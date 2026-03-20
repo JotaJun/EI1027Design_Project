@@ -7,6 +7,7 @@ public class Communication {
     private int idCandidacy;
     private LocalDate dateCommunication;
     private String information;
+    private String transmitterName;
 
     public int getIdCommunication() {
         return idCommunication;
@@ -40,6 +41,14 @@ public class Communication {
         this.information = information;
     }
 
+    public String getTransmitterName() {
+        return transmitterName;
+    }
+
+    public void setTransmitterName(String transmitterName) {
+        this.transmitterName = transmitterName;
+    }
+
     @Override
     public String toString() {
         return "Communication{" +
@@ -47,6 +56,7 @@ public class Communication {
                 ", idCandidacy=" + idCandidacy +
                 ", dateCommunication=" + dateCommunication +
                 ", information='" + information + '\'' +
+                ", transmitterName='" + transmitterName + '\'' +
                 '}';
     }
 }

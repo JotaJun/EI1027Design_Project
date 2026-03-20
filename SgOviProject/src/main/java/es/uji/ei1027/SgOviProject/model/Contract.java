@@ -11,9 +11,10 @@ public class Contract {
     private LocalDate endDate;
     private double hourlySalary;
     private String schedule;
+    private String urlDocument;
     private boolean signedByGuardian;
     private String dniLegalGuardian;
-    private Status status;
+    private Status status = Status.PENDING; // Valor por defecto
     private String deniedReason;
 
     public int getIdContract() {
@@ -64,6 +65,14 @@ public class Contract {
         this.schedule = schedule;
     }
 
+    public String getUrlDocument() {
+        return urlDocument;
+    }
+
+    public void setUrlDocument(String urlDocument) {
+        this.urlDocument = urlDocument;
+    }
+
     public boolean isSignedByGuardian() {
         return signedByGuardian;
     }
@@ -105,6 +114,7 @@ public class Contract {
                 ", endDate=" + endDate +
                 ", hourlySalary=" + hourlySalary +
                 ", schedule='" + schedule + '\'' +
+                ", urlDocument='" + urlDocument + '\'' +
                 ", signedByGuardian=" + signedByGuardian +
                 ", dniLegalGuardian='" + dniLegalGuardian + '\'' +
                 ", status=" + status +

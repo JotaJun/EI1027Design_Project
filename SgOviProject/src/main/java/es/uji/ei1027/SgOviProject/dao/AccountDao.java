@@ -21,10 +21,13 @@ public class AccountDao {
     }
 
     public void addAccount(Account account) {
-        jdbcTemplate.update("INSERT INTO Account(dni, name, surname, birthday, password, email, phoneNumber, city, street, zipCode, gender) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO Account(dni, name, surname, birthday, password, email, phoneNumber, city, street, zipCode, gender, status, deniedReason) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 account.getDni(), account.getName(), account.getSurname(), account.getBirthday(),
                 account.getPassword(), account.getEmail(), account.getPhoneNumber(),
-                account.getCity(), account.getStreet(), account.getZipCode(), account.getGender().name());
+                account.getCity(), account.getStreet(), account.getZipCode(),
+                account.getGender().name(),
+                account.getStatus().name().toLowerCase(), // Conversión a minúscula para la BBDD
+                account.getDeniedReason());
     }
 
     public void deleteAccount(String dni) {
@@ -35,12 +38,15 @@ public class AccountDao {
         jdbcTemplate.update("DELETE FROM Account WHERE dni=?", account.getDni());
     }
 
-    // Actualiza to.do MENOS dni
+    // Actualiza todo MENOS dni
     public void updateAccount(Account account) {
-        jdbcTemplate.update("UPDATE Account SET name=?, surname=?, birthday=?, password=?, email=?, phoneNumber=?, city=?, street=?, zipCode=?, gender=? WHERE dni=?",
+        jdbcTemplate.update("UPDATE Account SET name=?, surname=?, birthday=?, password=?, email=?, phoneNumber=?, city=?, street=?, zipCode=?, gender=?, status=?, deniedReason=? WHERE dni=?",
                 account.getName(), account.getSurname(), account.getBirthday(),
                 account.getPassword(), account.getEmail(), account.getPhoneNumber(),
-                account.getCity(), account.getStreet(), account.getZipCode(), account.getGender().name(),
+                account.getCity(), account.getStreet(), account.getZipCode(),
+                account.getGender().name(),
+                account.getStatus().name().toLowerCase(), // Conversión a minúscula para la BBDD
+                account.getDeniedReason(),
                 account.getDni());
     }
 
@@ -53,7 +59,6 @@ public class AccountDao {
         }
     }
 
-    // Aprovechamos que es clave alternativa
     public Account getAccountByEmail(String email) {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM Account WHERE email=?",

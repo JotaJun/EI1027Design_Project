@@ -1,13 +1,10 @@
 package es.uji.ei1027.SgOviProject.model;
 
 import es.uji.ei1027.SgOviProject.enums.StaffType;
-import es.uji.ei1027.SgOviProject.enums.Status;
-
 import java.time.LocalDate;
 
 public class PapPati {
     private String dni;
-    private Status status;
     private StaffType staffType;
     private boolean drivingLicense;
     private LocalDate initialAvailableDate;
@@ -15,7 +12,6 @@ public class PapPati {
     private String training;
     private int yearsOfExperience;
     private String urlCv;
-    private String deniedReason;
 
     public String getDni() {
         return dni;
@@ -23,14 +19,6 @@ public class PapPati {
 
     public void setDni(String dni) {
         this.dni = dni;
-    }
-
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
     }
 
     public StaffType getStaffType() {
@@ -89,19 +77,10 @@ public class PapPati {
         this.urlCv = urlCv;
     }
 
-    public String getDeniedReason() {
-        return deniedReason;
-    }
-
-    public void setDeniedReason(String deniedReason) {
-        this.deniedReason = deniedReason;
-    }
-
     @Override
     public String toString() {
         return "PapPati{" +
                 "dni='" + dni + '\'' +
-                ", status=" + status +
                 ", staffType=" + staffType +
                 ", drivingLicense=" + drivingLicense +
                 ", initialAvailableDate=" + initialAvailableDate +
@@ -109,7 +88,6 @@ public class PapPati {
                 ", training='" + training + '\'' +
                 ", yearsOfExperience=" + yearsOfExperience +
                 ", urlCv='" + urlCv + '\'' +
-                ", deniedReason='" + deniedReason + '\'' +
                 '}';
     }
 }

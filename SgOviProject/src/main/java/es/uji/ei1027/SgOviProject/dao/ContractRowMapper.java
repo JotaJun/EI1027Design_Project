@@ -19,12 +19,16 @@ public final class ContractRowMapper implements RowMapper<Contract> {
         contract.setEndDate(rs.getObject("endDate", LocalDate.class));
         contract.setHourlySalary(rs.getDouble("hourlySalary"));
         contract.setSchedule(rs.getString("schedule"));
+        contract.setUrlDocument(rs.getString("urlDocument"));
+
         contract.setSignedByGuardian(rs.getBoolean("signedByGuardian"));
         contract.setDniLegalGuardian(rs.getString("dniLegalGuardian"));
 
         String statusStr = rs.getString("status");
         if (statusStr != null) {
             contract.setStatus(Status.valueOf(statusStr.toUpperCase()));
+        } else {
+            contract.setStatus(Status.PENDING); // Valor por defecto en caso de nulo
         }
 
         contract.setDeniedReason(rs.getString("deniedReason"));

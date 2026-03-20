@@ -22,17 +22,15 @@ public class PapPatiDao {
     }
 
     public void addPapPati(PapPati papPati) {
-        jdbcTemplate.update("INSERT INTO PapPati(dni, status, stafftype, drivingLicense, initialAvailableDate, lastAvailableDate, training, yearsOfExperience, urlCv, deniedReason) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO PapPati(dni, stafftype, drivingLicense, initialAvailableDate, lastAvailableDate, training, yearsOfExperience, urlCv) VALUES(?, ?, ?, ?, ?, ?, ?, ?)",
                 papPati.getDni(),
-                papPati.getStatus().name().toLowerCase(), // Enum a minúscula para la BD
                 papPati.getStaffType().name(),
                 papPati.isDrivingLicense(),
                 papPati.getInitialAvailableDate(),
                 papPati.getLastAvailableDate(),
                 papPati.getTraining(),
                 papPati.getYearsOfExperience(),
-                papPati.getUrlCv(),
-                papPati.getDeniedReason());
+                papPati.getUrlCv());
     }
 
     public void deletePapPati(String dni) {
@@ -45,8 +43,7 @@ public class PapPatiDao {
 
     // Actualiza menos clave primaria
     public void updatePapPati(PapPati papPati) {
-        jdbcTemplate.update("UPDATE PapPati SET status=?, stafftype=?, drivingLicense=?, initialAvailableDate=?, lastAvailableDate=?, training=?, yearsOfExperience=?, urlCv=?, deniedReason=? WHERE dni=?",
-                papPati.getStatus().name().toLowerCase(), // Enum a minúscula para la BD
+        jdbcTemplate.update("UPDATE PapPati SET stafftype=?, drivingLicense=?, initialAvailableDate=?, lastAvailableDate=?, training=?, yearsOfExperience=?, urlCv=? WHERE dni=?",
                 papPati.getStaffType().name(),
                 papPati.isDrivingLicense(),
                 papPati.getInitialAvailableDate(),
@@ -54,7 +51,6 @@ public class PapPatiDao {
                 papPati.getTraining(),
                 papPati.getYearsOfExperience(),
                 papPati.getUrlCv(),
-                papPati.getDeniedReason(),
                 papPati.getDni());
     }
 

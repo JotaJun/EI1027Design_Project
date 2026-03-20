@@ -22,8 +22,9 @@ public class CommunicationDao {
 
     /* Añadir una comunicación */
     public void addCommunication(Communication communication) {
-        jdbcTemplate.update("INSERT INTO Communication (idCandidacy, dateCommunication, information) VALUES(?, ?, ?)",
-                communication.getIdCandidacy(), communication.getDateCommunication(), communication.getInformation());
+        jdbcTemplate.update("INSERT INTO Communication (idCandidacy, dateCommunication, information, transmitterName) VALUES(?, ?, ?, ?)",
+                communication.getIdCandidacy(), communication.getDateCommunication(),
+                communication.getInformation(), communication.getTransmitterName());
     }
 
     /* Borrar una comunicación por su PK (idCommunication) */
@@ -37,9 +38,10 @@ public class CommunicationDao {
 
     /* Actualizar la comunicación por su PK */
     public void updateCommunication(Communication communication) {
-        jdbcTemplate.update("UPDATE Communication SET idCandidacy=?, dateCommunication=?, information=? WHERE idCommunication=?",
+        jdbcTemplate.update("UPDATE Communication SET idCandidacy=?, dateCommunication=?, information=?, transmitterName=? WHERE idCommunication=?",
                 communication.getIdCandidacy(), communication.getDateCommunication(),
-                communication.getInformation(), communication.getIdCommunication());
+                communication.getInformation(), communication.getTransmitterName(),
+                communication.getIdCommunication());
     }
 
     // Actualiza solo la información sabiendo el id de la comunicación

@@ -16,6 +16,7 @@ public final class CommunicationRowMapper implements RowMapper<Communication> {
         communication.setIdCandidacy(rs.getInt("idCandidacy"));
         communication.setDateCommunication(rs.getObject("dateCommunication", LocalDate.class));
         communication.setInformation(rs.getString("information"));
+        communication.setTransmitterName(rs.getString("transmitterName"));
 
         return communication;
     }
