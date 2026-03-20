@@ -40,11 +40,11 @@ classDiagram
         -String street
         -String zipCode
         -Gender gender
+        -Status status
     }
 
     class PAP_PATI {
         -StaffType type
-        -Status status
         -String training
         -boolean drivingLicense
         -date initialAvailableDate
@@ -122,6 +122,7 @@ classDiagram
         -String idCommunication
         -date date
         -String information
+        -String transmitterName
     }
 
     class Contract {
@@ -132,6 +133,7 @@ classDiagram
         -date endDate
         -double hourlySalary
         -String schedule
+        -String urlDocument
         -boolean signedByGuardian
         +generateDocument()
     }
