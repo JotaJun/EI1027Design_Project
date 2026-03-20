@@ -5,6 +5,7 @@ CREATE TABLE Contract(
 	endDate				DATE			NOT NULL,
 	hourlySalary		Numeric(10,2)	NOT NULL,
 	schedule			VARCHAR(500)	NOT NULL,
+    urlDocument         VARCHAR(255),
 	signedByGuardian	BOOLEAN			DEFAULT FALSE,
 	dniLegalGuardian	VARCHAR(9),
     status              VARCHAR(10) DEFAULT 'pending' NOT NULL,

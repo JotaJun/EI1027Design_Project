@@ -3,6 +3,7 @@ CREATE TABLE Communication(
 	idCandidacy		INTEGER		NOT NULL,
 	dateCommunication 	DATE 	NOT NULL,
 	information	VARCHAR(500)	NOT NULL,
+    transmitterName VARCHAR(50) NOT NULL,
 	
 	CONSTRAINT fk_Candidacy_id FOREIGN KEY (idCandidacy)
 			REFERENCES Candidacy(idCandidacy)

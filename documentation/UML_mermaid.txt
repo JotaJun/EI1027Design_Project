@@ -41,6 +41,7 @@ classDiagram
         -String zipCode
         -Gender gender
         -Status status
+	-String deniedReason
     }
 
     class PAP_PATI {
@@ -51,7 +52,6 @@ classDiagram
         -date lastAvailableDate
         -int yearsOfExperience
         -String urlCv
-        -String deniedReason
         +signTo(Activity activity) boolean
     }
 

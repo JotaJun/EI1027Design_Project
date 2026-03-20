@@ -9,9 +9,12 @@ CREATE TABLE Account(
 	city 			VARCHAR(30) NOT NULL,	-- Cambiar UML
 	street			VARCHAR(30) NOT NULL,	-- Cambiar UML
 	zipCode			VARCHAR(5)	NOT NULL,	-- Cambiar UML
-	gender			VARCHAR(1)	NOT NULL, 
-	
-	CONSTRAINT pk_Account PRIMARY KEY(dni),
+	gender			VARCHAR(1)	NOT NULL,
+    status                  VARCHAR(10) DEFAULT 'pending' NOT NULL,
+    deniedReason            VARCHAR(255),
+
+
+    CONSTRAINT pk_Account PRIMARY KEY(dni),
 	CONSTRAINT un_Account_email UNIQUE(email), 
 	CONSTRAINT chk_birthday CHECK(birthday < CURRENT_DATE),
 	CONSTRAINT chk_dni CHECK(dni ~ '^[0-9]{8}[A-Z]$'),
@@ -19,5 +22,7 @@ CREATE TABLE Account(
 	CONSTRAINT chk_zipCode CHECK(zipCode ~ '^[0-9]{5}$'),
 	CONSTRAINT chk_email CHECK(email LIKE '%@%.%'),
 	CONSTRAINT chk_gender CHECK(gender IN('M','F', 'X')),
-	CONSTRAINT chk_password CHECK(LENGTH(password) >=8)
+	CONSTRAINT chk_password CHECK(LENGTH(password) >=8),
+    CONSTRAINT chk_status CHECK (status IN ('pending', 'accepted', 'rejected'))
+
 );
