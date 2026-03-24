@@ -16,6 +16,14 @@ classDiagram
         accepted
         rejected
     }
+    class CandidacyStatus{
+        <<enumeration>>
+        TalksNotStarted
+        inTalks
+        TalksEnded
+        ContractAccepted
+        ContractRejected
+    }
     class ActivityType {
         <<enumeration>>
         dissemination
@@ -41,7 +49,7 @@ classDiagram
         -String zipCode
         -Gender gender
         -Status status
-	-String deniedReason
+        -String deniedReason
     }
 
     class PAP_PATI {
@@ -97,7 +105,8 @@ classDiagram
     class Candidacy {
         -String idCandidacy
         -date lastModified
-        -Status status
+        -CandidacyStatus status
+        -String rejectedReason
         +startsCommunication() Communication
         +generateContract(String contractInfo) Contract
     }
@@ -127,8 +136,6 @@ classDiagram
 
     class Contract {
         -String idContract
-        -Status status
-        -String deniedReason
         -date startDate
         -date endDate
         -double hourlySalary

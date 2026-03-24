@@ -8,13 +8,9 @@ CREATE TABLE Contract(
     urlDocument         VARCHAR(255),
 	signedByGuardian	BOOLEAN			DEFAULT FALSE,
 	dniLegalGuardian	VARCHAR(9),
-    status              VARCHAR(10) DEFAULT 'pending' NOT NULL,
     deniedReason        VARCHAR(255),
 
-
     CONSTRAINT chk_contract_dates CHECK(startDate < endDate),
-    CONSTRAINT chk_status CHECK (status IN ('pending', 'accepted', 'rejected')),
-
 
     CONSTRAINT fk_Candidacy_id FOREIGN KEY (idCandidacy)
 			REFERENCES Candidacy(idCandidacy)
