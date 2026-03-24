@@ -15,15 +15,14 @@ public class ContractDao {
 
     private JdbcTemplate jdbcTemplate;
 
-    @Autowired // Faltaba esta anotación clave
+    @Autowired
     public void setDataSource(DataSource dataSource) {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
     /* Añadir un contrato */
     public void addContract(Contract contract) {
-        // No insertamos idContract porque es SERIAL y la BD lo genera solo
-        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, urlDocument, signedByGuardian, dniLegalGuardian, status, deniedReason) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, urlDocument, signedByGuardian, dniLegalGuardian, deniedReason) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?)",
                 contract.getIdCandidacy(),
                 contract.getStartDate(),
                 contract.getEndDate(),
@@ -32,7 +31,6 @@ public class ContractDao {
                 contract.getUrlDocument(),
                 contract.isSignedByGuardian(),
                 contract.getDniLegalGuardian(),
-                contract.getStatus() != null ? contract.getStatus().name().toLowerCase() : "pending", // Por defecto a pending si es nulo
                 contract.getDeniedReason());
     }
 
@@ -47,18 +45,17 @@ public class ContractDao {
 
     /* Actualizar un contrato */
     public void updateContract(Contract contract) {
-        jdbcTemplate.update("UPDATE Contract SET idCandidacy=?, startDate=?, endDate=?, hourlySalary=?, schedule=?, urlDocument=?, signedByGuardian=?, dniLegalGuardian=?, status=?, deniedReason=? WHERE idContract=?",
+        jdbcTemplate.update("UPDATE Contract SET idCandidacy=?, startDate=?, endDate=?, hourlySalary=?, schedule=?, urlDocument=?, signedByGuardian=?, dniLegalGuardian=?, deniedReason=? WHERE idContract=?",
                 contract.getIdCandidacy(),
                 contract.getStartDate(),
                 contract.getEndDate(),
                 contract.getHourlySalary(),
                 contract.getSchedule(),
-                contract.getUrlDocument(), // Nuevo campo
+                contract.getUrlDocument(),
                 contract.isSignedByGuardian(),
                 contract.getDniLegalGuardian(),
-                contract.getStatus() != null ? contract.getStatus().name().toLowerCase() : "pending",
                 contract.getDeniedReason(),
-                contract.getIdContract()); // El ID va al final para el WHERE
+                contract.getIdContract());
     }
 
     /* Listar un contrato */

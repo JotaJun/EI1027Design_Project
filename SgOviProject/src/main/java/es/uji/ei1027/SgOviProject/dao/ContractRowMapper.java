@@ -1,6 +1,5 @@
 package es.uji.ei1027.SgOviProject.dao;
 
-import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.model.Contract;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -23,14 +22,6 @@ public final class ContractRowMapper implements RowMapper<Contract> {
 
         contract.setSignedByGuardian(rs.getBoolean("signedByGuardian"));
         contract.setDniLegalGuardian(rs.getString("dniLegalGuardian"));
-
-        String statusStr = rs.getString("status");
-        if (statusStr != null) {
-            contract.setStatus(Status.valueOf(statusStr.toUpperCase()));
-        } else {
-            contract.setStatus(Status.PENDING); // Valor por defecto en caso de nulo
-        }
-
         contract.setDeniedReason(rs.getString("deniedReason"));
 
         return contract;

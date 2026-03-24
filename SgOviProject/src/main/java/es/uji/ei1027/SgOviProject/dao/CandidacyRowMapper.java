@@ -1,6 +1,6 @@
 package es.uji.ei1027.SgOviProject.dao;
 
-import es.uji.ei1027.SgOviProject.enums.Status;
+import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.model.Candidacy;
 import org.springframework.jdbc.core.RowMapper;
 
@@ -18,9 +18,11 @@ public final class CandidacyRowMapper implements RowMapper<Candidacy> {
 
         String statusStr = rs.getString("candidacyStatus");
         if (statusStr != null) {
-            candidacy.setStatus(Status.valueOf(statusStr.toUpperCase()));
+            // Convierte de la BBDD (minúsculas) al Enum en mayusculas
+            candidacy.setCandidacyStatus(CandidacyStatus.valueOf(statusStr.toUpperCase()));
         }
 
+        candidacy.setRejectedReason(rs.getString("rejectedReason"));
         candidacy.setIdApRequest(rs.getInt("idApRequest"));
         candidacy.setDniPapPati(rs.getString("dniPapPati"));
 

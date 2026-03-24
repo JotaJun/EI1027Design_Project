@@ -1,6 +1,6 @@
 package es.uji.ei1027.SgOviProject.dao;
 
-import es.uji.ei1027.SgOviProject.enums.Status;
+import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.model.Candidacy;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
@@ -24,9 +24,10 @@ public class CandidacyDao {
 
     /* Añadir candidatura */
     public void addCandidacy(Candidacy candidacy) {
-        jdbcTemplate.update("INSERT INTO Candidacy (dateLastModified, candidacyStatus, idApRequest, dniPapPati) VALUES(?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO Candidacy (dateLastModified, candidacyStatus, rejectedReason, idApRequest, dniPapPati) VALUES(?, ?, ?, ?, ?)",
                 candidacy.getDateLastModified(),
-                candidacy.getStatus().name().toLowerCase(), // Enum a minúscula para BD
+                candidacy.getCandidacyStatus() != null ? candidacy.getCandidacyStatus().name().toLowerCase() : "talksnotstarted", // Manejo de nulos preventivo
+                candidacy.getRejectedReason(),
                 candidacy.getIdApRequest(),
                 candidacy.getDniPapPati());
     }
@@ -42,17 +43,18 @@ public class CandidacyDao {
 
     /* Actualizar una candidatura */
     public void updateCandidacy(Candidacy candidacy) {
-        jdbcTemplate.update("UPDATE Candidacy SET dateLastModified=?, candidacyStatus=?, idApRequest=?, dniPapPati=? WHERE idCandidacy=?",
+        jdbcTemplate.update("UPDATE Candidacy SET dateLastModified=?, candidacyStatus=?, rejectedReason=?, idApRequest=?, dniPapPati=? WHERE idCandidacy=?",
                 candidacy.getDateLastModified(),
-                candidacy.getStatus().name().toLowerCase(),
+                candidacy.getCandidacyStatus() != null ? candidacy.getCandidacyStatus().name().toLowerCase() : "talksnotstarted",
+                candidacy.getRejectedReason(),
                 candidacy.getIdApRequest(),
                 candidacy.getDniPapPati(),
                 candidacy.getIdCandidacy());
     }
 
-    public void updateCandidacyStatus(int idCandidacy, Status status, LocalDate dateLastModified) {
+    public void updateCandidacyStatus(int idCandidacy, CandidacyStatus candidacyStatus, LocalDate dateLastModified) {
         jdbcTemplate.update("UPDATE Candidacy SET candidacyStatus=?, dateLastModified=? WHERE idCandidacy=?",
-                status.name().toLowerCase(),
+                candidacyStatus.name().toLowerCase(),
                 dateLastModified,
                 idCandidacy);
     }

@@ -1,11 +1,12 @@
 package es.uji.ei1027.SgOviProject.model;
 
-import es.uji.ei1027.SgOviProject.enums.Status;
+import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import java.time.LocalDate;
 
 public class Candidacy {
     private int idCandidacy;
-    private Status status;
+    private CandidacyStatus candidacyStatus = CandidacyStatus.TALKSNOTSTARTED;
+    private String rejectedReason;
     private LocalDate dateLastModified;
     private int idApRequest;
     private String dniPapPati;
@@ -18,12 +19,20 @@ public class Candidacy {
         this.idCandidacy = idCandidacy;
     }
 
-    public Status getStatus() {
-        return status;
+    public CandidacyStatus getCandidacyStatus() {
+        return candidacyStatus;
     }
 
-    public void setStatus(Status status) {
-        this.status = status;
+    public void setCandidacyStatus(CandidacyStatus candidacyStatus) {
+        this.candidacyStatus = candidacyStatus;
+    }
+
+    public String getRejectedReason() {
+        return rejectedReason;
+    }
+
+    public void setRejectedReason(String rejectedReason) {
+        this.rejectedReason = rejectedReason;
     }
 
     public LocalDate getDateLastModified() {
@@ -54,7 +63,8 @@ public class Candidacy {
     public String toString() {
         return "Candidacy{" +
                 "idCandidacy=" + idCandidacy +
-                ", status=" + status +
+                ", candidacyStatus=" + candidacyStatus +
+                ", rejectedReason='" + rejectedReason + '\'' +
                 ", dateLastModified=" + dateLastModified +
                 ", idApRequest=" + idApRequest +
                 ", dniPapPati='" + dniPapPati + '\'' +

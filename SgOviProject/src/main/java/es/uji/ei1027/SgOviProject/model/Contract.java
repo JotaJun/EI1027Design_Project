@@ -1,6 +1,5 @@
 package es.uji.ei1027.SgOviProject.model;
 
-import es.uji.ei1027.SgOviProject.enums.Status;
 import java.time.LocalDate;
 
 public class Contract {
@@ -14,7 +13,6 @@ public class Contract {
     private String urlDocument;
     private boolean signedByGuardian;
     private String dniLegalGuardian;
-    private Status status = Status.PENDING; // Valor por defecto
     private String deniedReason;
 
     public int getIdContract() {
@@ -89,14 +87,6 @@ public class Contract {
         this.dniLegalGuardian = dniLegalGuardian;
     }
 
-    public Status getStatus() {
-        return status;
-    }
-
-    public void setStatus(Status status) {
-        this.status = status;
-    }
-
     public String getDeniedReason() {
         return deniedReason;
     }
@@ -117,7 +107,6 @@ public class Contract {
                 ", urlDocument='" + urlDocument + '\'' +
                 ", signedByGuardian=" + signedByGuardian +
                 ", dniLegalGuardian='" + dniLegalGuardian + '\'' +
-                ", status=" + status +
                 ", deniedReason='" + deniedReason + '\'' +
                 '}';
     }
