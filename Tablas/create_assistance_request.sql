@@ -8,7 +8,6 @@ CREATE TABLE AssistanceRequest(
 	city					VARCHAR(30),
     drivingLicense          BOOLEAN,
 	yearsOfExperience		INTEGER,
-	specifiedTrainings		VARCHAR(100),
 	initialDateRequired		DATE			NOT NULL,
 	monthsRequired			INTEGER			NOT NULL,
 	

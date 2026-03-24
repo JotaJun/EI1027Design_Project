@@ -30,7 +30,7 @@ public class AssistanceRequestDao {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO AssistanceRequest(creationDate, assistantType, gender, city, drivingLicense, yearsOfExperience, specifiedTrainings, initialDateRequired, monthsRequired, status, deniedReason, dniOviUser, approvedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO AssistanceRequest(creationDate, assistantType, gender, city, drivingLicense, yearsOfExperience, initialDateRequired, monthsRequired, status, deniedReason, dniOviUser, approvedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     Statement.RETURN_GENERATED_KEYS);
 
             ps.setObject(1, request.getCreationDate());
@@ -39,14 +39,13 @@ public class AssistanceRequestDao {
             ps.setString(4, request.getCity());
             ps.setObject(5, request.getDrivingLicense(), java.sql.Types.BOOLEAN);
             ps.setObject(6, request.getYearsOfExperience(), java.sql.Types.INTEGER);
-            ps.setString(7, request.getSpecifiedTrainings());
-            ps.setObject(8, request.getInitialDateRequired());
-            ps.setInt(9, request.getMonthsRequired());
-            ps.setString(10, request.getStatus() != null ? request.getStatus().name().toLowerCase() : "pending");
-            ps.setString(11, request.getDeniedReason());
-            ps.setString(12, request.getDniOviUser());
-            ps.setBoolean(13, request.isApprovedByGuardian());
-            ps.setString(14, request.getDniLegalGuardian());
+            ps.setObject(7, request.getInitialDateRequired());
+            ps.setInt(8, request.getMonthsRequired());
+            ps.setString(9, request.getStatus() != null ? request.getStatus().name().toLowerCase() : "pending");
+            ps.setString(10, request.getDeniedReason());
+            ps.setString(11, request.getDniOviUser());
+            ps.setBoolean(12, request.isApprovedByGuardian());
+            ps.setString(13, request.getDniLegalGuardian());
 
             return ps;
         }, keyHolder);
@@ -72,14 +71,13 @@ public class AssistanceRequestDao {
     }
 
     public void updateAssistanceRequest(AssistanceRequest request) {
-        jdbcTemplate.update("UPDATE AssistanceRequest SET creationDate=?, assistantType=?, gender=?, city=?, drivingLicense=?, yearsOfExperience=?, specifiedTrainings=?, initialDateRequired=?, monthsRequired=?, status=?, deniedReason=?, dniOviUser=?, approvedByGuardian=?, dniLegalGuardian=? WHERE idApRequest=?",
+        jdbcTemplate.update("UPDATE AssistanceRequest SET creationDate=?, assistantType=?, gender=?, city=?, drivingLicense=?, yearsOfExperience=?, initialDateRequired=?, monthsRequired=?, status=?, deniedReason=?, dniOviUser=?, approvedByGuardian=?, dniLegalGuardian=? WHERE idApRequest=?",
                 request.getCreationDate(),
                 request.getAssistantType().name(),
                 request.getGender(),
                 request.getCity(),
                 request.getDrivingLicense(),
                 request.getYearsOfExperience(),
-                request.getSpecifiedTrainings(),
                 request.getInitialDateRequired(),
                 request.getMonthsRequired(),
                 request.getStatus().name().toLowerCase(),

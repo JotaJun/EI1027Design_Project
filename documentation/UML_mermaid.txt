@@ -119,7 +119,6 @@ classDiagram
         -String city
         -boolean drivingLicense
         -int yearsOfExperience
-        -String specifiedTrainings
         -date initialDateRequired
         -int monthsRequired
         -Status status

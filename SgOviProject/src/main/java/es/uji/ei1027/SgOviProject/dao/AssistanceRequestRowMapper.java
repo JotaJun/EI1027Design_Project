@@ -25,7 +25,6 @@ public final class AssistanceRequestRowMapper implements RowMapper<AssistanceReq
         request.setCity(rs.getString("city"));
         request.setDrivingLicense(rs.getObject("drivingLicense", Boolean.class));
         request.setYearsOfExperience(rs.getObject("yearsOfExperience", Integer.class));
-        request.setSpecifiedTrainings(rs.getString("specifiedTrainings"));
         request.setInitialDateRequired(rs.getObject("initialDateRequired", LocalDate.class));
         request.setMonthsRequired(rs.getInt("monthsRequired"));
 

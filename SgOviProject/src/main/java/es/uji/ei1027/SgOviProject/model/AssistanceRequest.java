@@ -14,12 +14,11 @@ public class AssistanceRequest {
     private String city;
     private Boolean drivingLicense;
     private Integer yearsOfExperience;
-    private String specifiedTrainings;
     private LocalDate initialDateRequired;
     private int monthsRequired;
     // Fin parámetros búsqueda
 
-    private Status status;
+    private Status status = Status.PENDING;
     private String deniedReason;
     private String dniOviUser;
     private boolean approvedByGuardian;
@@ -79,14 +78,6 @@ public class AssistanceRequest {
 
     public void setYearsOfExperience(Integer yearsOfExperience) {
         this.yearsOfExperience = yearsOfExperience;
-    }
-
-    public String getSpecifiedTrainings() {
-        return specifiedTrainings;
-    }
-
-    public void setSpecifiedTrainings(String specifiedTrainings) {
-        this.specifiedTrainings = specifiedTrainings;
     }
 
     public LocalDate getInitialDateRequired() {
@@ -155,7 +146,6 @@ public class AssistanceRequest {
                 ", city='" + city + '\'' +
                 ", drivingLicense=" + drivingLicense +
                 ", yearsOfExperience=" + yearsOfExperience +
-                ", specifiedTrainings='" + specifiedTrainings + '\'' +
                 ", initialDateRequired=" + initialDateRequired +
                 ", monthsRequired=" + monthsRequired +
                 ", status=" + status +
