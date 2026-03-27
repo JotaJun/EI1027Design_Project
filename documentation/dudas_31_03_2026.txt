@@ -6,3 +6,4 @@
  - Decir de revisar sitemap la parte de listado de APs
  - Debe habere una página principal o empezamos desde la página de login
  - Acabar de aclarar como funcionan las comunicaciones. Desde un ovi a candidato, le mandará un mensaje (tipo email) o debe de poder ver el historial de comunicaciones, y de ahí mandar un mensaje (podría ver el historial dentro del html de AP request específica).
+ - Mencionó Lledó poder leer usuarios desde un documento csv (para los técnicos), preguntar cuando lo van a enseñar.
