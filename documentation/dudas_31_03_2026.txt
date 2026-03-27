@@ -1,0 +1,8 @@
+ - Explicar mejor como funcionan los contratos
+	- Quien lo manda
+	- Debe ser firmado
+	- Quien puede modificar los datos
+	- El técnico debe de ACEPTARLOS?
+ - Decir de revisar sitemap la parte de listado de APs
+ - Debe habere una página principal o empezamos desde la página de login
+ - Acabar de aclarar como funcionan las comunicaciones. Desde un ovi a candidato, le mandará un mensaje (tipo email) o debe de poder ver el historial de comunicaciones, y de ahí mandar un mensaje (podría ver el historial dentro del html de AP request específica).
