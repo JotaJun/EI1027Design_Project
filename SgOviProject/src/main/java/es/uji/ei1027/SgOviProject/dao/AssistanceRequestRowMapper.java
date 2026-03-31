@@ -15,6 +15,7 @@ public final class AssistanceRequestRowMapper implements RowMapper<AssistanceReq
 
         request.setIdApRequest(rs.getInt("idApRequest"));
         request.setCreationDate(rs.getObject("creationDate", LocalDate.class));
+        request.setDescription(rs.getString("description"));
 
         String typeStr = rs.getString("assistantType");
         if (typeStr != null) {

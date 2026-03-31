@@ -22,7 +22,6 @@ public final class CandidacyRowMapper implements RowMapper<Candidacy> {
             candidacy.setCandidacyStatus(CandidacyStatus.valueOf(statusStr.toUpperCase()));
         }
 
-        candidacy.setRejectedReason(rs.getString("rejectedReason"));
         candidacy.setIdApRequest(rs.getInt("idApRequest"));
         candidacy.setDniPapPati(rs.getString("dniPapPati"));
 

@@ -7,6 +7,7 @@ import java.time.LocalDate;
 public class AssistanceRequest {
     private int idApRequest;
     private LocalDate creationDate = LocalDate.now();
+    private String description;
 
     // Parámetros de búsqueda
     private StaffType assistantType;
@@ -38,6 +39,14 @@ public class AssistanceRequest {
 
     public void setCreationDate(LocalDate creationDate) {
         this.creationDate = creationDate;
+    }
+
+    public String getDescription() {
+        return description;
+    }
+
+    public void setDescription(String description) {
+        this.description = description;
     }
 
     public StaffType getAssistantType() {
@@ -141,6 +150,7 @@ public class AssistanceRequest {
         return "AssistanceRequest{" +
                 "idApRequest=" + idApRequest +
                 ", creationDate=" + creationDate +
+                ", description='" + description + '\'' +
                 ", assistantType=" + assistantType +
                 ", gender='" + gender + '\'' +
                 ", city='" + city + '\'' +

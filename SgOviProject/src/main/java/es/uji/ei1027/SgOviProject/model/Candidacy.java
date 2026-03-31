@@ -6,7 +6,6 @@ import java.time.LocalDate;
 public class Candidacy {
     private int idCandidacy;
     private CandidacyStatus candidacyStatus = CandidacyStatus.TALKSNOTSTARTED;
-    private String rejectedReason;
     private LocalDate dateLastModified;
     private int idApRequest;
     private String dniPapPati;
@@ -25,14 +24,6 @@ public class Candidacy {
 
     public void setCandidacyStatus(CandidacyStatus candidacyStatus) {
         this.candidacyStatus = candidacyStatus;
-    }
-
-    public String getRejectedReason() {
-        return rejectedReason;
-    }
-
-    public void setRejectedReason(String rejectedReason) {
-        this.rejectedReason = rejectedReason;
     }
 
     public LocalDate getDateLastModified() {
@@ -64,7 +55,6 @@ public class Candidacy {
         return "Candidacy{" +
                 "idCandidacy=" + idCandidacy +
                 ", candidacyStatus=" + candidacyStatus +
-                ", rejectedReason='" + rejectedReason + '\'' +
                 ", dateLastModified=" + dateLastModified +
                 ", idApRequest=" + idApRequest +
                 ", dniPapPati='" + dniPapPati + '\'' +

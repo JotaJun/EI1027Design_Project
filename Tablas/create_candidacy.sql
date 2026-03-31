@@ -2,7 +2,6 @@ CREATE TABLE Candidacy(
     idCandidacy         SERIAL PRIMARY KEY,
     dateLastModified    DATE DEFAULT CURRENT_DATE NOT NULL,
     candidacyStatus     VARCHAR(20) DEFAULT 'talksnotstarted' NOT NULL,
-    rejectedReason      VARCHAR(255),
     idApRequest         INTEGER NOT NULL,        -- Referencia a un SERIAL
     dniPapPati          VARCHAR(9)  NOT NULL,
 
@@ -14,5 +13,5 @@ CREATE TABLE Candidacy(
         REFERENCES PapPati(dni)
         ON UPDATE CASCADE
         ON DELETE CASCADE,
-    CONSTRAINT chk_status CHECK(candidacyStatus IN ('talksnotstarted', 'intalks', 'talksended', 'contractaccepted', 'contractrejected'))
+    CONSTRAINT chk_status CHECK(candidacyStatus IN ('talksnotstarted', 'intalks', 'talksended', 'contracted'))
 );
