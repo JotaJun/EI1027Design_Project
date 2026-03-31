@@ -6,6 +6,7 @@
 		- El técnico debe de ACEPTARLOS?
 		- El tutor debe de ACEPTARLOS?
 
+ - En Candidacy hay un campo de RejectedReason y status: el técnico o el oviuser los puede denegar?
  - Decir de revisar sitemap la parte de listado de APs
  - Debe habere una página principal o empezamos desde la página de login
  - Acabar de aclarar como funcionan las comunicaciones. Desde un ovi a candidato, le mandará un mensaje (tipo email) o debe de poder ver el historial de comunicaciones, y de ahí mandar un mensaje (podría ver el historial dentro del html de AP request específica). *COMENTARIO DE ANDRÉS: Sí se guardan, por cada comunicación se almacena una fecha para saber el orden de los mensajes ya que si sabes el propietario y quiénes están en la conversación se puede reconstruir un historial con eso.
