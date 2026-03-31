@@ -11,8 +11,6 @@ public class Contract {
     private double hourlySalary;
     private String schedule;
     private String urlDocument;
-    private boolean signedByGuardian;
-    private String dniLegalGuardian;
     private String deniedReason;
 
     public int getIdContract() {
@@ -71,22 +69,6 @@ public class Contract {
         this.urlDocument = urlDocument;
     }
 
-    public boolean isSignedByGuardian() {
-        return signedByGuardian;
-    }
-
-    public void setSignedByGuardian(boolean signedByGuardian) {
-        this.signedByGuardian = signedByGuardian;
-    }
-
-    public String getDniLegalGuardian() {
-        return dniLegalGuardian;
-    }
-
-    public void setDniLegalGuardian(String dniLegalGuardian) {
-        this.dniLegalGuardian = dniLegalGuardian;
-    }
-
     public String getDeniedReason() {
         return deniedReason;
     }
@@ -105,8 +87,6 @@ public class Contract {
                 ", hourlySalary=" + hourlySalary +
                 ", schedule='" + schedule + '\'' +
                 ", urlDocument='" + urlDocument + '\'' +
-                ", signedByGuardian=" + signedByGuardian +
-                ", dniLegalGuardian='" + dniLegalGuardian + '\'' +
                 ", deniedReason='" + deniedReason + '\'' +
                 '}';
     }

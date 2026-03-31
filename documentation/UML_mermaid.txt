@@ -139,14 +139,12 @@ classDiagram
         -double hourlySalary
         -String schedule
         -String urlDocument
-        -boolean signedByGuardian
         +generateDocument()
     }
 
     %% Relaciones de la mejora (Tutoría)
     LegalGuardian "0..1" -- "0..*" OVIUser : represents
     LegalGuardian "0..1" -- "0..*" AssistanceRequest : validates
-    LegalGuardian "0..1" -- "0..*" Contract : signs
     LegalGuardian "0..1" -- "0..*" ActivityAssistance : consents
 
     %% Relaciones Originales
@@ -158,4 +156,4 @@ classDiagram
     AssistanceRequest "1" -- "0..*" Candidacy : considers possible
     PAP_PATI "1" -- "0..*" Candidacy : presents
     Candidacy "1" -- "0..*" Communication : makes
-    Candidacy "1" -- "0..*" Contract : creates
+    Candidacy "1" -- "0..*" Contract : generates

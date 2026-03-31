@@ -6,8 +6,6 @@ CREATE TABLE Contract(
 	hourlySalary		Numeric(10,2)	NOT NULL,
 	schedule			VARCHAR(500)	NOT NULL,
     urlDocument         VARCHAR(255),
-	signedByGuardian	BOOLEAN			DEFAULT FALSE,
-	dniLegalGuardian	VARCHAR(9),
     deniedReason        VARCHAR(255),
 
     CONSTRAINT chk_contract_dates CHECK(startDate < endDate),
@@ -15,9 +13,5 @@ CREATE TABLE Contract(
     CONSTRAINT fk_Candidacy_id FOREIGN KEY (idCandidacy)
 			REFERENCES Candidacy(idCandidacy)
 			ON UPDATE CASCADE
-			ON DELETE RESTRICT,
-	CONSTRAINT fk_legalGuardian_dni FOREIGN KEY (dniLegalGuardian)
-        REFERENCES LegalGuardian(dni)
-        ON UPDATE CASCADE
-        ON DELETE RESTRICT
+			ON DELETE RESTRICT
 );
