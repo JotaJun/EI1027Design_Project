@@ -1,0 +1,465 @@
+/* --- VARIABLES GUÍA DE ESTILO SgOVI --- */
+:root {
+    --color-primary: #FFB86C;
+    --color-primary-hover: #E3A05B;
+    --color-secondary: #555E66;
+    --color-background: #F8F9FA;
+    --color-text-main: #212529;
+    --color-white: #FFFFFF;
+    --color-border-main: #E5E7EB;
+    --color-border-light: #F3F4F6;
+
+    --font-heading: 'Poppins', sans-serif;
+    --font-body: 'Inter', sans-serif;
+}
+
+/* --- RESET --- */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+    font-family: var(--font-body);
+    color: var(--color-text-main);
+    background-color: var(--color-background);
+    line-height: 1.6;
+}
+
+/* --- CONTENEDOR PRINCIPAL --- */
+.container {
+    max-width: 1200px;
+    margin: 0 auto;
+    padding: 0 20px;
+}
+
+/* --- BARRA DE NAVEGACIÓN (HEADER) --- */
+.main-header {
+    background-color: var(--color-white);
+    padding: 20px 0;
+}
+
+.navbar {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Ajuste del logo para que se vea como en la imagen */
+.logo {
+    font-family: var(--font-heading);
+    font-size: 24px;
+    font-weight: 700;
+    color: var(--color-text-main);
+    display: flex;
+    align-items: center;
+    gap: 8px;
+}
+
+.logo-img {
+    height: 40px; /* Ajusta este valor para que el logo sea más grande o más pequeño */
+    width: auto;  /* Mantiene las proporciones de la imagen intactas */
+    display: block;
+}
+
+
+/* --- SECCIÓN HERO --- */
+.hero {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    gap: 50px;
+    padding: 80px 20px 40px; /* Reducido padding inferior para acercar las tarjetas */
+}
+
+.hero-content {
+    flex: 1;
+    max-width: 500px;
+}
+
+.hero h1 {
+    font-family: var(--font-heading);
+    font-size: 42px;
+    line-height: 1.2;
+    color: var(--color-text-main);
+    margin-bottom: 20px;
+}
+
+.hero p {
+    font-size: 16px;
+    color: var(--color-secondary);
+    margin-bottom: 40px;
+}
+
+.hero-image-wrapper {
+    flex: 1;
+    display: flex;
+    justify-content: flex-end;
+}
+
+.hero-img {
+    max-width: 100%; /* Asegura que no se salga de su contenedor */
+    height: auto;
+    border-radius: 16px; /* Bordes redondeados para que quede moderno */
+    box-shadow: 0 10px 30px rgba(0,0,0,0.08); /* Una sombra suave para darle profundidad */
+    display: block;
+}
+
+/* --- BOTONES --- */
+.btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-main);
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid var(--color-primary);
+    font-size: 14px;
+}
+
+.btn-primary:hover {
+    background-color: var(--color-primary-hover);
+    border-color: var(--color-primary-hover);
+}
+
+.btn-outline {
+    background-color: transparent;
+    color: var(--color-text-main);
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid var(--color-border-main);
+    font-size: 14px;
+}
+
+.btn-outline:hover {
+    border-color: var(--color-secondary);
+    background-color: var(--color-white);
+}
+
+.btn-group {
+    display: flex;
+    gap: 15px;
+}
+
+/* --- SECCIÓN FEATURES (LAS 3 TARJETAS) --- */
+.features {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr); /* 3 columnas de igual tamaño */
+    gap: 30px;
+    padding-bottom: 80px;
+}
+
+.feature-card {
+    background-color: var(--color-white);
+    padding: 40px 30px;
+    border-radius: 16px;
+    text-align: center;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.02);
+    border: 1px solid var(--color-secondary);
+    transition: border-color 0.3s ease, transform 0.3s ease; /* Transición suave */
+}
+
+.feature-card h3 {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    margin-bottom: 15px;
+    color: var(--color-text-main);
+}
+
+.feature-card p {
+    font-size: 14px;
+    color: var(--color-secondary);
+    line-height: 1.6;
+}
+
+.feature-card:hover {
+    border-color: var(--color-primary); /* El borde se vuelve naranja al pasar el ratón */
+    transform: translateY(-5px); /* la tarjeta sube un poco */
+}
+
+/* Iconos de las tarjetas */
+.icon-square {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    width: 50px;
+    height: 50px;
+    border-radius: 12px;
+    font-size: 24px;
+    margin-bottom: 20px;
+}
+
+.icon-orange { background-color: #FFF0E0; color: #A35200; }
+.icon-blue { background-color: #E0F2FE; color: #0369A1; }
+.icon-green { background-color: #DCFCE7; color: #15803D; }
+
+/* --- FOOTER --- */
+.main-footer {
+    background-color: var(--color-white);
+    border-top: 1px solid var(--color-border-main);
+    padding-top: 60px;
+}
+
+.footer-content {
+    display: flex;
+    justify-content: space-between;
+    padding-bottom: 40px;
+    border-bottom: 1px solid var(--color-border-light);
+}
+
+.footer-col h4 {
+    font-family: var(--font-heading);
+    font-size: 16px;
+    margin-bottom: 20px;
+    color: var(--color-text-main);
+}
+
+.footer-col p {
+    font-size: 12px;
+    color: var(--color-secondary);
+    margin-bottom: 8px;
+}
+
+.footer-col a {
+    color: var(--color-secondary);
+    text-decoration: none;
+}
+
+.footer-col a:hover {
+    color: var(--color-primary-hover);
+}
+
+/* =========================================
+   PÀGINA DE LOGIN
+   ========================================= */
+
+.login-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    padding: 40px 20px;
+    background-color: var(--color-background);
+    position: relative;
+    overflow: hidden;
+}
+
+.login-container::before,
+.login-container::after {
+    content: '';
+    position: absolute;
+    border-radius: 50%;
+    background-color: #FDF3E7;  /* Color naranja no tan claro */
+    z-index: 0;
+}
+
+.login-container::before { width: 600px; height: 600px; bottom: -200px; left: -250px; }
+.login-container::after { width: 800px; height: 800px; top: -400px; right: -250px; }
+
+/* Tarjeta principal */
+.login-card {
+    background-color: var(--color-white);
+    max-width: 450px;
+    width: 100%;
+    border-radius: 20px;
+    padding: 50px 40px;
+    box-shadow: 0 10px 40px rgba(0,0,0,0.06);
+    position: relative;
+    z-index: 1;
+}
+
+/* Cabecera interna */
+.login-header {
+    text-align: center;
+    margin-bottom: 30px;
+}
+
+.logo-box {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    font-size: 22px;
+    font-family: var(--font-heading);
+    color: var(--color-text-main);
+    margin-bottom: 15px;
+}
+
+.sg-badge {
+    background-color: var(--color-primary);
+    color: var(--color-text-main);
+    padding: 4px 8px;
+    border-radius: 8px;
+    font-weight: 700;
+    font-size: 16px;
+}
+
+.system-name {
+    font-size: 11px;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 25px;
+    font-weight: 600;
+}
+
+.login-header h2 {
+    font-family: var(--font-heading);
+    font-size: 26px;
+    color: var(--color-text-main);
+    margin-bottom: 5px;
+}
+
+.login-subtitle {
+    color: var(--color-secondary);
+    font-size: 14px;
+}
+
+/* Grupos del formulario */
+.login-form .form-group {
+    margin-bottom: 20px;
+}
+
+.login-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 12px;
+    margin-bottom: 8px;
+    color: var(--color-text-main);
+}
+
+/* Inputs con iconos */
+.input-wrapper {
+    position: relative;
+    display: flex;
+    align-items: center;
+}
+
+.input-wrapper svg {
+    position: absolute;
+    width: 18px;
+    height: 18px;
+    color: var(--color-secondary);
+}
+
+.input-wrapper .icon-left { left: 15px; }
+.input-wrapper .icon-right { right: 15px; cursor: pointer; }
+
+.login-form input {
+    width: 100%;
+    padding: 12px 15px 12px 42px;
+    border: 1px solid var(--color-border-main);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    transition: all 0.3s ease;
+}
+
+.login-form input:focus {
+    outline: none;
+    background-color: var(--color-white);
+    border-color: var(--color-primary);
+}
+
+/* Select (Desplegable Tipus de compte) */
+.select-wrapper {
+    position: relative;
+}
+
+select {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--color-primary);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    appearance: none;
+    background-image: url('data:image/svg+xml;utf8,<svg fill="%23212529" height="20" viewBox="0 0 24 24" width="20" xmlns="http://www.w3.org/2000/svg"><path d="M7 10l5 5 5-5z"/><path d="M0 0h24v24H0z" fill="none"/></svg>');
+    background-repeat: no-repeat;
+    background-position: right 15px center;
+    cursor: pointer;
+}
+
+select:focus {
+    outline: none;
+    box-shadow: 0 0 0 2px rgba(255, 184, 108, 0.2);
+}
+
+/* Botones genéricos de bloque */
+.btn-block {
+    width: 100%;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 10px;
+    padding: 14px;
+    font-size: 15px;
+    border-radius: 8px;
+    font-weight: 600;
+    cursor: pointer;
+    box-sizing: border-box;
+    text-decoration: none; /* Añadido por si se usa en etiquetas <a> */
+}
+
+/* Botón Entrar */
+.btn-login {
+    background-color: var(--color-primary);
+    color: var(--color-text-main);
+    border: none;
+    margin-top: 10px;
+    transition: background-color 0.3s;
+}
+
+.btn-login:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.btn-login .icon-btn {
+    width: 18px;
+    height: 18px;
+}
+
+/* Footer / Botón registrarse */
+.login-footer {
+    margin-top: 30px;
+    text-align: center;
+}
+
+.login-footer p {
+    font-size: 14px;
+    color: var(--color-secondary);
+    margin-bottom: 10px;
+}
+
+.login-footer .btn-outline {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-text-main);
+    color: var(--color-text-main);
+    transition: all 0.3s;
+}
+
+.login-footer .btn-outline:hover {
+    background-color: var(--color-background);
+}
+
+/* Alerta de error */
+.alert-danger {
+    background-color: #FEE2E2;
+    color: #B91C1C;
+    padding: 12px;
+    border-radius: 8px;
+    margin-bottom: 20px;
+    font-size: 14px;
+    border: 1px solid #FCA5A5;
+    text-align: center;
+}

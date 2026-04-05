@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<footer th:fragment="footer" class="main-footer">
+    <div class="container footer-content">
+        <div class="footer-col">
+            <h4>Contacte</h4>
+            <p>Oficina per a la Vida Independent</p>
+            <p>C/ Exemple, 123</p>
+            <p>46001 València</p>
+            <p>Tel: 96 123 45 67</p>
+            <p>Email: info@ovi.org</p>
+        </div>
+        <div class="footer-col">
+            <h4>Informació Legal</h4>
+            <p><a th:href="@{/privadesa}">Política de Privadesa</a></p>
+            <p><a th:href="@{/rgpd}">Protecció de Dades (RGPD)</a></p>
+            <p><a th:href="@{/avis-legal}">Avís Legal</a></p>
+            <p><a th:href="@{/accessibilitat}">Accessibilitat</a></p>
+        </div>
+    </div>
+</footer>
+</body>
+</html>
