@@ -1,7 +1,10 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 
-import es.uji.ei1027.SgOviProject.model.Account;
+import es.uji.ei1027.SgOviProject.dao.*;
+import es.uji.ei1027.SgOviProject.enums.AccountType;
+import es.uji.ei1027.SgOviProject.model.*;
+import es.uji.ei1027.SgOviProject.services.IntLoginService;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.web.bind.annotation.ModelAttribute;
@@ -12,47 +15,90 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.validation.BindingResult;
 import org.springframework.ui.Model;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 @Controller
 public class LoginController {
+
+    @Autowired
+    private AccountDao accountDao;
+
+    @Autowired
+    private TechnicianDao technicianDao;
+
+    @Autowired
+    private IntLoginService loginService;
 
 
     @RequestMapping("/login")
     public String login(Model model) {
-        model.addAttribute("account", new Account());
+        model.addAttribute("details", new LoginDetails());
         return "login";
     }
-/*
+
     @RequestMapping(value="/login", method=RequestMethod.POST)
-    public String checkLogin(@ModelAttribute("user") UserDetails user,
+    public String checkLogin(@ModelAttribute("details") LoginDetails details,
                              BindingResult bindingResult, HttpSession session) {
-        UserValidator userValidator = new UserValidator();
-        userValidator.validate(user, bindingResult);
+        LoginValidator loginValidator = new LoginValidator();
+        loginValidator.validate(details, bindingResult);
         if (bindingResult.hasErrors()) {
             return "login";
         }
 
-        // Comprova que el login siga correcte intentant carregar les dades
-        user = userDao.loadUserByUsername(user.getUsername(),
-                user.getPassword());
-        if (user == null) {
-            bindingResult.rejectValue("password", "badpw",
-                    "Contrasenya incorrecta");
-            return "login";
+        String targetUrl; // URL por defecto
+
+        // Comprobar tipo login (tecnico distinto)
+        if (details.getAccountType() == AccountType.TECHNICIAN) {
+
+            Technician technician = technicianDao.getTechnicianByLoginDetails(details);
+            if (technician == null) {
+                bindingResult.rejectValue("password", "badpw", "Credencials incorrectes");
+                return "login";
+            }
+            // Autenticados como técnico
+            session.setAttribute("technician", technician);
+
+            targetUrl = "redirect:/technician/main";
+
+        } else {
+
+            Account account = accountDao.getAccountByLoginDetails(details);
+            if (account == null) {
+                bindingResult.rejectValue("password", "badpw", "Credencials incorrectes");
+                return "login";
+            }
+
+            // Servicio comprueba que el tipo + cuenta coinciden
+            if (!loginService.authenticate(details, account.getDni())){
+                bindingResult.rejectValue("accountType", "wrongAccountType", "Tipus de compte incorrecte");
+                return "login";
+            }
+
+            session.setAttribute("account", account);
+
+            // Configuramos la ruta de destino según el rol
+            switch (details.getAccountType()){
+                case OVIUSER -> targetUrl = "redirect:/oviUser/main";
+                case PAPPATI -> targetUrl = "redirect:/papPati/main";
+                case LEGALGUARDIAN -> targetUrl = "redirect:/legalGuardian/main";
+                default -> { return "login"; }
+            }
         }
 
-        // Autenticats correctament.
-        session.setAttribute("user", user);
+        session.setAttribute("userRole", details.getAccountType().name());  // Guardar rol para identificar en html más fácil
 
-        // Ejercicio 3: Comprobar si existe nextUrl en la sesión
+        // GESTIÓN DEL NEXT-URL (Tiene prioridad sobre el targetUrl configurado arriba)
         String nextUrl = (String) session.getAttribute("nextUrl");
         if (nextUrl != null) {
-            session.removeAttribute("nextUrl"); // Eliminar el atributo para evitar confusiones
-            return "redirect:" + nextUrl;   // NECESARIO usar redirect para hacer la petición correcta.
+            session.removeAttribute("nextUrl");
+            return "redirect:" + nextUrl;
         }
 
-        // Torna a la pàgina principal si no hay nextUrl
-        return "redirect:/";
+        return targetUrl;
     }
+
 
     @RequestMapping("/logout")
     public String logout(HttpSession session) {
@@ -60,5 +106,4 @@ public class LoginController {
         return "redirect:/";
     }
 
- */
 }

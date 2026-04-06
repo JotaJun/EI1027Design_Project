@@ -463,3 +463,272 @@ select:focus {
     border: 1px solid #FCA5A5;
     text-align: center;
 }
+
+
+/* =========================================
+   PANELL PRINCIPAL (DASHBOARD)
+   ========================================= */
+
+/* Navbar superior del dashboard */
+.dashboard-header-nav {
+    border-bottom: 1px solid var(--color-border-light);
+    background-color: var(--color-white);
+}
+
+.header-inner {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-top: 20px;
+    padding-bottom: 20px;
+}
+
+.nav-actions {
+    display: flex;
+    gap: 15px;
+}
+
+.nav-link-btn {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    text-decoration: none;
+    color: var(--color-text-main);
+    font-size: 14px;
+    font-weight: 600;
+    padding: 8px 16px;
+    border-radius: 50px;
+    transition: all 0.3s;
+}
+
+.profile-btn {
+    background-color: transparent;
+}
+
+.icon-circle-orange {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    width: 28px;
+    height: 28px;
+    background-color: #FFF0E0;
+    color: #D97706;
+    border-radius: 50%;
+}
+
+.logout-btn {
+    border: 1px solid var(--color-border-main);
+}
+.logout-btn:hover {
+    background-color: var(--color-border-light);
+}
+
+.dashboard-main {
+    padding: 40px 20px;
+}
+
+/* Sección de Bienvenida */
+.welcome-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-end;
+    margin-bottom: 50px;
+}
+
+.date-text {
+    font-size: 12px;
+    color: var(--color-secondary);
+    font-weight: 600;
+    letter-spacing: 0.5px;
+    margin-bottom: 8px;
+}
+
+.welcome-title {
+    font-family: var(--font-heading);
+    font-size: 32px;
+    color: var(--color-text-main);
+}
+
+.welcome-title .light-text {
+    color: var(--color-secondary);
+    font-weight: 400;
+}
+
+.status-badge {
+    display: flex;
+    align-items: center;
+    gap: 6px;
+    background-color: #DCFCE7;
+    color: #15803D;
+    padding: 8px 16px;
+    border-radius: 50px;
+    font-size: 14px;
+    font-weight: 600;
+}
+
+/* --- COLORES PARA LOS ESTADOS DE LA CUENTA --- */
+.badge-accepted {
+    background-color: #DCFCE7;
+    color: #15803D;
+}
+
+.badge-pending {
+    background-color: #FEF3C7; /* Fondo amarillo suave */
+    color: #713F12; /* marrón/ámbar oscuro para accesibilidad */
+}
+
+.badge-rejected {
+    background-color: #FEE2E2; /* Fondo rojo suave */
+    color: #B91C1C; /* Texto rojo oscuro */
+}
+
+/* Sección Acciones Principales */
+.section-title {
+    font-family: var(--font-heading);
+    font-size: 20px;
+    color: var(--color-secondary);
+    margin-bottom: 25px;
+}
+
+.dashboard-cards-grid {
+    display: grid;
+    grid-template-columns: repeat(2, 1fr);
+    gap: 30px;
+}
+
+.dash-card {
+    background-color: var(--color-white);
+    border-radius: 20px;
+    padding: 35px;
+    box-shadow: 0 4px 15px rgba(0,0,0,0.03);
+    display: flex;
+    flex-direction: column;
+    border: 1px solid var(--color-border-light);
+}
+
+.dash-card-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: flex-start;
+    margin-bottom: 25px;
+}
+
+/* Variaciones de Iconos y Badges */
+.icon-orange-light {
+    background-color: #FFF0E0;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+}
+
+.icon-grey-light {
+    background-color: #F3F4F6;
+    width: 60px;
+    height: 60px;
+    border-radius: 16px;
+}
+
+.badge {
+    font-size: 12px;
+    font-weight: 700;
+    padding: 6px 12px;
+    border-radius: 8px;
+    letter-spacing: 0.5px;
+}
+
+.badge-orange {
+    background-color: #FFF0E0;
+    color: #853A00; /*  naranja oscuro casi marrón para accesibilidad */
+}
+
+.badge-grey {
+    background-color: #F3F4F6;
+    color: #4B5563;
+}
+
+.dash-card-body {
+    flex-grow: 1;
+    margin-bottom: 30px;
+}
+
+.dash-card-body h3 {
+    font-family: var(--font-heading);
+    font-size: 22px;
+    color: var(--color-text-main);
+    margin-bottom: 15px;
+}
+
+.dash-card-body p {
+    color: var(--color-secondary);
+    font-size: 15px;
+    margin-bottom: 20px;
+}
+
+/* Tags (PAP / PATI) */
+.tag-group {
+    display: flex;
+    gap: 10px;
+}
+
+.tag {
+    font-size: 12px;
+    font-weight: 600;
+    color: var(--color-secondary);
+    border: 1px solid var(--color-border-main);
+    padding: 4px 12px;
+    border-radius: 50px;
+    background-color: var(--color-white);
+}
+
+/* Botones dentro de las tarjetas */
+.dash-btn {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    width: 100%;
+    padding: 16px 24px;
+    border-radius: 12px;
+    font-weight: 600;
+    font-size: 15px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+}
+
+.btn-content-left {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.dash-btn-primary {
+    background-color: var(--color-primary);
+    color: var(--color-text-main);
+    border: none;
+}
+
+.dash-btn-primary:hover {
+    background-color: var(--color-primary-hover);
+}
+
+.dash-btn-outline {
+    background-color: var(--color-white);
+    color: var(--color-text-main);
+    border: 1px solid var(--color-text-main);
+}
+
+.dash-btn-outline:hover {
+    background-color: var(--color-background);
+}
+
+/* Footer del Dashboard */
+.simple-footer {
+    text-align: center;
+    padding: 40px 20px;
+    border-top: 1px solid var(--color-border-light);
+    margin-top: 40px;
+}
+
+.simple-footer p {
+    color: var(--color-secondary);
+    font-size: 13px;
+}

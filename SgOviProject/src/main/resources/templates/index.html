@@ -7,6 +7,10 @@
 </head>
 <body>
 
+<div layout:fragment="header">
+    <div th:replace="~{fragments/index-header :: header}"></div>
+</div>
+
 <main layout:fragment="content">
 
     <section class="hero container">

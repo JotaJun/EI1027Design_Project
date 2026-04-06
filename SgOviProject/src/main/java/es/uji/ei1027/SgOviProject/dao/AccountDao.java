@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject.dao;
 
 import es.uji.ei1027.SgOviProject.model.Account;
+import es.uji.ei1027.SgOviProject.model.LoginDetails;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -63,6 +64,15 @@ public class AccountDao {
         try {
             return jdbcTemplate.queryForObject("SELECT * FROM Account WHERE email=?",
                     new AccountRowMapper(), email);
+        } catch(EmptyResultDataAccessException e) {
+            return null;
+        }
+    }
+
+    public Account getAccountByLoginDetails(LoginDetails details){
+        try {
+            return jdbcTemplate.queryForObject("SELECT * FROM Account WHERE email=? and password=?",
+                    new AccountRowMapper(), details.getEmail(), details.getPassword());
         } catch(EmptyResultDataAccessException e) {
             return null;
         }
