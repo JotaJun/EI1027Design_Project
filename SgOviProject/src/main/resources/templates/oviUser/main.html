@@ -45,6 +45,25 @@
             </div>
         </div>
 
+        <div th:if="${session.account != null and session.account.status.name() == 'REJECTED'}" class="alert-box alert-rejected">
+            <div class="alert-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <div class="alert-content">
+                <h3 class="alert-title">S'ha rebutjat la validació del teu compte</h3>
+                <p class="alert-message">
+                    <strong>Motiu:</strong>
+                    <span th:text="${session.account.deniedReason != null ? session.account.deniedReason : 'No s''ha especificat cap motiu.'}">
+                        Motivo
+                    </span>
+                </p>
+            </div>
+        </div>
+
         <section class="actions-section">
             <h2 class="section-title">Accions principals</h2>
 

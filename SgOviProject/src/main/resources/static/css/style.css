@@ -582,6 +582,46 @@ select:focus {
     color: #B91C1C; /* Texto rojo oscuro */
 }
 
+/* Estilos para la caja de alerta de rechazo */
+.alert-box {
+    display: flex;
+    align-items: flex-start;
+    padding: 1rem;
+    margin-bottom: 2rem;
+    border-radius: 0.5rem;
+    gap: 1rem;
+}
+
+.alert-rejected {
+    background-color: #fef2f2; /* Fondo rojo muy claro */
+    border: 1px solid #f87171; /* Borde rojo medio */
+    color: #991b1b;            /* Texto rojo oscuro */
+}
+
+.alert-icon {
+    flex-shrink: 0;
+    color: #dc2626;            /* Icono rojo vibrante */
+}
+
+.alert-content {
+    display: flex;
+    flex-direction: column;
+    gap: 0.25rem;
+}
+
+.alert-title {
+    margin: 0;
+    font-size: 1rem;
+    font-weight: 600;
+    color: #991b1b;
+}
+
+.alert-message {
+    margin: 0;
+    font-size: 0.875rem;
+    line-height: 1.4;
+}
+
 /* Sección Acciones Principales */
 .section-title {
     font-family: var(--font-heading);
