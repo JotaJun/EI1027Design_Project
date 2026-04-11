@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Panell Principal OVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/user-header :: userHeader}"></div>
+</div>
+
+<main layout:fragment="content">
+
+    <div class="container dashboard-main">
+
+        <div class="welcome-section">
+            <div>
+                <p class="date-text" th:text="${dateNow}">...</p>
+
+                <h1 class="welcome-title">
+                    <strong>Hola, <span th:text="${session.account != null ? session.account.name : 'Usuari'}">...</span>.</strong>
+                    <span class="light-text">Què necessites fer avui?</span>
+                </h1>
+            </div>
+
+            <div th:if="${session.account != null}" th:switch="${session.account.status.name()}">
+
+                <div th:case="'ACCEPTED'" class="status-badge badge-accepted">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"><polyline points="20 6 9 17 4 12"></polyline></svg>
+                    Compte Actiu
+                </div>
+
+                <div th:case="'PENDING'" class="status-badge badge-pending">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><polyline points="12 6 12 12 16 14"></polyline></svg>
+                    Pendent de validació
+                </div>
+
+                <div th:case="'REJECTED'" class="status-badge badge-rejected">
+                    <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="10"></circle><line x1="15" y1="9" x2="9" y2="15"></line><line x1="9" y1="9" x2="15" y2="15"></line></svg>
+                    Compte Rebutjat
+                </div>
+
+            </div>
+        </div>
+
+        <div th:if="${session.account != null and session.account.status.name() == 'REJECTED'}" class="alert-box alert-rejected">
+            <div class="alert-icon">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <circle cx="12" cy="12" r="10"></circle>
+                    <line x1="12" y1="8" x2="12" y2="12"></line>
+                    <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                </svg>
+            </div>
+            <div class="alert-content">
+                <h3 class="alert-title">S'ha rebutjat la validació del teu compte</h3>
+                <p class="alert-message">
+                    <strong>Motiu:</strong>
+                    <span th:text="${session.account.deniedReason != null ? session.account.deniedReason : 'No s''ha especificat cap motiu.'}">
+                        Motivo
+                    </span>
+                </p>
+            </div>
+        </div>
+
+        <section class="actions-section">
+            <h2 class="section-title">Accions principals</h2>
+
+            <div class="dashboard-cards-grid">
+
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div class="icon-square icon-orange-light">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                        </div>
+                        <span class="badge badge-orange">NOVA ACCIÓ</span>
+                    </div>
+
+                    <div class="dash-card-body">
+                        <h3>Nova sol·licitud d'Assistència Personal</h3>
+                        <p>Sol·licita un PAP o PATI per al teu dia a dia i gestiona la teua assistència personalitzada.</p>
+
+                        <div class="tag-group">
+                            <span class="tag">PAP</span>
+                            <span class="tag">PATI</span>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/solicitud/nova}" class="dash-btn dash-btn-primary">
+                        <div class="btn-content-left">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                            Començar sol·licitud
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div class="icon-square icon-grey-light">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <span class="badge badge-grey">HISTORIAL</span>
+                    </div>
+
+                    <div class="dash-card-body">
+                        <h3>Les meues sol·licituds</h3>
+                        <p>Consulta l'estat de les teues peticions i contractes d'assistència personal en curs.</p>
+                    </div>
+
+                    <a th:href="@{/solicituds}" class="dash-btn dash-btn-outline">
+                        <div class="btn-content-left">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            Veure llistat
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+
+            </div>
+        </section>
+    </div>
+
+</main>
+
+</body>
+</html>

@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Inici</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/index-header :: header}"></div>
+</div>
+
+<main layout:fragment="content">
+
+    <section class="hero container">
+        <div class="hero-content">
+            <h1>SgOVI: Gestiona la teua vida independent</h1>
+            <p>Plataforma de l'Oficina per a la Vida Independent per a persones usuàries i assistents personals.</p>
+
+            <div class="btn-group">
+                <a th:href="@{/login}" class="btn-outline">Iniciar sessió</a>
+                <a th:href="@{/registre}" class="btn-primary">Registrar-se</a>
+            </div>
+        </div>
+
+        <div class="hero-image-wrapper">
+            <img th:src="@{/images/hero-image.png}" alt="Persones treballant juntes, assistència personal" class="hero-img">
+        </div>
+    </section>
+
+    <section class="features container">
+        <div class="feature-card">
+            <div class="icon-square icon-orange">👤</div>
+            <h3>Assistència Personal</h3>
+            <p>Gestió de professionals d'assistència personal (PAP) i terapèutica infantil (PATI) per a persones amb diversitat funcional.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-square icon-blue">📖</div>
+            <h3>Formació i Esdeveniments</h3>
+            <p>Organització i seguiment d'activitats formatives, tallers i esdeveniments per a la comunitat de l'OVI.</p>
+        </div>
+
+        <div class="feature-card">
+            <div class="icon-square icon-green">🛡️</div>
+            <h3>Gestió Segura de Dades</h3>
+            <p>Protecció i confidencialitat de les dades personals complint amb RGPD i garantint la privadesa dels usuaris.</p>
+        </div>
+    </section>
+
+</main>
+
+</body>
+</html>

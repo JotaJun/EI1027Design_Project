@@ -1,0 +1,18 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<body>
+<header th:fragment="header" class="main-header">
+    <div class="container navbar">
+        <div class="logo">
+            <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
+            SgOVI
+        </div>
+
+        <div class="btn-group">
+            <a th:href="@{/login}" class="btn-outline">Iniciar sessió</a>
+            <a th:href="@{/registre}" class="btn-primary">Registrar-se</a>
+        </div>
+    </div>
+</header>
+</body>
+</html>

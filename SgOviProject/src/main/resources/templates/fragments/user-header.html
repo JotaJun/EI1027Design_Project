@@ -1,0 +1,27 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="userHeader" class="dashboard-header-nav">
+  <div class="container header-inner">
+    <div class="logo">
+      <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
+      SgOVI
+    </div>
+
+    <div class="nav-actions">
+      <a th:href="@{/perfil}" class="nav-link-btn profile-btn">
+        <span class="icon-circle-orange">
+          <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+        </span>
+        El meu perfil
+      </a>
+      <a th:href="@{/logout}" class="nav-link-btn logout-btn">
+        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h4"></path><polyline points="16 17 21 12 16 7"></polyline><line x1="21" y1="12" x2="9" y2="12"></line></svg>
+        Eixir
+      </a>
+    </div>
+  </div> </header>
+
+</body>
+</html>

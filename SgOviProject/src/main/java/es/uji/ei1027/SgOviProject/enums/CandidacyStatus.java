@@ -4,6 +4,5 @@ public enum CandidacyStatus {
     INTALKS,
     TALKSENDED,
     TALKSNOTSTARTED,
-    CONTRACTACCEPTED,
-    CONTRACTREJECTED
+    CONTRACTED
 }

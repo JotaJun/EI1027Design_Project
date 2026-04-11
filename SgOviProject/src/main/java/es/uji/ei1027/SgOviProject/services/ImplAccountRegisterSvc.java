@@ -1,9 +1,11 @@
 package es.uji.ei1027.SgOviProject.services;
 
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
+import es.uji.ei1027.SgOviProject.dao.LegalGuardianDao;
 import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
 import es.uji.ei1027.SgOviProject.model.Account;
+import es.uji.ei1027.SgOviProject.model.LegalGuardian;
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import es.uji.ei1027.SgOviProject.model.PapPati;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -22,6 +24,9 @@ public class ImplAccountRegisterSvc implements  IntAccountRegisterSvc{
 
     @Autowired
     OviUserDao oviUserDao;
+
+    @Autowired
+    LegalGuardianDao legalGuardianDao;
 
 
     @Override
@@ -45,4 +50,17 @@ public class ImplAccountRegisterSvc implements  IntAccountRegisterSvc{
 
         oviUserDao.addOviUser(oviUser);
     }
+
+    @Override
+    public void addLegalGuardian(Account account, LegalGuardian legalGuardian){
+        accountDao.addAccount(account);
+
+        // Si no tiene el dni se lo asignamos
+        legalGuardian.setDni(account.getDni());
+
+        legalGuardianDao.addLegalGuardian(legalGuardian);
+    }
+
+
+
 }

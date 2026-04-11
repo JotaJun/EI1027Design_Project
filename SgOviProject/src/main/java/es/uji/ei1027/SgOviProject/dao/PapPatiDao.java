@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject.dao;
 
 import es.uji.ei1027.SgOviProject.enums.StaffType;
+import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.PapPati;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;

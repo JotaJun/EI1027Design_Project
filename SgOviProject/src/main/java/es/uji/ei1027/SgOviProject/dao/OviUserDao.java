@@ -1,5 +1,6 @@
 package es.uji.ei1027.SgOviProject.dao;
 
+import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
