@@ -1,8 +1,14 @@
 package es.uji.ei1027.SgOviProject.controller;
 
+import es.uji.ei1027.SgOviProject.dao.OviUserDao;
+import es.uji.ei1027.SgOviProject.model.OviUser;
 import jakarta.servlet.http.HttpSession;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.ModelAttribute;
+import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
@@ -12,6 +18,9 @@ import java.util.Locale;
 @Controller
 @RequestMapping("/oviUser")
 public class OviUserController {
+
+    @Autowired
+    private OviUserDao oviUserDao;
 
     @RequestMapping("/main")
     public String oviUserMain(HttpSession session, Model model) {
@@ -27,4 +36,6 @@ public class OviUserController {
 
         return "oviUser/main";
     }
+
+
 }
