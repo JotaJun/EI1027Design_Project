@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registre Completat - SgOVI</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card" style="text-align: center;">
+
+        <div class="login-header">
+            <div class="logo-box">
+                <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
+                SgOVI
+            </div>
+            <p class="system-name">SISTEMA DE GESTIÓ DE L'OFICINA PER LA VIDA INDEPENDENT</p>
+        </div>
+
+        <!-- Icono de Éxito -->
+        <div style="margin-bottom: 30px; display: inline-flex; justify-content: center; align-items: center; width: 80px; height: 80px; background-color: #DCFCE7; color: #15803D; border-radius: 50%;">
+            <svg width="40" height="40" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3" stroke-linecap="round" stroke-linejoin="round">
+                <polyline points="20 6 9 17 4 12"></polyline>
+            </svg>
+        </div>
+
+        <h2 style="font-family: var(--font-heading); color: var(--color-text-main); margin-bottom: 15px;">Registre completat amb èxit!</h2>
+        
+        <p style="color: var(--color-secondary); font-size: 16px; line-height: 1.6; margin-bottom: 35px;">
+            Les teues dades s'han enviat correctament. Actualment el teu compte està <strong>pendent d'aprovació</strong> pels nostres tècnics.
+            Rebràs un correu electrònic quan el teu accés siga habilitat o inicia sessió per a comprovar l'estat.
+        </p>
+
+        <a th:href="@{/}" class="btn-primary btn-block" style="text-decoration: none; justify-content: center;">
+            Torna a l'inici
+        </a>
+
+        <div class="login-footer" style="margin-top: 25px;">
+            <p>Tens algun dubte?</p>
+            <a href="mailto:suport@sgovi.uji.es" style="color: var(--color-primary-hover); font-weight: 600; text-decoration: none; font-size: 14px;">Contacta amb suport</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>

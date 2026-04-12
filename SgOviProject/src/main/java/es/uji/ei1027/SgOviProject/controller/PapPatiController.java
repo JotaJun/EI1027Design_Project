@@ -21,16 +21,18 @@ public class PapPatiController {
     private PapPatiDao papPatiDao;
 
 
-    @GetMapping("/registre")
+    @GetMapping("/registre") //seria ("/register/pappati")
     public String mostrarFormulariPap(Model model, HttpSession session) {
 
-        String dni = (String) session.getAttribute("dniEnRegistro");
+        String dni = (String) session.getAttribute("dniEnRegistro"); //seria creo que: session.getAttribute("pendingAccount").getDni()
 
         if (dni == null) {
-            return "redirect:/login";
+            return "redirect:/login"; //seria redirect:/register diria
         }
 
         // Preparamos el objeto y le inyectamos el DNI
+        //esto ya lo hace la interfaz e implentacion de serviceRegister mira mi codigo o el de juan tb te recomiendo que lo hagas abajo
+        //porque puedes acceder a pendingAccount en el httpsession que viene de mi pagina de registro
         PapPati papPati = new PapPati();
         papPati.setDni(dni);
 
@@ -52,6 +54,12 @@ public class PapPatiController {
 
         papPatiDao.addPapPati(papPati);
 
-        return "redirect:/postregistro";
+        return "redirect:/postregistro"; //aqui: "/register/pappati/done"
+    }
+
+    //
+    @GetMapping("/register/pappati/done")
+    public String done() {
+        return "register_done";
     }
 }

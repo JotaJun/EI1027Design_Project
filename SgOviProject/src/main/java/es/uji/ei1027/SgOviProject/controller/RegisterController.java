@@ -10,10 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestMethod;
-import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 
@@ -24,13 +21,13 @@ public class RegisterController {
     @Autowired
     private IntAccountRegisterSvc registerService;
 
-    @RequestMapping("/register")
+    @GetMapping("/register")
     public String register(Model model) {
         model.addAttribute("account", new Account());
         return "register";
     }
 
-    @RequestMapping(value="/register", method=RequestMethod.POST)
+    @PostMapping("/register") //se puede hacer con requestmapping peor parece ser que en versiones nuevas de spring se usa esto
     public String doRegister(@ModelAttribute("account") Account account, BindingResult bindingResult, @RequestParam("type") AccountType accountType, HttpSession session) {
         RegisterValidator registerValidator = new RegisterValidator();
         registerValidator.validate(account, bindingResult);
@@ -56,6 +53,9 @@ public class RegisterController {
         switch (accountType) {
             case OVIUSER:
                 registerService.addOviUser(account, new OviUser());
+
+                //el registro de oviuser lo gestionamos de momento ais para probar que va bien el register_done.html, pero
+                //tiene registro especifico como los otros dos
                 session.removeAttribute("pendingAccount");
                 session.removeAttribute("chosenType");
                 return "redirect:/register/oviuser/done";
@@ -72,7 +72,7 @@ public class RegisterController {
 
     }
 
-    @RequestMapping("/register/oviuser/done")
+    @GetMapping("/register/oviuser/done")
     public String done() {
         return "register_done"; 
     }

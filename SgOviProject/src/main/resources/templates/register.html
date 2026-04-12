@@ -1,0 +1,161 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registrar-se - SgOVI</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+    <style>
+        .input-error { border-color: #EF4444 !important; background-color: #FEF2F2 !important; }
+        .error-message { color: #EF4444; font-size: 12px; font-weight: 600; margin-top: 5px; display: block; padding-left: 5px; }
+    </style>
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<div class="login-container">
+    <div class="login-card" style="max-width: 550px; margin-top: 50px; margin-bottom: 50px;">
+
+        <div class="login-header">
+            <div class="logo-box">
+                <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
+                SgOVI
+            </div>
+            <p class="system-name">SISTEMA DE GESTIÓ DE L'OFICINA PER LA VIDA INDEPENDENT</p>
+            <h2>Crea el teu compte</h2>
+            <p class="login-subtitle">Omple les dades per començar el registre</p>
+        </div>
+
+        <form th:action="@{/register}" th:object="${account}" method="post" class="login-form" novalidate>
+
+            <div class="form-group">
+                <label for="name">Nom</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M20 21v-2a4 4 0 0 0-4-4H8a4 4 0 0 0-4 4v2"></path><circle cx="12" cy="7" r="4"></circle></svg>
+                    <input type="text" id="name" th:field="*{name}" placeholder="El teu nom" maxlength="30" th:classappend="${#fields.hasErrors('name')} ? 'input-error' : ''" required autofocus>
+                </div>
+                <span th:if="${#fields.hasErrors('name')}" th:errors="*{name}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="surname">Cognoms</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
+                    <input type="text" id="surname" th:field="*{surname}" placeholder="Els teus cognoms" maxlength="50" th:classappend="${#fields.hasErrors('surname')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('surname')}" th:errors="*{surname}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="dni">DNI</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="16" rx="2"></rect><line x1="7" y1="8" x2="17" y2="8"></line><line x1="7" y1="12" x2="17" y2="12"></line><line x1="7" y1="16" x2="13" y2="16"></line></svg>
+                    <input type="text" id="dni" th:field="*{dni}" placeholder="12345678A" maxlength="9" th:classappend="${#fields.hasErrors('dni')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="email">Email</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path><polyline points="22,6 12,13 2,6"></polyline></svg>
+                    <input type="email" id="email" th:field="*{email}" placeholder="email@exemple.com" maxlength="30" th:classappend="${#fields.hasErrors('email')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="phoneNumber">Telèfon</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 16.92v3a2 2 0 0 1-2.18 2 19.79 19.79 0 0 1-8.63-3.07 19.5 19.5 0 0 1-6-6 19.79 19.79 0 0 1-3.07-8.67A2 2 0 0 1 4.11 2h3a2 2 0 0 1 2 1.72 12.84 12.84 0 0 0 .7 2.81 2 2 0 0 1-.45 2.11L8.09 9.91a16 16 0 0 0 6 6l1.27-1.27a2 2 0 0 1 2.11-.45 12.84 12.84 0 0 0 2.81.7A2 2 0 0 1 22 16.92z"></path></svg>
+                    <input type="tel" id="phoneNumber" th:field="*{phoneNumber}" placeholder="666555444" maxlength="9" th:classappend="${#fields.hasErrors('phoneNumber')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('phoneNumber')}" th:errors="*{phoneNumber}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="birthday">Data de naixement</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect><line x1="16" y1="2" x2="16" y2="6"></line><line x1="8" y1="2" x2="8" y2="6"></line><line x1="3" y1="10" x2="21" y2="10"></line></svg>
+                    <input type="date" id="birthday" th:field="*{birthday}" th:classappend="${#fields.hasErrors('birthday')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('birthday')}" th:errors="*{birthday}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="gender">Gènere</label>
+                <div class="select-wrapper">
+                    <select id="gender" th:field="*{gender}" th:classappend="${#fields.hasErrors('gender')} ? 'input-error' : ''" required>
+                        <option value="" disabled selected>Selecciona gènere</option>
+                        <option value="M">Masculí</option>
+                        <option value="F">Femení</option>
+                        <option value="X">Altre / No binari</option>
+                    </select>
+                </div>
+                <span th:if="${#fields.hasErrors('gender')}" th:errors="*{gender}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="city">Ciutat</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21h18"></path><path d="M3 7v1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7m0 1a3 3 0 0 0 6 0V7H3"></path><path d="M19 21V11"></path><path d="M5 21V11"></path></svg>
+                    <input type="text" id="city" th:field="*{city}" placeholder="Castelló" maxlength="30" th:classappend="${#fields.hasErrors('city')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="street">Carrer</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 12h18"></path><path d="M3 6h18"></path><path d="M3 18h18"></path></svg>
+                    <input type="text" id="street" th:field="*{street}" placeholder="Carrer..." maxlength="30" th:classappend="${#fields.hasErrors('street')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('street')}" th:errors="*{street}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="zipCode">Codi Postal</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 10c0 7-9 13-9 13s-9-6-9-13a9 9 0 0 1 18 0z"></path><circle cx="12" cy="10" r="3"></circle></svg>
+                    <input type="text" id="zipCode" th:field="*{zipCode}" placeholder="12006" maxlength="5" th:classappend="${#fields.hasErrors('zipCode')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('zipCode')}" th:errors="*{zipCode}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="password">Contrasenya</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect><path d="M7 11V7a5 5 0 0 1 10 0v4"></path></svg>
+                    <input type="password" id="password" minlength="8" th:field="*{password}" placeholder="••••••••" maxlength="100" th:classappend="${#fields.hasErrors('password')} ? 'input-error' : ''" required>
+                </div>
+                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
+            </div>
+
+            <div class="form-group">
+                <label for="type">Tipus de compte</label>
+                <div class="select-wrapper">
+                    <select id="type" name="type" required>
+                        <option value="OVIUSER">Usuari OVI</option>
+                        <option value="PAPPATI">Personal d'assistència professional</option>
+                        <option value="LEGALGUARDIAN">Tutor Legal</option>
+                    </select>
+                </div>
+            </div>
+
+            <button type="submit" class="btn-primary btn-block btn-login">Següent pas</button>
+        </form>
+
+        <div class="login-footer">
+            <p>Ja tens un compte?</p>
+            <a th:href="@{/login}" class="btn-outline btn-block">Inicia sessió</a>
+        </div>
+
+    </div>
+</div>
+
+</body>
+</html>
