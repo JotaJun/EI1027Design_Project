@@ -64,7 +64,7 @@
             </div>
         </div>
 
-        <section class="actions-section">
+        <section class="actions-section" th:if="${session.account != null and session.account.status.name() == 'ACCEPTED'}">
             <h2 class="section-title">Accions principals</h2>
 
             <div class="dashboard-cards-grid">
