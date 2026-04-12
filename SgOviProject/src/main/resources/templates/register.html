@@ -17,10 +17,10 @@
 </head>
 <body>
 
-<div class="login-container">
+<main class="login-container">
     <div class="login-card" style="max-width: 550px; margin-top: 50px; margin-bottom: 50px;">
 
-        <div class="login-header">
+        <header class="login-header">
             <div class="logo-box">
                 <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
                 SgOVI
@@ -28,10 +28,10 @@
             <p class="system-name">SISTEMA DE GESTIÓ DE L'OFICINA PER LA VIDA INDEPENDENT</p>
             <h2>Crea el teu compte</h2>
             <p class="login-subtitle">Omple les dades per començar el registre</p>
-        </div>
+        </header>
 
         <form th:action="@{/register}" th:object="${account}" method="post" class="login-form" novalidate>
-
+            <!-- ... rest of form ... -->
             <div class="form-group">
                 <label for="name">Nom</label>
                 <div class="input-wrapper">
@@ -149,13 +149,13 @@
             <button type="submit" class="btn-primary btn-block btn-login">Següent pas</button>
         </form>
 
-        <div class="login-footer">
+        <footer class="login-footer">
             <p>Ja tens un compte?</p>
             <a th:href="@{/login}" class="btn-outline btn-block">Inicia sessió</a>
-        </div>
+        </footer>
 
     </div>
-</div>
+</main>
 
 </body>
 </html>
