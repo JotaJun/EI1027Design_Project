@@ -47,7 +47,7 @@
         </div>
 
         <!-- Formulari -->
-        <form th:action="@{/registre}" th:object="${papData}" method="post" class="login-form">
+        <form th:action="@{/pappati/register}" th:object="${papData}" method="post" class="login-form">
 
             <!-- Camp ocult: DNI (ve del pas anterior) -->
             <input type="hidden" th:field="*{dni}">

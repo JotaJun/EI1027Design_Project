@@ -15,11 +15,6 @@ public class PapPatiValidator implements Validator {
     public void validate(Object target, Errors errors) {
         PapPati papPati = (PapPati) target;
 
-        // Validació del DNI (camp intern, no ha d'estar buit mai)
-        if (papPati.getDni() == null || papPati.getDni().trim().isEmpty()) {
-            errors.rejectValue("dni", "required", "Error intern: S'ha perdut la referència del DNI");
-        }
-
         // Validació del tipus de personal (enum)
         if (papPati.getStaffType() == null) {
             errors.rejectValue("staffType", "required", "El tipus de personal és obligatori");

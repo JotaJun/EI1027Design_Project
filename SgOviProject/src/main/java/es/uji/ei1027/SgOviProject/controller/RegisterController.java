@@ -58,10 +58,11 @@ public class RegisterController {
                 //tiene registro especifico como los otros dos
                 session.removeAttribute("pendingAccount");
                 session.removeAttribute("chosenType");
-                return "redirect:/register/oviuser/done";
+                return "redirect:/register/done";
+
 
             case PAPPATI:
-                return "redirect:/register/pappati";
+                return "redirect:/pappati/register";
 
             case LEGALGUARDIAN:
                 return "redirect:/register/legalguardian";
@@ -72,7 +73,7 @@ public class RegisterController {
 
     }
 
-    @GetMapping("/register/oviuser/done")
+    @GetMapping("/register/done")
     public String done() {
         return "register_done"; 
     }
