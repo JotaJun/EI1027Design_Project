@@ -2,6 +2,7 @@ package es.uji.ei1027.SgOviProject.dao;
 
 import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.LoginDetails;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
@@ -71,8 +72,18 @@ public class AccountDao {
 
     public Account getAccountByLoginDetails(LoginDetails details){
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM Account WHERE email=? and password=?",
-                    new AccountRowMapper(), details.getEmail(), details.getPassword());
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            Account account = jdbcTemplate.queryForObject("SELECT * FROM Account WHERE email=?",
+                    new AccountRowMapper(), details.getEmail());
+            if (passwordEncryptor.checkPassword(details.getPassword(), account.getPassword())) {
+                // quitar contraseña para seguridad
+                account.setPassword(null);
+                return account;
+            }else {
+                return null;
+            }
+
+
         } catch(EmptyResultDataAccessException e) {
             return null;
         }

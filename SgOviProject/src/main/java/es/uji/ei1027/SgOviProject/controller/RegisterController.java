@@ -6,6 +6,7 @@ import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.IntAccountRegisterSvc;
 import jakarta.servlet.http.HttpSession;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -46,7 +47,13 @@ public class RegisterController {
             return "register";
         }
 
-        account.setStatus(Status.PENDING);
+        // ENCRIPTACIÓN DE LA CONTRASEÑA
+        BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+        String encriptedPassword = passwordEncryptor.encryptPassword(account.getPassword());
+        account.setPassword(encriptedPassword);
+
+        // COMENTARIO JUAN: no hace falta esto, ya que en la clase Account por defecto ya es PENDING, así nos quitamos líos de cabeza
+        // account.setStatus(Status.PENDING);
         session.setAttribute("pendingAccount", account);
         session.setAttribute("chosenType", accountType);
 
