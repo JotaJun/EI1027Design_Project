@@ -6,7 +6,7 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Scanner;
 
-public class GeneradorPasswords {
+public class VisualizadorPasswords {
 
     public static void main(String[] args) {
         BasicPasswordEncryptor encryptor = new BasicPasswordEncryptor();
