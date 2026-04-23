@@ -2,7 +2,6 @@ package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
-import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.IntAccountRegisterSvc;
 import jakarta.servlet.http.HttpSession;
@@ -49,8 +48,8 @@ public class RegisterController {
 
         // ENCRIPTACIÓN DE LA CONTRASEÑA
         BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
-        String encriptedPassword = passwordEncryptor.encryptPassword(account.getPassword());
-        account.setPassword(encriptedPassword);
+        String encryptedPassword = passwordEncryptor.encryptPassword(account.getPassword());
+        account.setPassword(encryptedPassword);
 
         // COMENTARIO JUAN: no hace falta esto, ya que en la clase Account por defecto ya es PENDING, así nos quitamos líos de cabeza
         // account.setStatus(Status.PENDING);
@@ -81,7 +80,8 @@ public class RegisterController {
     }
 
     @GetMapping("/register/done")
-    public String done() {
-        return "register_done"; 
+    public String done(HttpSession session) {
+        session.invalidate();
+        return "register_done";
     }
 }
