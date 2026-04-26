@@ -23,7 +23,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         return DataSourceBuilder.create().build();
     }
 
-    // Este método se encargará de que en todos los htmls se esté registrado previamente
+    // Este método existe para especificar los htmls que necesiten excluyan a ciertos tipos de cuenta
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
@@ -58,7 +58,4 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/legalGuardian/**"
                 );
     }
-}
-
-
 }

@@ -1,0 +1,25 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<body>
+
+<header th:fragment="user-returnMain-header" class="simple-form-header">
+    <div class="container header-inner-simple">
+
+        <div class="logo">
+            <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
+            SgOVI
+        </div>
+
+        <a th:href="@{/oviUser/main}" class="btn-back">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <line x1="19" y1="12" x2="5" y2="12"></line>
+                <polyline points="12 19 5 12 12 5"></polyline>
+            </svg>
+            Tornar a l'inici
+        </a>
+
+    </div>
+</header>
+
+</body>
+</html>
