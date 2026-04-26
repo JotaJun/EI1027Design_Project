@@ -5,6 +5,8 @@ import es.uji.ei1027.SgOviProject.model.LoginDetails;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.time.LocalDate;
+
 public class AssistanceRequestValidator implements Validator {
 
     @Override
@@ -20,16 +22,20 @@ public class AssistanceRequestValidator implements Validator {
             errors.rejectValue("assistantType", "required", "Has de seleccionar un tipus d'assistent");
         }
 
+        if (request.getCity() == null || request.getCity().trim().isEmpty()){
+            errors.rejectValue("city", "required", "La població on es donarà el servei és obligatòria");
+        } else if (request.getCity().length() > 30) {
+            errors.rejectValue("city", "tooLong", "La població no pot superar els 30 caràcters");
+        }
+
         if (request.getInitialDateRequired() == null) {
             errors.rejectValue("initialDateRequired", "required", "La data d'inici és obligatòria");
+        } else if (request.getInitialDateRequired().isBefore(LocalDate.now())) {
+            errors.rejectValue("initialDateRequired", "pastDate", "La data d'inici no pot ser anterior a la data actual");
         }
 
         if (request.getMonthsRequired() < 1) {
             errors.rejectValue("monthsRequired", "tooShort", "La duració ha de ser d'almenys 1 mes");
-        }
-
-        if (request.getCity() != null && request.getCity().length() > 30) {
-            errors.rejectValue("city", "tooLong", "La població no pot superar els 30 caràcters");
         }
 
         if (request.getYearsOfExperience() != null && request.getYearsOfExperience() < 0) {

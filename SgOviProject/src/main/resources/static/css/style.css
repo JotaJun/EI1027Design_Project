@@ -9,6 +9,19 @@
     --color-border-main: #E5E7EB;
     --color-border-light: #F3F4F6;
 
+    /* Éxito / Aceptado */
+    --color-success-bg: #DCFCE7;
+    --color-success-text: #15803D;
+
+    /* Pendiente / Advertencia */
+    --color-pending-bg: #FEF3C7;
+    --color-pending-text: #713F12;
+
+    /* Peligro / Rechazado / Error */
+    --color-danger-bg: #FEE2E2;
+    --color-danger-text: #B91C1C;
+    --color-danger-border: #FCA5A5;
+
     --font-heading: 'Poppins', sans-serif;
     --font-body: 'Inter', sans-serif;
 }
@@ -436,13 +449,13 @@ select:focus {
 
 /* Alerta de error */
 .alert-danger {
-    background-color: #FEE2E2;
-    color: #B91C1C;
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-text);
+    border: 1px solid var(--color-danger-border);
     padding: 12px;
     border-radius: 8px;
     margin-bottom: 20px;
     font-size: 14px;
-    border: 1px solid #FCA5A5;
     text-align: center;
 }
 
@@ -550,18 +563,18 @@ select:focus {
 
 /* --- COLORES PARA LOS ESTADOS DE LA CUENTA --- */
 .badge-accepted {
-    background-color: #DCFCE7;
-    color: #15803D;
+    background-color: var(--color-success-bg);
+    color: var(--color-success-text);
 }
 
 .badge-pending {
-    background-color: #FEF3C7; /* Fondo amarillo suave */
-    color: #713F12; /* marrón/ámbar oscuro para accesibilidad */
+    background-color: var(--color-pending-bg);
+    color: var(--color-pending-text);
 }
 
 .badge-rejected {
-    background-color: #FEE2E2; /* Fondo rojo suave */
-    color: #B91C1C; /* Texto rojo oscuro */
+    background-color: var(--color-danger-bg);
+    color: var(--color-danger-text);
 }
 
 /* Estilos para la caja de alerta de rechazo */
@@ -575,14 +588,14 @@ select:focus {
 }
 
 .alert-rejected {
-    background-color: #fef2f2; /* Fondo rojo muy claro */
-    border: 1px solid #f87171; /* Borde rojo medio */
-    color: #991b1b;            /* Texto rojo oscuro */
+    background-color: var(--color-danger-bg);
+    border: 1px solid var(--color-danger-border);
+    color: var(--color-danger-text);
 }
 
 .alert-icon {
     flex-shrink: 0;
-    color: #dc2626;            /* Icono rojo vibrante */
+    color: var(--color-danger-text);
 }
 
 .alert-content {
@@ -595,7 +608,7 @@ select:focus {
     margin: 0;
     font-size: 1rem;
     font-weight: 600;
-    color: #991b1b;
+    color: var(--color-danger-text);
 }
 
 .alert-message {
@@ -913,7 +926,7 @@ select:focus {
 
 /* Indicador de campo obligatorio */
 .required-asterisk {
-    color: #B91C1C;
+    color: var(--color-danger-text);
 }
 
 /* Layout de la cabecera con el icono */
@@ -1001,4 +1014,177 @@ select:focus {
 .subtitle-spaced {
     margin-bottom: 35px;
     line-height: 1.6;
+}
+
+
+/* =========================================
+   MODIFICADORES: Listado APRequest
+   ========================================= */
+
+.requests-header-action {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.table-card {
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border-main);
+    border-radius: 12px;
+    box-shadow: 0 4px 20px rgba(0, 0, 0, 0.02);
+    overflow-x: auto;
+}
+
+.styled-table {
+    width: 100%;
+    border-collapse: collapse;
+    text-align: left;
+}
+
+.styled-table thead {
+    background-color: var(--color-secondary);
+}
+
+.styled-table th {
+    font-family: var(--font-body);
+    font-size: 11px;
+    color: var(--color-white); /* Texto blanco para que contraste */
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    padding: 20px 24px;
+    border-bottom: none; /* Quitamos el borde inferior porque con fondo oscuro no hace falta */
+    font-weight: 600;
+}
+
+.styled-table td {
+    padding: 16px 24px;
+    font-size: 14px;
+    color: var(--color-text-main);
+    border-bottom: 1px solid var(--color-border-light);
+    vertical-align: middle;
+}
+
+.styled-table tbody tr:last-child td {
+    border-bottom: none;
+}
+
+.action-btn {
+    background: none;
+    border: none;
+    color: var(--color-secondary);
+    cursor: pointer;
+    transition: color 0.2s ease;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    text-decoration: none; /* Per si usem <a> en comptes de <button> */
+}
+
+.action-btn:hover {
+    color: var(--color-primary);
+}
+
+.table-badge {
+    display: inline-flex;
+    justify-content: center;
+    align-items: center;
+    padding: 6px 16px;
+    border-radius: 50px;
+    font-size: 12px;
+    font-weight: 600;
+    min-width: 90px;
+}
+
+.results-count {
+    text-align: center;
+    font-size: 13px;
+    color: var(--color-secondary);
+    margin-top: 25px;
+}
+
+.empty-state {
+    text-align: center;
+    padding: 40px;
+    background-color: var(--color-white);
+    border: 1px solid var(--color-border-main);
+    border-radius: 12px;
+    color: var(--color-secondary);
+}
+
+
+/* =========================================
+   MODIFICADORES: Detall de la sol·licitud
+   ========================================= */
+
+.header-flex {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 25px;
+}
+
+.detail-section-title {
+    font-family: var(--font-heading);
+    font-size: 18px;
+    color: var(--color-text-main);
+    margin-top: 35px;
+    margin-bottom: 20px;
+    padding-bottom: 10px;
+    border-bottom: 2px solid var(--color-border-main);
+}
+
+.detail-group {
+    margin-bottom: 15px;
+}
+
+.detail-label {
+    display: block;
+    font-weight: 600;
+    font-size: 12px;
+    color: var(--color-secondary);
+    text-transform: uppercase;
+    letter-spacing: 0.5px;
+    margin-bottom: 4px;
+}
+
+.detail-value {
+    font-size: 15px;
+    color: var(--color-text-main);
+}
+
+.detail-description-box {
+    padding: 20px;
+    border: 1px solid var(--color-border-main);
+    border-radius: 8px;
+    background-color: var(--color-background);
+    line-height: 1.6;
+}
+
+/* --- CLASES DE UTILIDAD Y ESTADOS --- */
+
+/* Modificadores de margen */
+.mt-10 {
+    margin-top: 10px;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+/* Modificador para botones con borde superior */
+.actions-bordered {
+    border-top: 2px solid var(--color-border-main);
+    padding-top: 30px;
+}
+
+/* Estados de texto coherentes con los badges */
+.text-success {
+    color: var(--color-success-text);
+    font-weight: 600;
+}
+
+.text-danger {
+    color: var(--color-danger-text);
+    font-weight: 600;
 }

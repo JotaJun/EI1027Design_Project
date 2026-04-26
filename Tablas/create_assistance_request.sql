@@ -6,7 +6,7 @@ CREATE TABLE AssistanceRequest(
 		-- Los que permitan nulos implicará que no importa como restricción
 	assistantType			VARCHAR(4)		NOT NULL,
 	gender					VARCHAR(1),
-	city					VARCHAR(30),
+	city					VARCHAR(30)     NOT NULL,
     drivingLicense          BOOLEAN,
 	yearsOfExperience		INTEGER,
 	initialDateRequired		DATE			NOT NULL,
@@ -23,6 +23,7 @@ CREATE TABLE AssistanceRequest(
 
 	CONSTRAINT chk_assistantType CHECK(assistantType IN ('PAP', 'PATI')),
     CONSTRAINT chk_status CHECK (status IN ('pending', 'accepted', 'rejected')),
+    CONSTRAINT chk_initialDate CHECK (initialDateRequired >= CURRENT_DATE),
 	
 	CONSTRAINT fk_OVIUser_dni FOREIGN KEY (dniOviUser)
 			REFERENCES OviUser(dni)

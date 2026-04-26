@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Les meues sol·licituds - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="requests-header-action">
+            <h2 class="welcome-title">Les meues sol·licituds</h2>
+            <a th:href="@{/assistanceRequest/add}" class="btn-primary">+ Nova sol·licitud</a>
+        </div>
+
+        <div th:if="${#lists.isEmpty(requests)}" class="empty-state">
+            <p>No tens cap sol·licitud registrada en aquest moment.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(requests)}" class="table-card">
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>DATA DE CREACIÓ</th>
+                    <th>TIPUS</th>
+                    <th>POBLACIÓ</th>
+                    <th>DURACIÓ</th>
+                    <th style="text-align: center;">ESTAT</th>
+                    <th style="text-align: center;">ACCIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="req : ${requests}">
+
+                    <td th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
+
+                    <td><strong th:text="${req.assistantType}">PAP</strong></td>
+
+                    <td th:text="${req.city}">Castelló</td>
+
+                    <td th:text="${req.monthsRequired} + ' mesos'">6 mesos</td>
+
+                    <td style="text-align: center;">
+                        <div th:switch="${req.status.name()}">
+                            <span th:case="'PENDING'" class="table-badge badge-pending">Pendent</span>
+
+                            <span th:case="'ACCEPTED'" class="table-badge badge-accepted">Acceptat</span>
+
+                            <span th:case="'REJECTED'" class="table-badge badge-rejected">Rebutjat</span>
+
+                            <span th:case="*" class="table-badge" th:text="${req.status}">Sense estat</span>
+                        </div>
+                    </td>
+
+                    <td style="text-align: center;">
+                        <a th:href="@{/assistanceRequest/details/{id}(id=${req.idApRequest})}" class="action-btn" title="Veure detall">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(requests)}" class="results-count">
+            Mostrant <span th:text="${#lists.size(requests)}">0</span> sol·licituds
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

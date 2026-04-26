@@ -8,10 +8,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
 @Controller
 @RequestMapping("/assistanceRequest")
@@ -36,11 +33,9 @@ public class AssistanceRequestController {
             return "assistanceRequest/add";
         }
 
+        // No hace falta comprobar si es null, ya se encarga interceptor
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
-        if (currentUser == null) {
-            return "redirect:/login";
-        }
 
         // Asignar los datos que faltan
         assistanceRequest.setDniOviUser(currentUser.getDni());
@@ -48,6 +43,33 @@ public class AssistanceRequestController {
         assistanceRequestDao.addAssistanceRequest(assistanceRequest);
 
         return "redirect:/assistanceRequest/done";
+    }
+
+    @GetMapping("/list")
+    public String showList(Model model, HttpSession session) {
+        // No hace falta comprobar si es null, ya se encarga interceptor
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        model.addAttribute("requests", assistanceRequestDao.getAssistanceRequestsByDni(currentUser.getDni()));
+
+        return "assistanceRequest/list";
+    }
+
+    @GetMapping(value="/details/{idApRequest}")
+    public String showDetails(Model model, @PathVariable int idApRequest, HttpSession session) {
+        // No hace falta comprobar si es null, ya se encarga interceptor
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        if (request == null || ! request.getDniOviUser().equals(currentUser.getDni())) {
+            return "redirect:/assistanceRequest/list";
+        }
+
+        model.addAttribute("req", assistanceRequestDao.getAssistanceRequest(idApRequest));
+
+        return "assistanceRequest/details";
     }
 
     @RequestMapping("/done")

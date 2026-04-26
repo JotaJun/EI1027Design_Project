@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject;
 
 import es.uji.ei1027.SgOviProject.enums.AccountType;
+import es.uji.ei1027.SgOviProject.interceptor.AuthInterceptor;
 import es.uji.ei1027.SgOviProject.interceptor.RoleInterceptor;
 import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
@@ -27,6 +28,23 @@ public class SgOviConfiguration implements WebMvcConfigurer {
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
 
+        // Interceptor para autenticaciones
+        registry.addInterceptor(new AuthInterceptor())
+                // Le decimos que vigile TODAS las rutas por defecto
+                .addPathPatterns("/**")
+                // EXCEPCIONES: Rutas que NO necesitan estar logueados
+                .excludePathPatterns(
+                        "/",
+                        "/index",           // La página de inicio pública
+                        "/login",           // Si no, el redireccionamiento hace un bucle
+                        "register",
+                        "register_done",
+                        "/css/**",          // Archivos de estilos
+                        "/images/**"        // Imágenes
+                );
+
+        // Interceptor para roles
+
         // /** significa esta ruta y cualquier sub-ruta que cuelgue de ella
 
         // OVIUSER
@@ -34,7 +52,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                 .addPathPatterns(
                         "/oviUser/**",
                         "/assistanceRequest/add",       // Ruta específica
-                        "/assistanceRequest/list"       // Ruta específica
+                        "/assistanceRequest/list",       // Ruta específica
+                        "assistanceRequest/details/**"
                 );
 
         // TECHNICIAN
