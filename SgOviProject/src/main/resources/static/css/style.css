@@ -281,24 +281,6 @@ body {
     margin-bottom: 30px;
 }
 
-.logo-box {
-    display: inline-flex;
-    align-items: center;
-    gap: 8px;
-    font-size: 22px;
-    font-family: var(--font-heading);
-    color: var(--color-text-main);
-    margin-bottom: 15px;
-}
-
-.sg-badge {
-    background-color: var(--color-primary);
-    color: var(--color-text-main);
-    padding: 4px 8px;
-    border-radius: 8px;
-    font-weight: 700;
-    font-size: 16px;
-}
 
 .system-name {
     font-size: 11px;
@@ -771,4 +753,252 @@ select:focus {
 .simple-footer p {
     color: var(--color-secondary);
     font-size: 13px;
+}
+
+
+/* --- FORMULARIO DE ASISTENCIA --- */
+
+.assistance-card {
+    max-width: 850px;
+    margin: 0 auto 3rem auto; /* Margen superior 0, margen inferior 3rem */
+    padding: 40px;
+    background-color: var(--color-white);
+
+    /* Lo nuevo para redondear y enmarcar */
+    border: 1px solid var(--color-border-main); /* Línea que lo rodea */
+    border-radius: 16px; /* Curvatura de las esquinas */
+    box-shadow: 0 4px 20px rgba(0,0,0,0.04); /* Sombra suave para darle profundidad */
+}
+
+.card-header-section {
+    margin-bottom: 25px;
+}
+
+.card-title {
+    font-family: var(--font-heading);
+    color: var(--color-text-main);
+    font-size: 1.5rem;
+    margin-bottom: 8px;
+}
+
+.card-subtitle {
+    color: var(--color-secondary);
+    font-size: 0.95rem;
+}
+
+/* Layout en rejilla de 2 columnas */
+.form-grid {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px 30px;
+}
+
+.form-full-width {
+    grid-column: span 2;
+    margin-top: 10px;
+}
+
+/* Adaptación para pantallas pequeñas */
+@media (max-width: 600px) {
+    .form-grid {
+        grid-template-columns: 1fr;
+    }
+    .form-full-width {
+        grid-column: span 1;
+    }
+}
+
+
+
+/* Checkbox personalizado */
+.checkbox-container {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    margin: 20px 0;
+    cursor: pointer;
+}
+
+.checkbox-container input[type="checkbox"] {
+    width: 18px;
+    height: 18px;
+    accent-color: var(--color-primary);
+    cursor: pointer;
+}
+
+.checkbox-container label {
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* Mensajes de error */
+.error-text {
+    color: #dc3545;
+    font-size: 0.8em;
+    margin-top: 5px;
+    display: block;
+}
+
+
+/* --- HEADER SIMPLE (PARA FORMULARIOS) --- */
+
+.simple-form-header {
+    background-color: var(--color-white);
+    padding: 15px 0;
+    /* La sombra ligera ayuda a separarlo del fondo gris de la página */
+    box-shadow: 0 2px 10px rgba(0,0,0,0.02);
+}
+
+.header-inner-simple {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+}
+
+/* Botón de volver al inicio */
+.btn-back {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background-color: var(--color-white);
+    color: var(--color-secondary);
+    border: 1px solid var(--color-border-main);
+    padding: 8px 16px;
+    border-radius: 8px;
+    font-size: 14px;
+    font-weight: 500;
+    text-decoration: none;
+    transition: all 0.2s ease;
+}
+
+.btn-back:hover {
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    border-color: var(--color-secondary);
+}
+
+
+/* Estilos generales para inputs dentro de este formulario específico */
+.assistance-form label {
+    display: block;
+    font-weight: 600;
+    font-size: 13px;
+    margin-bottom: 8px;
+    color: var(--color-text-main);
+}
+
+.assistance-form input[type="text"],
+.assistance-form input[type="date"],
+.assistance-form input[type="number"],
+.assistance-form select,
+.assistance-form textarea {
+    width: 100%;
+    padding: 12px 15px;
+    border: 1px solid var(--color-border-main);
+    border-radius: 8px;
+    font-family: var(--font-body);
+    font-size: 14px;
+    background-color: var(--color-background);
+    color: var(--color-text-main);
+    transition: all 0.3s ease;
+}
+
+.assistance-form input:focus,
+.assistance-form select:focus,
+.assistance-form textarea:focus {
+    outline: none;
+    background-color: var(--color-white);
+    border-color: var(--color-primary);
+}
+
+/* Indicador de campo obligatorio */
+.required-asterisk {
+    color: #B91C1C;
+}
+
+/* Layout de la cabecera con el icono */
+.card-header-icon-layout {
+    display: flex;
+    align-items: flex-start;
+    justify-content: center; /* Esto centra el icono y el texto juntos */
+    gap: 15px;
+    max-width: 850px; /* Mismo ancho que la tarjeta para que queden alineados */
+    margin: 0 auto; /* Centra el bloque entero en la pantalla */
+}
+
+.card-header-icon-layout .icon-square {
+    margin-bottom: 0;
+    width: 45px;
+    height: 45px;
+    font-size: 20px;
+    flex-shrink: 0;
+}
+
+/* Layout de los botones centrados con iconos */
+.form-actions-centered {
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    margin-top: 40px;
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    min-width: 200px;
+}
+
+/* Ajustes específicos para el textarea */
+.assistance-form .textarea-wrapper {
+    border: 1px solid var(--color-border-main);
+    border-radius: 8px;
+    background-color: var(--color-background);
+}
+
+.assistance-form .textarea-wrapper textarea {
+    border: none;
+    background: transparent;
+    padding: 15px;
+    width: 100%;
+    min-height: 120px;
+    font-family: var(--font-body);
+    resize: vertical;
+    outline: none;
+}
+
+/* Utilidad de margen */
+.mt-15 {
+    margin-top: 15px;
+}
+
+
+/* =========================================
+   MODIFICADORES: PÁGINA DE ÉXITO / CONFIRMACIÓN
+   ========================================= */
+
+/* Centrar el contenido de la tarjeta */
+.login-card-success {
+    text-align: center;
+}
+
+/* Centrar el logo en páginas específicas */
+.logo-centered {
+    justify-content: center;
+    margin-bottom: 20px;
+}
+
+/* Hacer el icono cuadrado más grande y circular para mensajes de éxito */
+.icon-large-circle {
+    width: 80px;
+    height: 80px;
+    border-radius: 50%;
+    margin-bottom: 20px;
+}
+
+/* Espaciado extra para subtítulos de confirmación */
+.subtitle-spaced {
+    margin-bottom: 35px;
+    line-height: 1.6;
 }

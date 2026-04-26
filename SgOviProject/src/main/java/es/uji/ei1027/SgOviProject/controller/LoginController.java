@@ -67,19 +67,33 @@ public class LoginController {
             }
 
             // Servicio comprueba que el tipo + cuenta coinciden
-            if (!loginService.authenticate(details, account.getDni())){
+            Object specificAccount = loginService.authenticate(details, account.getDni());
+            if (specificAccount == null){
                 bindingResult.rejectValue("accountType", "wrongAccountType", "Tipus de compte incorrecte");
                 return "login";
             }
 
             session.setAttribute("account", account);
 
-            // Configuramos la ruta de destino según el rol
+            // Configuramos la ruta de destino según el rol y agregamos la cuenta
             switch (details.getAccountType()){
-                case OVIUSER -> targetUrl = "redirect:/oviUser/main";
-                case PAPPATI -> targetUrl = "redirect:/papPati/main";
-                case LEGALGUARDIAN -> targetUrl = "redirect:/legalGuardian/main";
-                default -> { return "login"; }
+                case OVIUSER :
+                    targetUrl = "redirect:/oviUser/main";
+                    OviUser oviUser = (OviUser) specificAccount;
+                    session.setAttribute("specificAccount", oviUser);
+                    break;
+                case PAPPATI:
+                    targetUrl = "redirect:/papPati/main";
+                    PapPati papPati = (PapPati) specificAccount;
+                    session.setAttribute("specificAccount", papPati);
+                    break;
+                case LEGALGUARDIAN:
+                    targetUrl = "redirect:/legalGuardian/main";
+                    LegalGuardian legalGuardian = (LegalGuardian) specificAccount;
+                    session.setAttribute("specificAccount", legalGuardian);
+                    break;
+                default:
+                    return "login";
             }
         }
 

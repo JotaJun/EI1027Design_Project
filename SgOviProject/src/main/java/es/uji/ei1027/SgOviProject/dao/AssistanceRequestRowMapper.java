@@ -1,5 +1,6 @@
 package es.uji.ei1027.SgOviProject.dao;
 
+import es.uji.ei1027.SgOviProject.enums.Gender;
 import es.uji.ei1027.SgOviProject.enums.StaffType;
 import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
@@ -22,7 +23,11 @@ public final class AssistanceRequestRowMapper implements RowMapper<AssistanceReq
             request.setAssistantType(StaffType.valueOf(typeStr));
         }
 
-        request.setGender(rs.getString("gender"));
+        String gender = rs.getString("gender");
+        if (gender != null){
+            request.setGender(Gender.valueOf(gender));
+        }
+
         request.setCity(rs.getString("city"));
         request.setDrivingLicense(rs.getObject("drivingLicense", Boolean.class));
         request.setYearsOfExperience(rs.getObject("yearsOfExperience", Integer.class));

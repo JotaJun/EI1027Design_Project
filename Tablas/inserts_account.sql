@@ -52,9 +52,9 @@ INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber,
 -- ==========================================
 
 -- OviUsers: Aceptamos a Lucas y rechazamos a Hugo
-UPDATE Account SET status = 'accepted' WHERE dni = '77777777Q'; -- Lucas
-UPDATE Account SET status = 'rejected', deniedReason = 'Documentación incompleta' WHERE dni = '99999999S'; -- Hugo
+UPDATE Account SET status = 'accepted' WHERE email = 'lucas.m@email.com'; -- Lucas
+UPDATE Account SET status = 'rejected', deniedReason = 'Documentación incompleta' WHERE email = 'hblasco@outlook.es'; -- Hugo
 
 -- PAPati: Aceptamos a Marcos y rechazamos a Sara
-UPDATE Account SET status = 'accepted' WHERE dni = '40404040D'; -- Marcos
-UPDATE Account SET status = 'rejected', deniedReason = 'No cumple con los requisitos de zona' WHERE dni = '50505050E'; -- Sara
+UPDATE Account SET status = 'accepted' WHERE email = 'mtorres@pap.es'; -- Marcos
+UPDATE Account SET status = 'rejected', deniedReason = 'No cumple con los requisitos de zona' WHERE email = 'screspo@pap.es'; -- Sara

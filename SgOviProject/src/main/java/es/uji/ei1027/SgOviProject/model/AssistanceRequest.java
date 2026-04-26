@@ -1,5 +1,6 @@
 package es.uji.ei1027.SgOviProject.model;
 
+import es.uji.ei1027.SgOviProject.enums.Gender;
 import es.uji.ei1027.SgOviProject.enums.StaffType;
 import es.uji.ei1027.SgOviProject.enums.Status;
 import java.time.LocalDate;
@@ -11,7 +12,7 @@ public class AssistanceRequest {
 
     // Parámetros de búsqueda
     private StaffType assistantType;
-    private String gender;
+    private Gender gender;
     private String city;
     private Boolean drivingLicense;
     private Integer yearsOfExperience;
@@ -22,7 +23,7 @@ public class AssistanceRequest {
     private Status status = Status.PENDING;
     private String deniedReason;
     private String dniOviUser;
-    private boolean approvedByGuardian;
+    private Boolean approvedByGuardian;
     private String dniLegalGuardian;
 
     public int getIdApRequest() {
@@ -57,11 +58,11 @@ public class AssistanceRequest {
         this.assistantType = assistantType;
     }
 
-    public String getGender() {
+    public Gender getGender() {
         return gender;
     }
 
-    public void setGender(String gender) {
+    public void setGender(Gender gender) {
         this.gender = gender;
     }
 
@@ -129,11 +130,11 @@ public class AssistanceRequest {
         this.dniOviUser = dniOviUser;
     }
 
-    public boolean isApprovedByGuardian() {
+    public Boolean getApprovedByGuardian() {
         return approvedByGuardian;
     }
 
-    public void setApprovedByGuardian(boolean approvedByGuardian) {
+    public void setApprovedByGuardian(Boolean approvedByGuardian) {
         this.approvedByGuardian = approvedByGuardian;
     }
 
@@ -152,7 +153,7 @@ public class AssistanceRequest {
                 ", creationDate=" + creationDate +
                 ", description='" + description + '\'' +
                 ", assistantType=" + assistantType +
-                ", gender='" + gender + '\'' +
+                ", gender=" + gender +
                 ", city='" + city + '\'' +
                 ", drivingLicense=" + drivingLicense +
                 ", yearsOfExperience=" + yearsOfExperience +

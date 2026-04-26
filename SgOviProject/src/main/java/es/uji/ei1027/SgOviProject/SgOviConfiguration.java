@@ -33,23 +33,20 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER))
                 .addPathPatterns(
                         "/oviUser/**",
-                        "/assistanceRequest/add",      // Ruta específica
-                        "/assistanceRequest/myList"    // Ruta específica
+                        "/assistanceRequest/add",       // Ruta específica
+                        "/assistanceRequest/list"       // Ruta específica
                 );
 
         // TECHNICIAN
         registry.addInterceptor(new RoleInterceptor(AccountType.TECHNICIAN))
                 .addPathPatterns(
-                        "/technician/**",
-                        "/assistanceRequest/accept/**", // Ruta específica para técnicos
-                        "/assistanceRequest/reject/**",
-                        "/assistanceRequest/all"
+                        "/technician/**" // faltan por poner; por ejemplo las de assistance request
                 );
 
         // PAPPATI
         registry.addInterceptor(new RoleInterceptor(AccountType.PAPPATI))
                 .addPathPatterns(
-                        "/pappati/**"
+                        "/papPati/**"
                 );
 
         // LEGALGUARDIAN

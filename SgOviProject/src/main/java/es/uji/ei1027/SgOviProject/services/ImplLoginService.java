@@ -1,6 +1,5 @@
 package es.uji.ei1027.SgOviProject.services;
 
-import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.LegalGuardianDao;
 import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
@@ -21,13 +20,13 @@ public class ImplLoginService implements  IntLoginService{
     LegalGuardianDao legalGuardianDao;
 
     @Override
-    public boolean authenticate(LoginDetails details, String dni) {
+    public Object authenticate(LoginDetails details, String dni) {
 
         return switch (details.getAccountType()) {
-            case OVIUSER -> oviUserDao.getOviUser(dni) != null;
-            case PAPPATI -> papPatiDao.getPapPati(dni) != null;
-            case LEGALGUARDIAN -> legalGuardianDao.getLegalGuardian(dni) != null;
-            default -> false;
+            case OVIUSER -> oviUserDao.getOviUser(dni);
+            case PAPPATI -> papPatiDao.getPapPati(dni);
+            case LEGALGUARDIAN -> legalGuardianDao.getLegalGuardian(dni);
+            default -> null;
         };
 
     }
