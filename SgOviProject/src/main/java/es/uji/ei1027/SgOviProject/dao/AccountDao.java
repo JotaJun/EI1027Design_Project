@@ -54,8 +54,10 @@ public class AccountDao {
 
     public Account getAccount(String dni) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM Account WHERE dni=?",
+            Account account = jdbcTemplate.queryForObject("SELECT * FROM Account WHERE dni=?",
                     new AccountRowMapper(), dni);
+            account.setPassword(null);
+            return account;
         } catch(EmptyResultDataAccessException e) {
             return null;
         }
@@ -63,8 +65,10 @@ public class AccountDao {
 
     public Account getAccountByEmail(String email) {
         try {
-            return jdbcTemplate.queryForObject("SELECT * FROM Account WHERE email=?",
+            Account account = jdbcTemplate.queryForObject("SELECT * FROM Account WHERE email=?",
                     new AccountRowMapper(), email);
+            account.setPassword(null);
+            return account;
         } catch(EmptyResultDataAccessException e) {
             return null;
         }
