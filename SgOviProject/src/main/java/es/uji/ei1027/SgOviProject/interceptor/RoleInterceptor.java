@@ -26,9 +26,19 @@ public class RoleInterceptor implements HandlerInterceptor {
 
         String currentRole = (String) session.getAttribute("userRole");
 
-        // Comprobamos si el rol coincide con el que requiere este interceptor
+        // Si hay usuario, pero NO tiene el rol adecuado
         if (currentRole == null || !currentRole.equals(requiredRole.name())) {
-            response.sendRedirect("/login");
+
+            // Obtenemos la URL de la página de donde viene
+            String referer = request.getHeader("Referer");
+
+            if (referer != null && !referer.isEmpty()) {
+                // Lo devolvemos a la página anterior
+                response.sendRedirect(referer);
+            } else {
+                // Si el navegador ocultó el Referer, lo mandamos al inicio por defecto
+                response.sendRedirect("/index");
+            }
             return false;
         }
 
