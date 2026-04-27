@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+  <title>Candidats de la sol·licitud - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+  <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container dashboard-main">
+
+    <div class="requests-header-action">
+      <div>
+        <h2 class="welcome-title">Candidats proposats</h2>
+        <p class="date-text" th:text="'Sol·licitud ID: ' + ${idApRequest}">Sol·licitud ID: 123</p>
+      </div>
+      <a th:href="@{/assistanceRequest/details/{id}(id=${idApRequest})}" class="btn-outline">Tornar a la sol·licitud</a>
+    </div>
+
+    <div th:if="${#lists.isEmpty(candidacies)}" class="empty-state">
+      <p>Encara no hi ha cap candidat assignat a aquesta sol·licitud.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(candidacies)}" class="table-card">
+      <table class="styled-table">
+        <thead>
+        <tr>
+          <th>CANDIDAT</th>
+          <th>TIPUS</th>
+          <th>POBLACIÓ</th>
+          <th>EXPERIÈNCIA</th>
+          <th class="text-center">CARNET</th>
+          <th class="text-center">ESTAT</th>
+          <th class="text-center">DETALL</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="cand : ${candidacies}">
+
+          <td><strong th:text="${cand.account.name + ' ' + cand.account.surname}">Joan Pérez</strong></td>
+
+          <td th:text="${cand.papPati.staffType}">PAP ó Pati</td>
+
+          <td th:text="${cand.account.city}">Castelló</td>
+
+          <td th:text="${cand.papPati.yearsOfExperience} + ' anys'">3 anys</td>
+
+          <td class="text-center">
+            <span th:if="${cand.papPati.drivingLicense}" class="tag text-success">Sí</span>
+            <span th:unless="${cand.papPati.drivingLicense}" class="tag">No</span>
+          </td>
+
+          <td class="text-center">
+            <div th:switch="${cand.candidacy.candidacyStatus.name()}">
+              <span th:case="'CONTRACTED'" class="table-badge badge-accepted">Contractat</span>
+
+              <span th:case="'INTALKS'" class="table-badge badge-pending">En converses</span>
+
+              <span th:case="'TALKSNOTSTARTED'" class="table-badge badge-grey">Pendent</span>
+
+              <span th:case="'TALKSENDED'" class="table-badge badge-rejected">Finalitzat</span>
+
+              <span th:case="*" class="table-badge badge-grey" th:text="${cand.candidacy.candidacyStatus}">Desconegut</span>
+            </div>
+          </td>
+
+          <td class="text-center">
+            <a th:href="@{/candidacy/details/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn" title="Veure perfil complet">
+              <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                <circle cx="12" cy="12" r="3"></circle>
+              </svg>
+            </a>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(candidacies)}" class="results-count">
+      Mostrant <span th:text="${#lists.size(candidacies)}">0</span> candidats
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>

@@ -679,6 +679,7 @@ select:focus {
 .badge-grey {
     background-color: #F3F4F6;
     color: #4B5563;
+    border: 1px solid #D1D5DB
 }
 
 .dash-card-body {
@@ -1187,4 +1188,8 @@ select:focus {
 .text-danger {
     color: var(--color-danger-text);
     font-weight: 600;
+}
+
+.text-center {
+    text-align: center;
 }

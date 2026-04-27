@@ -1,0 +1,122 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+  <title>Detall del Candidat - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+  <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container dashboard-main">
+
+    <div class="assistance-card">
+
+      <div class="requests-header-action">
+        <a th:href="@{/candidacy/listCandidates/{id}(id=${candidacyDto.candidacy.idApRequest})}" class="btn-back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Tornar al llistat
+        </a>
+      </div>
+
+      <br>
+
+      <div class="header-flex">
+        <div>
+          <h2 class="card-title" th:text="${candidacyDto.account.name + ' ' + candidacyDto.account.surname}">Nom del Candidat</h2>
+          <p class="card-subtitle m-0" th:text="'DNI: ' + ${candidacyDto.account.dni}">DNI: 12345678A</p>
+        </div>
+
+        <div th:switch="${candidacyDto.candidacy.candidacyStatus.name()}">
+          <span th:case="'CONTRACTED'" class="status-badge badge-accepted">Contractat</span>
+          <span th:case="'INTALKS'" class="status-badge badge-pending">En converses</span>
+          <span th:case="'TALKSNOTSTARTED'" class="status-badge badge-grey">Pendent</span>
+          <span th:case="'TALKSENDED'" class="status-badge badge-rejected">Finalitzat</span>
+        </div>
+      </div>
+
+      <h3 class="detail-section-title mt-10">Dades Personals</h3>
+      <div class="form-grid">
+        <div class="detail-group">
+          <span class="detail-label">Correu electrònic</span>
+          <span class="detail-value" th:text="${candidacyDto.account.email}">correu@exemple.com</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Telèfon</span>
+          <span class="detail-value" th:text="${candidacyDto.account.phoneNumber}">600 000 000</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Data de naixement</span>
+          <span class="detail-value" th:text="${#temporals.format(candidacyDto.account.birthday, 'dd/MM/yyyy')}">01/01/1990</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Gènere</span>
+          <span class="detail-value" th:text="${candidacyDto.account.gender.description != null ? candidacyDto.account.gender.description : 'Indiferent'}" ></span>
+        </div>
+        <div class="detail-group form-full-width">
+          <span class="detail-label">Adreça</span>
+          <span class="detail-value" th:text="${candidacyDto.account.street + ', ' + candidacyDto.account.city + ' (' + candidacyDto.account.zipCode + ')'}">Carrer Fals 123, Castelló</span>
+        </div>
+      </div>
+
+      <h3 class="detail-section-title">Perfil Professional</h3>
+      <div class="form-grid">
+        <div class="detail-group">
+          <span class="detail-label">Tipus de Personal</span>
+          <span class="detail-value"><strong th:text="${candidacyDto.papPati.staffType}">PAP</strong></span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Anys d'experiència</span>
+          <span class="detail-value" th:text="${candidacyDto.papPati.yearsOfExperience} + ' anys'">5 anys</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Carnet de conduir</span>
+          <span class="detail-value">
+                        <span th:if="${candidacyDto.papPati.drivingLicense}" class="text-success">Sí, disposa de carnet</span>
+                        <span th:unless="${candidacyDto.papPati.drivingLicense}" class="text-danger">No en disposa</span>
+                    </span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Disponibilitat</span>
+          <span class="detail-value" th:text="'Del ' + ${#temporals.format(candidacyDto.papPati.initialAvailableDate, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(candidacyDto.papPati.lastAvailableDate, 'dd/MM/yyyy')}">
+                        Del 01/01/2024 al 31/12/2024
+                    </span>
+        </div>
+      </div>
+
+      <h3 class="detail-section-title">Formació i Coneixements</h3>
+      <div class="detail-description-box">
+        <p class="detail-value m-0" th:text="${candidacyDto.papPati.training}">
+          Detall de la formació del candidat...
+        </p>
+      </div>
+
+      <div class="form-actions-centered actions-bordered mt-15">
+        <a th:if="${candidacyDto.papPati.urlCv != null and !candidacyDto.papPati.urlCv.isEmpty()}"
+           th:href="${candidacyDto.papPati.urlCv}"
+           target="_blank"
+           class="btn-outline btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+            <polyline points="14 2 14 8 20 8"></polyline>
+            <line x1="16" y1="13" x2="8" y2="13"></line>
+            <line x1="16" y1="17" x2="8" y2="17"></line>
+            <polyline points="10 9 9 9 8 9"></polyline>
+          </svg>
+          Veure Currículum (CV)
+        </a>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

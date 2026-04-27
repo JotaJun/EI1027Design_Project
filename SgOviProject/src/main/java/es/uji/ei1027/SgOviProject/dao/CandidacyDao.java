@@ -77,6 +77,15 @@ public class CandidacyDao {
         }
     }
 
+    public List<Candidacy> getCandidaciesByIdApRequest(int idApRequest){
+        try {
+            return jdbcTemplate.query("SELECT * FROM Candidacy WHERE idApRequest=?",
+                    new CandidacyRowMapper(), idApRequest);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Candidacy>();
+        }
+    }
+
     public List<Candidacy> getCandidacies() {
         try {
             return jdbcTemplate.query("SELECT * FROM Candidacy", new CandidacyRowMapper());
