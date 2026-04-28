@@ -156,6 +156,25 @@ body {
     background-color: var(--color-white);
 }
 
+/* Botón Outline Peligro / Rechazar */
+.btn-outline-danger {
+    background-color: transparent;
+    color: var(--color-danger-text);
+    font-family: var(--font-body);
+    font-weight: 600;
+    padding: 10px 24px;
+    border-radius: 50px;
+    text-decoration: none;
+    transition: all 0.3s ease;
+    border: 2px solid var(--color-danger-border);
+    font-size: 14px;
+}
+
+.btn-outline-danger:hover {
+    background-color: var(--color-danger-bg);
+    border-color: var(--color-danger-text);
+}
+
 .btn-group {
     display: flex;
     gap: 15px;
@@ -952,6 +971,7 @@ select:focus {
 .form-actions-centered {
     display: flex;
     justify-content: center;
+    flex-wrap: wrap; /* Añadido para que los botones se adapten en pantallas pequeñas */
     gap: 20px;
     margin-top: 40px;
 }
@@ -1192,4 +1212,10 @@ select:focus {
 
 .text-center {
     text-align: center;
+}
+
+/* Sección de documentos en candidacy/details */
+.document-section {
+margin-bottom: 25px;
+    padding: 5px 0;
 }
