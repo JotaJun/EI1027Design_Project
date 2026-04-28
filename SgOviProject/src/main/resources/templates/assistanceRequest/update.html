@@ -1,0 +1,138 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Modificar sol·licitud d'Assistència Personal - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="card-header-section card-header-icon-layout">
+            <div class="icon-square icon-orange">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+            </div>
+            <div>
+                <h2 class="card-title">Modificar sol·licitud d'Assistència Personal</h2>
+                <p class="card-subtitle">Actualitza les dades de la teua sol·licitud. Els camps amb asterisc (<span class="required-asterisk">*</span>) són obligatoris.</p>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card assistance-card">
+
+            <form th:action="@{/assistanceRequest/update}" th:object="${assistanceRequest}" method="post" class="assistance-form">
+
+                <!-- Atributos hidden para no perderlos al enviar el formulario -->
+                <input type="hidden" th:field="*{idApRequest}" />
+
+                <div class="form-grid">
+
+                    <div class="form-group">
+                        <label for="assistantType">Tipus d'assistent <span class="required-asterisk">*</span></label>
+                        <div class="select-wrapper">
+                            <select id="assistantType" th:field="*{assistantType}" required>
+                                <option value="" disabled>Selecciona una opció</option>
+                                <option value="PAP">Personal d'Assistència Personal (PAP)</option>
+                                <option value="PATI">Personal Tècnic (PATI)</option>
+                            </select>
+                        </div>
+                        <span th:if="${#fields.hasErrors('assistantType')}" th:errors="*{assistantType}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="initialDateRequired">Data d'inici necessària <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="date" id="initialDateRequired" th:field="*{initialDateRequired}" required>
+                        </div>
+                        <span th:if="${#fields.hasErrors('initialDateRequired')}" th:errors="*{initialDateRequired}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monthsRequired">Duració estimada (mesos) <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="number" id="monthsRequired" th:field="*{monthsRequired}" min="1" placeholder="Ex: 6" required>
+                        </div>
+                        <span th:if="${#fields.hasErrors('monthsRequired')}" th:errors="*{monthsRequired}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">Població on es donarà el servei <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="text" id="city" th:field="*{city}" placeholder="Ex: València" required>
+                        </div>
+                        <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Preferència de gènere de l'assistent</label>
+                        <div class="select-wrapper">
+                            <select id="gender" th:field="*{gender}">
+                                <option value="">Sense preferència</option>
+                                <option value="M">Home</option>
+                                <option value="F">Dona</option>
+                                <option value="X">Altre</option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="yearsOfExperience">Anys d'experiència mínima requerida</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="yearsOfExperience" th:field="*{yearsOfExperience}" min="0" placeholder="Ex: 2">
+                        </div>
+                        <span th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}" class="error-text"></span>
+                    </div>
+
+                </div>
+
+                <div class="form-group checkbox-container mt-15">
+                    <input type="checkbox" id="drivingLicense" th:field="*{drivingLicense}">
+                    <label for="drivingLicense">Requerirà que tinga carnet de conduir?</label>
+                </div>
+
+                <div class="form-group form-full-width">
+                    <label for="description">Descriu el motiu pel qual necessites assistència personal <span class="required-asterisk">*</span></label>
+                    <div class="input-wrapper textarea-wrapper">
+                        <textarea id="description" th:field="*{description}" placeholder="Explica les teues necessitats i com un assistent personal pot ajudar-te en el teu dia a dia..." required></textarea>
+                    </div>
+                    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-text"></span>
+                </div>
+
+                <div class="form-actions form-actions-centered">
+                    <a th:href="@{/assistanceRequest/list}" class="dash-btn dash-btn-outline btn-icon" style="text-decoration: none;">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancel·lar
+                    </a>
+
+                    <button type="submit" class="dash-btn dash-btn-primary btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Actualitzar sol·licitud
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

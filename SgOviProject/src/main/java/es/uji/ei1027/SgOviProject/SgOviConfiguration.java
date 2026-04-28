@@ -7,10 +7,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.expression.ParseException;
+import org.springframework.format.Formatter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Configuration
 public class SgOviConfiguration implements WebMvcConfigurer {
@@ -71,6 +76,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/assistanceRequest/add",       // Rutas específica
                         "/assistanceRequest/list",
                         "assistanceRequest/details/**",
+                        "assistanceRequest/update/**",
                         "candidacy/listCandidates/**",
                         "candidacy/details/**"
                 );
