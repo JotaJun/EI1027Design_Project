@@ -52,7 +52,7 @@ public class RegisterValidator implements Validator {
             errors.rejectValue("password", "required", "La contrasenya és obligatòria");
         } else if (account.getPassword().length() < 8) {
             errors.rejectValue("password", "tooShort", "La contrasenya ha de tindre almenys 8 caràcters");
-        } else if (account.getPassword().length() > 100) {
+        } else if (account.getPassword().length() > 20) {
             errors.rejectValue("password", "tooLong", "La contrasenya és massa llarga");
         }
 
