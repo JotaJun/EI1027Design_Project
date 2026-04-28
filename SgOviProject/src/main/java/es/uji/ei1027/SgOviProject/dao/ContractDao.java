@@ -22,14 +22,13 @@ public class ContractDao {
 
     /* Añadir un contrato */
     public void addContract(Contract contract) {
-        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, urlDocument, deniedReason) VALUES(?, ?, ?, ?, ?, ?, ?)",
+        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, urlDocument) VALUES(?, ?, ?, ?, ?, ?)",
                 contract.getIdCandidacy(),
                 contract.getStartDate(),
                 contract.getEndDate(),
                 contract.getHourlySalary(),
                 contract.getSchedule(),
-                contract.getUrlDocument(),
-                contract.getDeniedReason());
+                contract.getUrlDocument());
     }
 
     /* Borrar un contrato */
@@ -43,14 +42,13 @@ public class ContractDao {
 
     /* Actualizar un contrato */
     public void updateContract(Contract contract) {
-        jdbcTemplate.update("UPDATE Contract SET idCandidacy=?, startDate=?, endDate=?, hourlySalary=?, schedule=?, urlDocument=?, deniedReason=? WHERE idContract=?",
+        jdbcTemplate.update("UPDATE Contract SET idCandidacy=?, startDate=?, endDate=?, hourlySalary=?, schedule=?, urlDocument=? WHERE idContract=?",
                 contract.getIdCandidacy(),
                 contract.getStartDate(),
                 contract.getEndDate(),
                 contract.getHourlySalary(),
                 contract.getSchedule(),
                 contract.getUrlDocument(),
-                contract.getDeniedReason(),
                 contract.getIdContract());
     }
 

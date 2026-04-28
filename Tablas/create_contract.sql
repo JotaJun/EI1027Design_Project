@@ -6,7 +6,6 @@ CREATE TABLE Contract(
 	hourlySalary		Numeric(10,2)	NOT NULL,
 	schedule			VARCHAR(500)	NOT NULL,
     urlDocument         VARCHAR(255),
-    deniedReason        VARCHAR(255),
 
     CONSTRAINT chk_contract_dates CHECK(startDate < endDate),
 

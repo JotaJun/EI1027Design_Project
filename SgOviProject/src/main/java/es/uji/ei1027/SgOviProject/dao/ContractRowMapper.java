@@ -20,8 +20,6 @@ public final class ContractRowMapper implements RowMapper<Contract> {
         contract.setSchedule(rs.getString("schedule"));
         contract.setUrlDocument(rs.getString("urlDocument"));
 
-        contract.setDeniedReason(rs.getString("deniedReason"));
-
         return contract;
     }
 }

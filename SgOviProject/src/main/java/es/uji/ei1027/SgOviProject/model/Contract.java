@@ -11,7 +11,6 @@ public class Contract {
     private double hourlySalary;
     private String schedule;
     private String urlDocument;
-    private String deniedReason;
 
     public int getIdContract() {
         return idContract;
@@ -69,14 +68,6 @@ public class Contract {
         this.urlDocument = urlDocument;
     }
 
-    public String getDeniedReason() {
-        return deniedReason;
-    }
-
-    public void setDeniedReason(String deniedReason) {
-        this.deniedReason = deniedReason;
-    }
-
     @Override
     public String toString() {
         return "Contract{" +
@@ -87,7 +78,6 @@ public class Contract {
                 ", hourlySalary=" + hourlySalary +
                 ", schedule='" + schedule + '\'' +
                 ", urlDocument='" + urlDocument + '\'' +
-                ", deniedReason='" + deniedReason + '\'' +
                 '}';
     }
 }
