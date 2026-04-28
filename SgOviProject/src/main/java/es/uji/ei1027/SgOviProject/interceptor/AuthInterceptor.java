@@ -13,25 +13,30 @@ public class AuthInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
 
-        // Comprobamos si no hay NADIE logueado (ni cuenta normal ni técnico)
         if (session.getAttribute("account") == null && session.getAttribute("technician") == null) {
 
-            // Reconstruimos la URL a la que intentaban ir
             String requestURI = request.getRequestURI();
-            String queryString = request.getQueryString();
 
-            // Si la URL tenía parámetros (ej: /perfil?id=5), los añadimos también
-            String fullUrl = (queryString == null) ? requestURI : requestURI + "?" + queryString;
+            // Solo guardamos la URL si NO es un recurso estático evidente
+            // Evitamos guardar: .ico, .css, .js, .png, .jpg, etc.
+            if (!isStaticResource(requestURI)) {
+                String queryString = request.getQueryString();
+                String fullUrl = (queryString == null) ? requestURI : requestURI + "?" + queryString;
+                session.setAttribute("nextUrl", fullUrl);
+            }
 
-            // Guardamos la URL en la sesión (variable para LoginController)
-            session.setAttribute("nextUrl", fullUrl);
-
-            // Redirigimos al login y bloqueamos el acceso
             response.sendRedirect("/login");
-            return false; // Retornar false significa "detener la petición aquí"
+            return false;
         }
-
-        // Si hay alguien en la sesión, dejamos que la petición continúe
         return true;
+    }
+
+    private boolean isStaticResource(String uri) {
+        return uri.contains("favicon.ico") ||
+                uri.endsWith(".css") ||
+                uri.endsWith(".js") ||
+                uri.endsWith(".png") ||
+                uri.endsWith(".jpg") ||
+                uri.endsWith(".jpeg");
     }
 }
