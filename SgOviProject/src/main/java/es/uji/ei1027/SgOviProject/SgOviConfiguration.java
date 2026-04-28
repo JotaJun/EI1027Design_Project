@@ -37,6 +37,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/",
                         "/index",           // La página de inicio pública
                         "/login",           // Si no, el redireccionamiento hace un bucle
+                        "/logout",
                         "register",
                         "register_done",
                         "/css/**",          // Archivos de estilos
