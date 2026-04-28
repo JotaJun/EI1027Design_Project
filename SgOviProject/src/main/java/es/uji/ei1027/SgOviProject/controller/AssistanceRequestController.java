@@ -67,9 +67,59 @@ public class AssistanceRequestController {
             return "redirect:/assistanceRequest/list";
         }
 
-        model.addAttribute("req", assistanceRequestDao.getAssistanceRequest(idApRequest));
+        model.addAttribute("req", request);
 
         return "assistanceRequest/details";
+    }
+
+    @GetMapping(value="/update/{idApRequest}")
+    public String editApRequest(Model model, @PathVariable int idApRequest, HttpSession session) {
+        // No hace falta comprobar si es null, ya se encarga interceptor
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        if (request == null || ! request.getDniOviUser().equals(currentUser.getDni())) {
+            return "redirect:/assistanceRequest/list";
+        }
+
+        model.addAttribute("assistanceRequest", request);
+        return "assistanceRequest/update";
+    }
+
+    @PostMapping(value="/update")
+    public String processUpdateApRequest(@ModelAttribute("assistanceRequest") AssistanceRequest assistanceRequest,
+                                         BindingResult bindingResult,
+                                         HttpSession session) {
+        AssistanceRequestValidator assistanceRequestValidator = new AssistanceRequestValidator();
+        assistanceRequestValidator.validate(assistanceRequest, bindingResult);
+        if (bindingResult.hasErrors()) {
+            return "assistanceRequest/update";
+        }
+
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        // RECUPERAMOS LA PETICIÓN ORIGINAL DE LA BASE DE DATOS
+        AssistanceRequest originalRequest = assistanceRequestDao.getAssistanceRequest(assistanceRequest.getIdApRequest());
+
+        if (originalRequest == null || !originalRequest.getDniOviUser().equals(currentUser.getDni())) {
+            return "redirect:/assistanceRequest/list";
+        }
+
+        // Copiamos SOLO los campos que el usuario tiene permitido editar
+        originalRequest.setAssistantType(assistanceRequest.getAssistantType());
+        originalRequest.setInitialDateRequired(assistanceRequest.getInitialDateRequired());
+        originalRequest.setMonthsRequired(assistanceRequest.getMonthsRequired());
+        originalRequest.setCity(assistanceRequest.getCity());
+        originalRequest.setGender(assistanceRequest.getGender());
+        originalRequest.setYearsOfExperience(assistanceRequest.getYearsOfExperience());
+        originalRequest.setDrivingLicense(assistanceRequest.getDrivingLicense());
+        originalRequest.setDescription(assistanceRequest.getDescription());
+
+        assistanceRequestDao.updateAssistanceRequest(originalRequest);
+
+        return "redirect:/assistanceRequest/done";
     }
 
     @RequestMapping("/done")

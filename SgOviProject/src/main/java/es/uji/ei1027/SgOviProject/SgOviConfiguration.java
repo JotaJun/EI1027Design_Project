@@ -7,10 +7,15 @@ import org.springframework.boot.context.properties.ConfigurationProperties;
 import org.springframework.boot.jdbc.DataSourceBuilder;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.expression.ParseException;
+import org.springframework.format.Formatter;
 import org.springframework.web.servlet.config.annotation.InterceptorRegistry;
 import org.springframework.web.servlet.config.annotation.WebMvcConfigurer;
 
 import javax.sql.DataSource;
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
 
 @Configuration
 public class SgOviConfiguration implements WebMvcConfigurer {
@@ -22,6 +27,22 @@ public class SgOviConfiguration implements WebMvcConfigurer {
     @ConfigurationProperties(prefix = "spring.datasource")
     public DataSource dataSource() {
         return DataSourceBuilder.create().build();
+    }
+
+    // Formato fechas estándar mediante formateador
+    @Bean
+    public Formatter<LocalDate> localDateFormatterISO() {
+        return new Formatter<LocalDate>() {
+            @Override
+            public LocalDate parse(String text, Locale locale) throws ParseException {
+                return LocalDate.parse(text, DateTimeFormatter.ISO_LOCAL_DATE);
+            }
+
+            @Override
+            public String print(LocalDate object, Locale locale) {
+                return DateTimeFormatter.ISO_LOCAL_DATE.format(object);
+            }
+        };
     }
 
     // Este método existe para especificar los htmls que necesiten excluyan a ciertos tipos de cuenta
@@ -55,6 +76,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/assistanceRequest/add",       // Rutas específica
                         "/assistanceRequest/list",
                         "assistanceRequest/details/**",
+                        "assistanceRequest/update/**",
                         "candidacy/listCandidates/**",
                         "candidacy/details/**"
                 );

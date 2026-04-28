@@ -26,7 +26,7 @@ public class OviUserController {
     private OviUserDao oviUserDao;
 
     @RequestMapping("/main")
-    public String oviUserMain(HttpSession session, Model model) {
+    public String oviUserMain(Model model) {
 
         // Generar la fecha para la vista
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'de' yyyy", new Locale("ca", "ES"));
