@@ -27,7 +27,7 @@ public class RegisterController {
         return "register";
     }
 
-    @PostMapping("/register") //se puede hacer con requestmapping peor parece ser que en versiones nuevas de spring se usa esto
+    @PostMapping("/register")
     public String doRegister(@ModelAttribute("account") Account account, BindingResult bindingResult, @RequestParam("type") AccountType accountType, HttpSession session) {
         RegisterValidator registerValidator = new RegisterValidator();
         registerValidator.validate(account, bindingResult);
@@ -51,8 +51,6 @@ public class RegisterController {
         String encryptedPassword = passwordEncryptor.encryptPassword(account.getPassword());
         account.setPassword(encryptedPassword);
 
-        // COMENTARIO JUAN: no hace falta esto, ya que en la clase Account por defecto ya es PENDING, así nos quitamos líos de cabeza
-        // account.setStatus(Status.PENDING);
         session.setAttribute("pendingAccount", account);
         session.setAttribute("chosenType", accountType);
 
