@@ -24,6 +24,22 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         return DataSourceBuilder.create().build();
     }
 
+    // Formato fechas estándar mediante formateador
+    @Bean
+    public Formatter<LocalDate> localDateFormatterISO() {
+        return new Formatter<LocalDate>() {
+            @Override
+            public LocalDate parse(String text, Locale locale) throws ParseException {
+                return LocalDate.parse(text, DateTimeFormatter.ISO_LOCAL_DATE);
+            }
+
+            @Override
+            public String print(LocalDate object, Locale locale) {
+                return DateTimeFormatter.ISO_LOCAL_DATE.format(object);
+            }
+        };
+    }
+
     // Este método existe para especificar los htmls que necesiten excluyan a ciertos tipos de cuenta
     @Override
     public void addInterceptors(InterceptorRegistry registry) {
