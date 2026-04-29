@@ -7,25 +7,6 @@
 
     <link rel="stylesheet" th:href="@{/css/style.css}">
 
-    <style>
-        .login-card {
-            max-width: 520px;
-        }
-        @media (max-width: 600px) {
-            .login-card {
-                padding: 30px 20px;
-                border-radius: 12px;
-            }
-            .login-header h2 {
-                font-size: 20px;
-            }
-            .login-container {
-                padding: 20px 12px;
-                align-items: flex-start;
-            }
-        }
-    </style>
-
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
@@ -33,7 +14,7 @@
 <body>
 
 <div class="login-container">
-    <div class="login-card">
+    <div class="login-card login-card-wide">
 
         <!-- Capçalera -->
         <div class="login-header">
@@ -52,21 +33,20 @@
             <!-- Camp ocult: DNI (ve del pas anterior) -->
             <input type="hidden" th:field="*{dni}">
             <!-- Mostrar error intern del DNI si existeix -->
-            <span th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="text-danger"
-                  style="color: red; font-size: 0.85em; margin-top: -10px; margin-bottom: 15px; display: block; text-align: center;"></span>
+            <span th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="error-message"
+                  style="text-align: center; margin-top: -10px; margin-bottom: 15px;"></span>
 
             <!-- Tipus de personal -->
             <div class="form-group">
                 <label for="staffType">Tipus de personal</label>
                 <div class="select-wrapper">
-                    <select id="staffType" th:field="*{staffType}" required>
+                    <select id="staffType" th:field="*{staffType}" th:classappend="${#fields.hasErrors('staffType')} ? 'input-error' : ''" required>
                         <option value="">-- Selecciona un tipus --</option>
                         <option value="PAP">PAP – Personal d'Assistència Professional</option>
                         <option value="PATI">PATI – Personal d'Assistència Tècnica Individualitzada</option>
                     </select>
                 </div>
-                <span th:if="${#fields.hasErrors('staffType')}" th:errors="*{staffType}" class="text-danger"
-                      style="color: red; font-size: 0.85em; margin-top: 5px; display: block;"></span>
+                <span th:if="${#fields.hasErrors('staffType')}" th:errors="*{staffType}" class="error-message"></span>
             </div>
 
             <!-- Permís de conduir -->
@@ -88,10 +68,9 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <input type="date" id="initialAvailableDate" th:field="*{initialAvailableDate}" required>
+                    <input type="date" id="initialAvailableDate" th:field="*{initialAvailableDate}" th:classappend="${#fields.hasErrors('initialAvailableDate')} ? 'input-error' : ''" required>
                 </div>
-                <span th:if="${#fields.hasErrors('initialAvailableDate')}" th:errors="*{initialAvailableDate}" class="text-danger"
-                      style="color: red; font-size: 0.85em; margin-top: 5px; display: block;"></span>
+                <span th:if="${#fields.hasErrors('initialAvailableDate')}" th:errors="*{initialAvailableDate}" class="error-message"></span>
             </div>
 
             <!-- Data de fi de disponibilitat -->
@@ -104,10 +83,9 @@
                         <line x1="8" y1="2" x2="8" y2="6"></line>
                         <line x1="3" y1="10" x2="21" y2="10"></line>
                     </svg>
-                    <input type="date" id="lastAvailableDate" th:field="*{lastAvailableDate}" required>
+                    <input type="date" id="lastAvailableDate" th:field="*{lastAvailableDate}" th:classappend="${#fields.hasErrors('lastAvailableDate')} ? 'input-error' : ''" required>
                 </div>
-                <span th:if="${#fields.hasErrors('lastAvailableDate')}" th:errors="*{lastAvailableDate}" class="text-danger"
-                      style="color: red; font-size: 0.85em; margin-top: 5px; display: block;"></span>
+                <span th:if="${#fields.hasErrors('lastAvailableDate')}" th:errors="*{lastAvailableDate}" class="error-message"></span>
             </div>
 
             <!-- Formació -->
@@ -118,10 +96,9 @@
                         <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
                         <path d="M6 12v5c0 1.1 2.7 2 6 2s6-.9 6-2v-5"></path>
                     </svg>
-                    <input type="text" id="training" th:field="*{training}" placeholder="p.ex. Grau en Treball Social" required>
+                    <input type="text" id="training" th:field="*{training}" placeholder="p.ex. Grau en Treball Social" th:classappend="${#fields.hasErrors('training')} ? 'input-error' : ''" required>
                 </div>
-                <span th:if="${#fields.hasErrors('training')}" th:errors="*{training}" class="text-danger"
-                      style="color: red; font-size: 0.85em; margin-top: 5px; display: block;"></span>
+                <span th:if="${#fields.hasErrors('training')}" th:errors="*{training}" class="error-message"></span>
             </div>
 
             <!-- Anys d'experiència -->
@@ -134,10 +111,9 @@
                         <line x1="12" y1="12" x2="12" y2="16"></line>
                         <line x1="10" y1="14" x2="14" y2="14"></line>
                     </svg>
-                    <input type="number" id="yearsOfExperience" th:field="*{yearsOfExperience}" min="0" max="60" placeholder="p.ex. 3" required>
+                    <input type="number" id="yearsOfExperience" th:field="*{yearsOfExperience}" min="0" max="60" placeholder="p.ex. 3" th:classappend="${#fields.hasErrors('yearsOfExperience')} ? 'input-error' : ''" required>
                 </div>
-                <span th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}" class="text-danger"
-                      style="color: red; font-size: 0.85em; margin-top: 5px; display: block;"></span>
+                <span th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}" class="error-message"></span>
             </div>
 
             <!-- URL del Currículum -->
@@ -148,10 +124,9 @@
                         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
                         <path d="M14 11a5 5 0 0 0-7.54-.54l-3 3a5 5 0 0 0 7.07 7.07l1.71-1.71"></path>
                     </svg>
-                    <input type="url" id="urlCv" th:field="*{urlCv}" placeholder="https://linkedin.com/in/el-teu-perfil" required>
+                    <input type="url" id="urlCv" th:field="*{urlCv}" placeholder="https://linkedin.com/in/el-teu-perfil" th:classappend="${#fields.hasErrors('urlCv')} ? 'input-error' : ''" required>
                 </div>
-                <span th:if="${#fields.hasErrors('urlCv')}" th:errors="*{urlCv}" class="text-danger"
-                      style="color: red; font-size: 0.85em; margin-top: 5px; display: block;"></span>
+                <span th:if="${#fields.hasErrors('urlCv')}" th:errors="*{urlCv}" class="error-message"></span>
             </div>
 
             <!-- Botó d'enviament -->

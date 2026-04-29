@@ -59,8 +59,11 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/index",           // La página de inicio pública
                         "/login",           // Si no, el redireccionamiento hace un bucle
                         "/logout",
-                        "register",
-                        "register_done",
+                        "/register",
+                        "/register/**",     // Para rutas como /register/done
+                        "/oviuser/register",
+                        "/pappati/register",
+                        "/guardian/register",
                         "/css/**",          // Archivos de estilos
                         "/images/**"        // Imágenes
                 );
@@ -72,14 +75,15 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         // OVIUSER
         registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER))
                 .addPathPatterns(
-                        "/oviUser/**",
+                        "/oviuser/**",
                         "/assistanceRequest/add",       // Rutas específica
                         "/assistanceRequest/list",
-                        "assistanceRequest/details/**",
-                        "assistanceRequest/update/**",
-                        "candidacy/listCandidates/**",
-                        "candidacy/details/**"
-                );
+                        "/assistanceRequest/details/**",
+                        "/assistanceRequest/update/**",
+                        "/candidacy/listCandidates/**",
+                        "/candidacy/details/**"
+                )
+                .excludePathPatterns("/oviuser/register");
 
         // TECHNICIAN
         registry.addInterceptor(new RoleInterceptor(AccountType.TECHNICIAN))
@@ -90,14 +94,16 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         // PAPPATI
         registry.addInterceptor(new RoleInterceptor(AccountType.PAPPATI))
                 .addPathPatterns(
-                        "/papPati/**",
-                        "candidacy/listRequests/**"
-                );
+                        "/pappati/**",
+                        "/candidacy/listRequests/**"
+                )
+                .excludePathPatterns("/pappati/register");
 
         // LEGALGUARDIAN
         registry.addInterceptor(new RoleInterceptor(AccountType.LEGALGUARDIAN))
                 .addPathPatterns(
-                        "/legalGuardian/**"
-                );
+                        "/guardian/**"
+                )
+                .excludePathPatterns("/guardian/register");
     }
 }

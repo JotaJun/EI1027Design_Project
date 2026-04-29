@@ -1,11 +1,10 @@
 package es.uji.ei1027.SgOviProject.controller;
 
-
 import es.uji.ei1027.SgOviProject.model.Account;
+import es.uji.ei1027.SgOviProject.model.LegalGuardian;
 import es.uji.ei1027.SgOviProject.model.PapPati;
 import es.uji.ei1027.SgOviProject.services.IntAccountRegisterSvc;
 import jakarta.servlet.http.HttpSession;
-
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,41 +13,42 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.thymeleaf.standard.expression.LessOrEqualToExpression;
 
 @Controller
-@RequestMapping("/pappati")
-public class PapPatiController {
+@RequestMapping("/guardian")
+public class LegalGuardianController {
     @Autowired
     private IntAccountRegisterSvc registerService;
 
 
     @GetMapping("/register")
-    public String mostrarFormulariPap(Model model, HttpSession session) {
+    public String legalGuardianRegister(Model model, HttpSession session) {
 
         Account account = (Account) session.getAttribute("pendingAccount");
         if(account == null) {
             return "redirect:/register";
         }
-        model.addAttribute("papData", new PapPati());
-        return "pappati/register";
+        model.addAttribute("guardianAccount", new LegalGuardian());
+        return "guardian/register";
     }
 
     @PostMapping("/register")
-    public String processarRegistrePap(@ModelAttribute("papData") PapPati papPati,
-                                       BindingResult bindingResult,
-                                       HttpSession session) {
+    public String doLegalGuardianRegister(@ModelAttribute("guardianAccount") LegalGuardian guardian,
+                                          BindingResult bindingResult,
+                                          HttpSession session) {
 
-        PapPatiValidator papValidator = new PapPatiValidator();
-        papValidator.validate(papPati, bindingResult);
+        LegalGuardianValidator guardianValidator = new LegalGuardianValidator();
+        guardianValidator.validate(guardian, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "pappati/register";
+            return "guardian/register";
         }
 
         Account account = (Account) session.getAttribute("pendingAccount");
 
 
-        registerService.addPapPati(account, papPati);
+        registerService.addLegalGuardian(account, guardian);
         session.removeAttribute("pendingAccount");
         session.removeAttribute("chosenType");
 

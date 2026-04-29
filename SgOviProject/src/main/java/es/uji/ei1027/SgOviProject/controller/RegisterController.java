@@ -11,6 +11,8 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+import java.time.LocalDate;
+import java.time.Period;
 
 @Controller
 
@@ -56,20 +58,22 @@ public class RegisterController {
 
         switch (accountType) {
             case OVIUSER:
-                registerService.addOviUser(account, new OviUser());
+                if (account.getBirthday() != null) {
+                    LocalDate now = LocalDate.now();
+                    Period period = Period.between(account.getBirthday(), now);
+                    if (period.getYears() >= 18) {
 
-                //el registro de oviuser lo gestionamos de momento ais para probar que va bien el register_done.html, pero
-                //tiene registro especifico como los otros dos
-                session.removeAttribute("pendingAccount");
-                session.removeAttribute("chosenType");
-                return "redirect:/register/done";
-
+                        registerService.addOviUser(account, new OviUser());
+                        return "redirect:/register/done";
+                    }
+                }
+                return "redirect:/oviuser/register";
 
             case PAPPATI:
                 return "redirect:/pappati/register";
 
             case LEGALGUARDIAN:
-                return "redirect:/register/legalguardian";
+                return "redirect:/guardian/register";
 
             default:
                 return "register";

@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Detalls Usuari OVI - SgOVI</title>
+
+    <link rel="stylesheet" th:href="@{/css/style.css}">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&family=Poppins:wght@600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+
+<main class="login-container">
+    <div class="login-card login-card-wide">
+
+        <header class="login-header">
+            <div class="logo-box">
+                <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
+                SgOVI
+            </div>
+            <p class="system-name">SISTEMA DE GESTIÓ DE L'OFICINA PER LA VIDA INDEPENDENT</p>
+            <h2>Detalls d'Usuari OVI</h2>
+            <p class="login-subtitle">Necessitem una dada addicional per completar el teu perfil</p>
+        </header>
+
+        <form th:action="@{/oviuser/register}" th:object="${oviAccount}" method="post" class="login-form" novalidate>
+            
+            <input type="hidden" th:field="*{dni}">
+            
+            <div class="form-group">
+                <label for="dniLegalGuardian">DNI del Tutor Legal</label>
+                <div class="input-wrapper">
+                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    <input type="text" id="dniLegalGuardian" th:field="*{dniLegalGuardian}" placeholder="DNI del teu tutor" maxlength="9" th:classappend="${#fields.hasErrors('dniLegalGuardian')} ? 'input-error' : ''" required autofocus>
+                </div>
+                <span th:if="${#fields.hasErrors('dniLegalGuardian')}" th:errors="*{dniLegalGuardian}" class="error-message"></span>
+            </div>
+
+            <button type="submit" class="btn-primary btn-block btn-login">Finalitzar Registre</button>
+        </form>
+
+    </div>
+</main>
+
+</body>
+</html>
