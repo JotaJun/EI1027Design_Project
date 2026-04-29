@@ -5,7 +5,7 @@ import java.time.LocalDate;
 public class Communication {
     private int idCommunication;
     private int idCandidacy;
-    private LocalDate dateCommunication;
+    private LocalDate dateCommunication = LocalDate.now();
     private String information;
     private String transmitterName;
 
