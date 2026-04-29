@@ -18,7 +18,7 @@ import java.time.format.DateTimeFormatter;
 import java.util.Locale;
 
 @Controller
-@RequestMapping("/oviuser")
+@RequestMapping("/oviUser")
 public class OviUserController {
 
     @Autowired
@@ -33,7 +33,7 @@ public class OviUserController {
 
         model.addAttribute("dateNow", dateNow);
 
-        return "oviuser/main";
+        return "oviUser/main";
     }
 
     @GetMapping("/register")
@@ -56,7 +56,7 @@ public class OviUserController {
         oviValidator.validate(oviUser, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "oviuser/register";
+            return "oviUser/register";
         }
 
         Account account = (Account) session.getAttribute("pendingAccount");

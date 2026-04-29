@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/pappati")
+@RequestMapping("/papPati")
 public class PapPatiController {
     @Autowired
     private IntAccountRegisterSvc registerService;
@@ -30,7 +30,7 @@ public class PapPatiController {
             return "redirect:/register";
         }
         model.addAttribute("papData", new PapPati());
-        return "pappati/register";
+        return "papPati/register";
     }
 
     @PostMapping("/register")
@@ -42,7 +42,7 @@ public class PapPatiController {
         papValidator.validate(papPati, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "pappati/register";
+            return "papPati/register";
         }
 
         Account account = (Account) session.getAttribute("pendingAccount");

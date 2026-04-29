@@ -16,7 +16,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.thymeleaf.standard.expression.LessOrEqualToExpression;
 
 @Controller
-@RequestMapping("/guardian")
+@RequestMapping("/legalGuardian")
 public class LegalGuardianController {
     @Autowired
     private IntAccountRegisterSvc registerService;
@@ -30,7 +30,7 @@ public class LegalGuardianController {
             return "redirect:/register";
         }
         model.addAttribute("guardianAccount", new LegalGuardian());
-        return "guardian/register";
+        return "legalGuardian/register";
     }
 
     @PostMapping("/register")
@@ -42,7 +42,7 @@ public class LegalGuardianController {
         guardianValidator.validate(guardian, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "guardian/register";
+            return "legalGuardian/register";
         }
 
         Account account = (Account) session.getAttribute("pendingAccount");
