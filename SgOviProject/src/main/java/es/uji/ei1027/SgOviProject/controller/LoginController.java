@@ -50,7 +50,7 @@ public class LoginController {
 
             Technician technician = technicianDao.getTechnicianByLoginDetails(details);
             if (technician == null) {
-                bindingResult.rejectValue("password", "badpw", "Credencials incorrectes");
+                bindingResult.reject("badCredentials", "El correu o la contrasenya són incorrectes");
                 return "login";
             }
             // Autenticados como técnico
@@ -62,7 +62,7 @@ public class LoginController {
 
             Account account = accountDao.getAccountByLoginDetails(details);
             if (account == null) {
-                bindingResult.rejectValue("password", "badpw", "Credencials incorrectes");
+                bindingResult.reject("badCredentials", "El correu o la contrasenya són incorrectes");
                 return "login";
             }
 

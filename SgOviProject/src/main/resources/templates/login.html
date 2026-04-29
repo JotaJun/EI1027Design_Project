@@ -31,42 +31,49 @@
             <div class="form-group">
                 <label for="tipus_compte">Tipus de compte</label>
                 <div class="select-wrapper">
-                    <select id="tipus_compte" th:field="*{accountType}" required>
+                    <select id="tipus_compte" th:field="*{accountType}" aria-describedby="tipus-error" required>
                         <option value="OVIUSER" selected>Usuari OVI</option>
                         <option value="PAPPATI">Personal d'assistència professional</option>
                         <option value="LEGALGUARDIAN">Tutor Legal</option>
                         <option value="TECHNICIAN">Tècnic</option>
                     </select>
                 </div>
-                <span th:if="${#fields.hasErrors('accountType')}" th:errors="*{accountType}" class="error-message"></span>
+                <span id="tipus-error" th:if="${#fields.hasErrors('accountType')}" th:errors="*{accountType}" class="error-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="email">Email</label>
                 <div class="input-wrapper">
-                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="icon-left" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M4 4h16c1.1 0 2 .9 2 2v12c0 1.1-.9 2-2 2H4c-1.1 0-2-.9-2-2V6c0-1.1.9-2 2-2z"></path>
                         <polyline points="22,6 12,13 2,6"></polyline>
                     </svg>
-                    <input type="email" id="email" th:field="*{email}" placeholder="email@exemple.com" th:classappend="${#fields.hasErrors('email')} ? 'input-error' : ''" required autofocus>
+                    <input type="email" id="email" th:field="*{email}" placeholder="email@exemple.com"
+                           th:classappend="${#fields.hasErrors('email') or #fields.hasGlobalErrors()} ? 'input-error' : ''"
+                           aria-describedby="email-error" required autofocus>
                 </div>
-                <span th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
+                <span id="email-error" th:if="${#fields.hasErrors('email')}" th:errors="*{email}" class="error-message"></span>
             </div>
 
             <div class="form-group">
                 <label for="password">Contrasenya</label>
                 <div class="input-wrapper">
-                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <svg class="icon-left" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="3" y="11" width="18" height="11" rx="2" ry="2"></rect>
                         <path d="M7 11V7a5 5 0 0 1 10 0v4"></path>
                     </svg>
-                    <input type="password" id="password" minlength="8" th:field="*{password}" placeholder="••••••••" th:classappend="${#fields.hasErrors('password')} ? 'input-error' : ''" required>
+                    <input type="password" id="password" minlength="8" th:field="*{password}" placeholder="••••••••"
+                           th:classappend="${#fields.hasErrors('password') or #fields.hasGlobalErrors()} ? 'input-error' : ''"
+                           aria-describedby="password-error global-error" required>
                 </div>
-                <span th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
+
+                <span id="password-error" th:if="${#fields.hasErrors('password')}" th:errors="*{password}" class="error-message"></span>
+
+                <span id="global-error" th:if="${#fields.hasGlobalErrors()}" th:errors="*{global}" class="error-message" role="alert"></span>
             </div>
 
             <button type="submit" class="btn-primary btn-block btn-login">
-                <svg class="icon-btn" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                <svg class="icon-btn" aria-hidden="true" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <path d="M15 3h4a2 2 0 0 1 2 2v14a2 2 0 0 1-2 2h-4"></path>
                     <polyline points="10 17 15 12 10 7"></polyline>
                     <line x1="15" y1="12" x2="3" y2="12"></line>
@@ -82,7 +89,6 @@
 
     </div>
 </div>
-
 
 </body>
 </html>

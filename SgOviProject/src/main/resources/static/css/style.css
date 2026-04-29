@@ -487,12 +487,12 @@ select:focus {
 
 /* Errores de validación en campos */
 .input-error {
-    border-color: #EF4444 !important;
-    background-color: #FEF2F2 !important;
+    border-color: var(--color-danger-text) !important; /* Cambiado a tu variable oscura */
+    background-color: var(--color-danger-bg) !important;
 }
 
 .error-message {
-    color: #EF4444;
+    color: var(--color-danger-text); /* Cambiado de #EF4444 a #B91C1C */
     font-size: 12px;
     font-weight: 600;
     margin-top: 5px;
