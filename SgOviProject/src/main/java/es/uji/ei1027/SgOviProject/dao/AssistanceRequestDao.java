@@ -98,4 +98,16 @@ public class AssistanceRequestDao {
             return new ArrayList<AssistanceRequest>();
         }
     }
+
+    public List<AssistanceRequest> getAssistanceRequestsByDniAndStatus(String dniOviUser, String status) {
+        try {
+            if (status.equals("Totes")) {
+                return getAssistanceRequestsByDni(dniOviUser);
+            }
+            return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniOviUser=? AND status=LOWER(?)",
+                    new AssistanceRequestRowMapper(), dniOviUser, status);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
 }

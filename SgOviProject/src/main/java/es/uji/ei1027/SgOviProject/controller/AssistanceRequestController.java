@@ -1,6 +1,9 @@
 package es.uji.ei1027.SgOviProject.controller;
 
+import es.uji.ei1027.SgOviProject.comparator.AssistanceRequestComparator;
 import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
+import es.uji.ei1027.SgOviProject.enums.Status;
+import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import jakarta.servlet.http.HttpSession;
@@ -9,6 +12,13 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/assistanceRequest")
@@ -45,14 +55,76 @@ public class AssistanceRequestController {
         return "redirect:/assistanceRequest/done";
     }
 
-    @GetMapping("/list")
-    public String showList(Model model, HttpSession session) {
+    // Número de peticiones que queremos mostrar al usuario
+    private int pageLength = 10;
+
+    @GetMapping({"/list", "/list/{status}"}) // Acepta la ruta base o con filtro
+    public String showList(Model model, HttpSession session,
+                           @PathVariable(required = false) String status,
+                           @RequestParam("page") Optional<Integer> page) {
         // No hace falta comprobar si es null, ya se encarga interceptor
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
-        model.addAttribute("requests", assistanceRequestDao.getAssistanceRequestsByDni(currentUser.getDni()));
+        // Si no viene estado en la URL, por defecto mostramos "Totes"
+        if (status == null) status = "Totes";
+
+        // Obtener la lista filtrada
+        List<AssistanceRequest> requests;
+        if (status.equals("Totes")) {
+            requests = assistanceRequestDao.getAssistanceRequestsByDni(currentUser.getDni());
+        } else {
+            requests = assistanceRequestDao.getAssistanceRequestsByDniAndStatus(currentUser.getDni(), status);
+        }
+
+        requests.sort(new AssistanceRequestComparator());   // ordenar la lista completa
+
+        // Crear la lista paginada (una lista de listas)
+        ArrayList<ArrayList<AssistanceRequest>> requestsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        // Añadir los elementos sobrantes si la división no es exacta
+        if (ini < requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, requests.size())));
+        }
+
+        model.addAttribute("requestsPaged", requestsPaged);
+
+        // Crear la lista de números de página para la barra de navegación
+        int totalPages = requestsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        // Determinar la página seleccionada (por defecto la 0 si no se indica)
+        int currentPage = page.orElse(0);
+        model.addAttribute("selectedPage", currentPage);
+        // PASAMOS LOS DATOS TOTALES PARA EL CONTADOR
+        model.addAttribute("totalRequests", requests.size());
+        model.addAttribute("pageLength", pageLength);
+
+        // Preparar el objeto del filtro para la vista
+        StatusFilter filter = new StatusFilter();
+        filter.setStatusSel(status);
+        filter.setStatusList(Arrays.asList("Totes", "PENDING", "ACCEPTED", "REJECTED"));
+
+        model.addAttribute("statusFilter", filter);
+        model.addAttribute("requestsPaged", requestsPaged);
 
         return "assistanceRequest/list";
+    }
+
+    @PostMapping("/list")
+    public String processFilter(@ModelAttribute("statusFilter") StatusFilter filter) {
+        return "redirect:/assistanceRequest/list/" + filter.getStatusSel();
     }
 
     @GetMapping(value="/details/{idApRequest}")

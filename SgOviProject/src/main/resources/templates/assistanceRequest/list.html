@@ -16,14 +16,31 @@
 
         <div class="requests-header-action">
             <h2 class="welcome-title">Les meues sol·licituds</h2>
-            <a th:href="@{/assistanceRequest/add}" class="btn-primary">+ Nova sol·licitud</a>
+
+            <div class="header-actions-group">
+
+                <form action="#" th:action="@{/assistanceRequest/list}" th:object="${statusFilter}" method="post" class="filter-form">
+                    <div class="select-wrapper">
+                        <label for="statusSelect" class="filter-label">Filtra per estat:</label>
+
+                        <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
+                            <option th:each="val : *{statusList}"
+                                    th:value="${val}"
+                                    th:text="${val == 'PENDING' ? 'Pendent' : (val == 'ACCEPTED' ? 'Acceptat' : (val == 'REJECTED' ? 'Rebutjat' : 'Totes'))}">
+                            </option>
+                        </select>
+                    </div>
+                </form>
+
+                <a th:href="@{/assistanceRequest/add}" class="btn-primary">+ Nova sol·licitud</a>
+            </div>
         </div>
 
-        <div th:if="${#lists.isEmpty(requests)}" class="empty-state">
-            <p>No tens cap sol·licitud registrada en aquest moment.</p>
+        <div th:if="${#lists.isEmpty(requestsPaged)}" class="empty-state">
+            <p>No s'han trobat sol·licituds amb aquests criteris.</p>
         </div>
 
-        <div th:unless="${#lists.isEmpty(requests)}" class="table-card">
+        <div th:unless="${#lists.isEmpty(requestsPaged)}" class="table-card" th:with="requestsPage=${requestsPaged[__${selectedPage}__]}">
             <table class="styled-table">
                 <thead>
                 <tr>
@@ -36,7 +53,7 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="req : ${requests}">
+                <tr th:each="req : ${requestsPage}">
 
                     <td th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
 
@@ -68,9 +85,29 @@
             </table>
         </div>
 
-        <div th:unless="${#lists.isEmpty(requests)}" class="results-count">
-            Mostrant <span th:text="${#lists.size(requests)}">0</span> sol·licituds
+        <div th:unless="${#lists.isEmpty(requestsPaged)}" class="results-count">
+            Mostrant del
+            <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+            al
+            <strong th:text="${(selectedPage * pageLength) + #lists.size(requestsPaged[selectedPage])}">5</strong>
+            de
+            <strong th:text="${totalRequests}">12</strong> sol·licituds
         </div>
+
+        <nav aria-label="Selecció de pàgina en llistat de sol·licituds"
+             th:unless="${#lists.isEmpty(requestsPaged)}"
+             class="pagination-container">
+            <ul class="pagination">
+                <li class="page-item"
+                    th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+                    th:each="pageNumber : ${pageNumbers}">
+
+                    <a th:href="@{/assistanceRequest/list/{status}(status=${statusFilter.statusSel}, page=${pageNumber - 1})}"
+                       th:text="${pageNumber}"
+                       class="page-link">1</a>
+                </li>
+            </ul>
+        </nav>
 
     </div>
 </main>
