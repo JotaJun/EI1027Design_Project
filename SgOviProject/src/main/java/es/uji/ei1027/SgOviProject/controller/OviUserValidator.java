@@ -15,14 +15,7 @@ public class OviUserValidator implements Validator {
     public void validate(Object target, Errors errors) {
         OviUser oviUser = (OviUser) target;
 
-        //Validació de DNI
-        if (oviUser.getDni() == null || oviUser.getDni().trim().isEmpty()) {
-            errors.rejectValue("dni", "required", "El DNI és obligatori");
-        } else if (!oviUser.getDni().matches("^[0-9]{8}[A-Z]$")) {
-            errors.rejectValue("dni", "invalidFormat", "El DNI ha de tindre 8 números i una lletra majúscula (Ex: 12345678A)");
-        }
-
-        //Validació de DNI
+        // Validació de DNI del Tutor Legal
         if (oviUser.getDniLegalGuardian() == null || oviUser.getDniLegalGuardian().trim().isEmpty()) {
             errors.rejectValue("dniLegalGuardian", "required", "El DNI del tutor és obligatori");
         } else if (!oviUser.getDniLegalGuardian().matches("^[0-9]{8}[A-Z]$")) {

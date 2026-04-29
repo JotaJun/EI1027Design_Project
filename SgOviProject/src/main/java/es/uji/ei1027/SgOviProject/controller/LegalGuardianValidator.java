@@ -14,20 +14,15 @@ public class LegalGuardianValidator implements Validator {
     public void validate(Object target, Errors errors) {
         LegalGuardian guardian = (LegalGuardian) target;
 
-        //Validació de DNI
-        if (guardian.getDni() == null || guardian.getDni().trim().isEmpty()) {
-            errors.rejectValue("dni", "required", "El DNI és obligatori");
-        } else if (!guardian.getDni().matches("^[0-9]{8}[A-Z]$")) {
-            errors.rejectValue("dni", "invalidFormat", "El DNI ha de tindre 8 números i una lletra majúscula (Ex: 12345678A)");
-        }
+        // El DNI se valida en el primer paso del registro general.
 
         // Validació de la signatura
         if (guardian.getSignatureCode() == null || guardian.getSignatureCode().trim().isEmpty()) {
-            errors.rejectValue("name", "required", "La signatura és obligatòria");
+            errors.rejectValue("signatureCode", "required", "La signatura és obligatòria");
         } else if (guardian.getSignatureCode().length() < 4) {
-            errors.rejectValue("name", "tooShort", "La signatura obligatòria no pot ser menor de 4 caràcters");
-        } else if (guardian.getSignatureCode().length() > 15) {
-        errors.rejectValue("name", "tooLong", "La signatura obligatòria no pot superar els 15 caràcters");
-    }
+            errors.rejectValue("signatureCode", "tooShort", "La signatura no pot ser menor de 4 caràcters");
+        } else if (guardian.getSignatureCode().length() > 20) {
+            errors.rejectValue("signatureCode", "tooLong", "La signatura no pot superar els 20 caràcters");
+        }
     }
 }
