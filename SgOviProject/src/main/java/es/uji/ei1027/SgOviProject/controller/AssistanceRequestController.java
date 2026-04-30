@@ -56,7 +56,7 @@ public class AssistanceRequestController {
     }
 
     // Número de peticiones que queremos mostrar al usuario
-    private int pageLength = 10;
+    private int pageLength = 5;
 
     @GetMapping({"/list", "/list/{status}"}) // Acepta la ruta base o con filtro
     public String showList(Model model, HttpSession session,
@@ -118,6 +118,11 @@ public class AssistanceRequestController {
 
         model.addAttribute("statusFilter", filter);
         model.addAttribute("requestsPaged", requestsPaged);
+
+
+        // Guardamos la URL exacta (con su estado y página) para el botón de volver de assistanceRequest/details
+        String exactUrl = "/assistanceRequest/list/" + status + "?page=" + currentPage;
+        session.setAttribute("lastRequestListUrl", exactUrl);
 
         return "assistanceRequest/list";
     }
