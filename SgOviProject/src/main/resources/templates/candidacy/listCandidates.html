@@ -19,14 +19,32 @@
         <h2 class="welcome-title">Candidats proposats</h2>
         <p class="date-text" th:text="'Sol·licitud ID: ' + ${idApRequest}">Sol·licitud ID: 123</p>
       </div>
-      <a th:href="@{/assistanceRequest/details/{id}(id=${idApRequest})}" class="btn-outline">Tornar a la sol·licitud</a>
+
+      <div class="header-actions-group">
+        <form action="#" th:action="@{/candidacy/listCandidates/{id}(id=${idApRequest})}" th:object="${candidacyStatusFilter}" method="post" class="filter-form">
+          <div class="select-wrapper">
+            <label for="statusSelect" class="filter-label">Filtra per estat:</label>
+
+            <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
+              <option value="Totes">Totes</option>
+
+              <option th:each="status : ${candidacyStatuses}"
+                      th:value="${status.name()}"
+                      th:text="${status.description}">
+              </option>
+            </select>
+          </div>
+        </form>
+
+        <a th:href="@{/assistanceRequest/details/{id}(id=${idApRequest})}" class="btn-outline">Tornar a la sol·licitud</a>
+      </div>
     </div>
 
-    <div th:if="${#lists.isEmpty(candidacies)}" class="empty-state">
-      <p>Encara no hi ha cap candidat assignat a aquesta sol·licitud.</p>
+    <div th:if="${#lists.isEmpty(candidaciesPaged)}" class="empty-state">
+      <p>No s'han trobat candidats amb aquests criteris.</p>
     </div>
 
-    <div th:unless="${#lists.isEmpty(candidacies)}" class="table-card">
+    <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="table-card" th:with="candidaciesPage=${candidaciesPaged[__${selectedPage}__]}">
       <table class="styled-table">
         <thead>
         <tr>
@@ -40,7 +58,7 @@
         </tr>
         </thead>
         <tbody>
-        <tr th:each="cand : ${candidacies}">
+        <tr th:each="cand : ${candidaciesPage}">
 
           <td><strong th:text="${cand.account.name + ' ' + cand.account.surname}">Joan Pérez</strong></td>
 
@@ -58,13 +76,9 @@
           <td class="text-center">
             <div th:switch="${cand.candidacy.candidacyStatus.name()}">
               <span th:case="'CONTRACTED'" class="table-badge badge-accepted">Contractat</span>
-
               <span th:case="'INTALKS'" class="table-badge badge-pending">En converses</span>
-
               <span th:case="'TALKSNOTSTARTED'" class="table-badge badge-grey">Pendent</span>
-
               <span th:case="'TALKSENDED'" class="table-badge badge-rejected">Finalitzat</span>
-
               <span th:case="*" class="table-badge badge-grey" th:text="${cand.candidacy.candidacyStatus}">Desconegut</span>
             </div>
           </td>
@@ -82,9 +96,29 @@
       </table>
     </div>
 
-    <div th:unless="${#lists.isEmpty(candidacies)}" class="results-count">
-      Mostrant <span th:text="${#lists.size(candidacies)}">0</span> candidats
+    <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="results-count">
+      Mostrant del
+      <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+      al
+      <strong th:text="${(selectedPage * pageLength) + #lists.size(candidaciesPaged[selectedPage])}">5</strong>
+      de
+      <strong th:text="${totalCandidacies}">12</strong> candidats
     </div>
+
+    <nav aria-label="Selecció de pàgina en llistat de candidats"
+         th:unless="${#lists.isEmpty(candidaciesPaged)}"
+         class="pagination-container">
+      <ul class="pagination">
+        <li class="page-item"
+            th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+            th:each="pageNumber : ${pageNumbers}">
+
+          <a th:href="@{/candidacy/listCandidates/{id}/{status}(id=${idApRequest}, status=${candidacyStatusFilter.statusSel}, page=${pageNumber - 1})}"
+             th:text="${pageNumber}"
+             class="page-link">1</a>
+        </li>
+      </ul>
+    </nav>
 
   </div>
 </main>

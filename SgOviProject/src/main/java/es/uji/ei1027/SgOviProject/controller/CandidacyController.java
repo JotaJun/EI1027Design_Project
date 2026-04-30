@@ -1,17 +1,23 @@
 package es.uji.ei1027.SgOviProject.controller;
 
+import es.uji.ei1027.SgOviProject.comparator.CandidacyDTOComparator;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
+import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
+import es.uji.ei1027.SgOviProject.filters.CandidacyStatusFilter;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.*;
 
+import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/candidacy")
@@ -23,16 +29,77 @@ public class CandidacyController {
     @Autowired
     private CandidacyService candidacyService;
 
-    // Ruta para OVIUSER
-    @GetMapping(value="/listCandidates/{idApRequest}")
-    public String listCandidates(Model model, @PathVariable int idApRequest) {
-        // El controlador pide los datos ya procesados y listos para la vista
-        List<CandidacyDTO> candidaciesInfo = candidacyService.getCandidaciesWithDetailsByIdApRequest(idApRequest);
+    // Número de candidatos que queremos mostrar por página
+    private int pageLength = 5;
 
-        model.addAttribute("candidacies", candidaciesInfo);
+    // Ruta para OVIUSER
+    // Aceptamos la ruta con o sin el filtro de estado
+    @GetMapping({"/listCandidates/{idApRequest}", "/listCandidates/{idApRequest}/{status}"})
+    public String listCandidates(Model model,
+                                 @PathVariable int idApRequest,
+                                 @PathVariable(required = false) String status,
+                                 @RequestParam("page") Optional<Integer> page,
+                                 HttpSession session) {
+
+        // Si no viene estado en la URL, por defecto mostramos "Totes"
+        if (status == null) status = "Totes";
+
+        List<CandidacyDTO> filteredCandidacies = candidacyService.getCandidaciesWithDetailsByIdApRequestAndStatus(idApRequest, status);
+
+        filteredCandidacies.sort(new CandidacyDTOComparator());
+
+        // Crear la lista paginada sobre la lista YA FILTRADA
+        ArrayList<ArrayList<CandidacyDTO>> candidaciesPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= filteredCandidacies.size()) {
+            candidaciesPaged.add(new ArrayList<>(filteredCandidacies.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < filteredCandidacies.size()) {
+            candidaciesPaged.add(new ArrayList<>(filteredCandidacies.subList(ini, filteredCandidacies.size())));
+        }
+
+        // Crear la lista de números de página para la barra de navegación
+        int totalPages = candidaciesPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+
+        // PREPARAR EL FILTRO PARA LA VISTA
+        CandidacyStatusFilter filter = new CandidacyStatusFilter();
+        filter.setStatusSel(status);
+
+        // PASAR DATOS AL MODELO
+
+        model.addAttribute("candidacyStatusFilter", filter);
+        model.addAttribute("candidacyStatuses", CandidacyStatus.values());
+        model.addAttribute("candidaciesPaged", candidaciesPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalCandidacies", filteredCandidacies.size());
+        model.addAttribute("pageLength", pageLength);
         model.addAttribute("idApRequest", idApRequest);
 
+        // Guardar URL exacta para el botón de volver al listado
+        String exactUrl = "/candidacy/listCandidates/" + idApRequest + "/" + status + "?page=" + currentPage;
+        session.setAttribute("lastCandidacyListUrl", exactUrl);
+
         return "candidacy/listCandidates";
+    }
+
+    // PostMapping para procesar el formulario del filtro
+    @PostMapping("/listCandidates/{idApRequest}")
+    public String processFilter(@PathVariable int idApRequest,
+                                @ModelAttribute("candidacyStatusFilter") CandidacyStatusFilter filter) {
+        // Redirigimos a la ruta GET, inyectando el ID de la petición y el estado seleccionado
+        return "redirect:/candidacy/listCandidates/" + idApRequest + "/" + filter.getStatusSel();
     }
 
     @GetMapping(value="/details/{idCandidacy}")

@@ -24,9 +24,11 @@
                         <label for="statusSelect" class="filter-label">Filtra per estat:</label>
 
                         <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
-                            <option th:each="val : *{statusList}"
-                                    th:value="${val}"
-                                    th:text="${val == 'PENDING' ? 'Pendent' : (val == 'ACCEPTED' ? 'Acceptat' : (val == 'REJECTED' ? 'Rebutjat' : 'Totes'))}">
+                            <option value="Totes">Totes</option>
+
+                            <option th:each="status : ${statuses}"
+                                    th:value="${status.name()}"
+                                    th:text="${status.description}">
                             </option>
                         </select>
                     </div>

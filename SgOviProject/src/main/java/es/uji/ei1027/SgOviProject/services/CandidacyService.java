@@ -41,6 +41,22 @@ public class CandidacyService {
         return candidaciesInfo;
     }
 
+    public List<CandidacyDTO> getCandidaciesWithDetailsByIdApRequestAndStatus(int idApRequest, String status) {
+        List<Candidacy> basicCandidacies = candidacyDao.getCandidaciesByIdApRequestAndStatus(idApRequest, status);
+        List<CandidacyDTO> candidaciesInfo = new ArrayList<>();
+
+        for (Candidacy candidacy : basicCandidacies) {
+            String dni = candidacy.getDniPapPati();
+
+            PapPati papPati = papPatiDao.getPapPati(dni);
+            Account account = accountDao.getAccount(dni);
+
+            candidaciesInfo.add(new CandidacyDTO(candidacy, papPati, account));
+        }
+
+        return candidaciesInfo;
+    }
+
     public CandidacyDTO getCandidacyDetailByIdCandidacy(int idCandidacy) {
         Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
 

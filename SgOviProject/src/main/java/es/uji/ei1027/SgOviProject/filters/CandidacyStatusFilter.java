@@ -2,7 +2,7 @@ package es.uji.ei1027.SgOviProject.filters;
 
 import java.util.List;
 
-public class StatusFilter {
+public class CandidacyStatusFilter {
     String statusSel;
 
     public String getStatusSel() {
@@ -15,7 +15,7 @@ public class StatusFilter {
 
     @Override
     public String toString() {
-        return "StatusFilter{" +
+        return "CandidacyStatusFilter{" +
                 "statusSel='" + statusSel + '\'' +
                 '}';
     }

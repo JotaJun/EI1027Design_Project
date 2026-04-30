@@ -2,6 +2,7 @@ package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.AssistanceRequestComparator;
 import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
+import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
@@ -69,12 +70,7 @@ public class AssistanceRequestController {
         if (status == null) status = "Totes";
 
         // Obtener la lista filtrada
-        List<AssistanceRequest> requests;
-        if (status.equals("Totes")) {
-            requests = assistanceRequestDao.getAssistanceRequestsByDni(currentUser.getDni());
-        } else {
-            requests = assistanceRequestDao.getAssistanceRequestsByDniAndStatus(currentUser.getDni(), status);
-        }
+        List<AssistanceRequest> requests = assistanceRequestDao.getAssistanceRequestsByDniAndStatus(currentUser.getDni(), status);
 
         requests.sort(new AssistanceRequestComparator());   // ordenar la lista completa
 
@@ -114,9 +110,9 @@ public class AssistanceRequestController {
         // Preparar el objeto del filtro para la vista
         StatusFilter filter = new StatusFilter();
         filter.setStatusSel(status);
-        filter.setStatusList(Arrays.asList("Totes", "PENDING", "ACCEPTED", "REJECTED"));
 
         model.addAttribute("statusFilter", filter);
+        model.addAttribute("statuses", Status.values());
         model.addAttribute("requestsPaged", requestsPaged);
 
 

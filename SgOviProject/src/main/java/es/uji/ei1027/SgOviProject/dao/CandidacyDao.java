@@ -77,10 +77,24 @@ public class CandidacyDao {
         }
     }
 
+
     public List<Candidacy> getCandidaciesByIdApRequest(int idApRequest){
         try {
             return jdbcTemplate.query("SELECT * FROM Candidacy WHERE idApRequest=?",
                     new CandidacyRowMapper(), idApRequest);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Candidacy>();
+        }
+    }
+
+    public List<Candidacy> getCandidaciesByIdApRequestAndStatus(int idApRequest, String status){
+        try {
+            if (status.equals("Totes")) {
+                return getCandidaciesByIdApRequest(idApRequest);
+            }else{
+                return jdbcTemplate.query("SELECT * FROM Candidacy WHERE idApRequest=? AND candidacyStatus=LOWER(?)",
+                        new CandidacyRowMapper(), idApRequest, status);
+            }
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<Candidacy>();
         }
