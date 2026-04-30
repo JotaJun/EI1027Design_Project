@@ -1,10 +1,12 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.CandidacyDTOComparator;
+import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.filters.CandidacyStatusFilter;
+import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import es.uji.ei1027.SgOviProject.model.Candidacy;
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
@@ -32,6 +34,9 @@ public class CandidacyController {
     @Autowired
     private CandidacyService candidacyService;
 
+    @Autowired
+    private AssistanceRequestDao assistanceRequestDao;
+
     // Número de candidatos que queremos mostrar por página
     private int pageLength = 5;
 
@@ -46,6 +51,14 @@ public class CandidacyController {
 
         // Si no viene estado en la URL, por defecto mostramos "Totes"
         if (status == null) status = "Totes";
+
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        AssistanceRequest assistanceRequest = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        // Comprobar que la petición de la aprequest es del usuario loggeado
+        if (! assistanceRequest.getDniOviUser().equals(currentUser.getDni())){
+            return "redirect:/assistanceRequest/list";
+        }
 
         List<CandidacyDTO> filteredCandidacies = candidacyService.getCandidaciesWithDetailsByIdApRequestAndStatus(idApRequest, status);
 
@@ -118,14 +131,16 @@ public class CandidacyController {
     public String processDelete(Model model, @PathVariable int idCandidacy, HttpSession session){
         Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
 
+        // Si la candidacy no existe devolver al listado de aprequest
         if (candidacy == null){
-            return "candidacy/list";
+            return "redirect:/assistanceRequest/list";
         }
 
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
+        // Si la candidatura no es del usuario actual, devolver a la lista de aprequest
         if (! candidacyService.isCandidacyFromOviUser(candidacy, currentUser)){
-            return "candidacy/list";
+            return "redirect:/assistanceRequest/list";
         }
 
         candidacy.setCandidacyStatus(CandidacyStatus.TALKSENDED);
