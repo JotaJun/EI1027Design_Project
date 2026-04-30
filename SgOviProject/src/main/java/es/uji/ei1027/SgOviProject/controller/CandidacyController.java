@@ -5,6 +5,8 @@ import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.filters.CandidacyStatusFilter;
+import es.uji.ei1027.SgOviProject.model.Candidacy;
+import es.uji.ei1027.SgOviProject.model.OviUser;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,6 +14,7 @@ import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
@@ -109,6 +112,30 @@ public class CandidacyController {
         model.addAttribute("candidacyDto", candidacyDto);
 
         return "candidacy/details";
+    }
+
+    @GetMapping("reject/{idCandidacy}")
+    public String processDelete(Model model, @PathVariable int idCandidacy, HttpSession session){
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+
+        if (candidacy == null){
+            return "candidacy/list";
+        }
+
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        if (! candidacyService.isCandidacyFromOviUser(candidacy, currentUser)){
+            return "candidacy/list";
+        }
+
+        candidacy.setCandidacyStatus(CandidacyStatus.TALKSENDED);
+        candidacy.setDateLastModified(LocalDate.now());
+
+        candidacyDao.updateCandidacy(candidacy);
+
+        model.addAttribute("idApRequest", candidacy.getIdApRequest());  // guardar en caso de haber perdido el enlace a la lista con parámetros específicos
+
+        return "candidacy/rejected_done";
     }
 
     // Ruta para PAPPATI

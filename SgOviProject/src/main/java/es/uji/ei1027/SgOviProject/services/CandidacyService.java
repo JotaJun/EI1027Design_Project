@@ -1,12 +1,8 @@
 package es.uji.ei1027.SgOviProject.services;
 
-import es.uji.ei1027.SgOviProject.dao.AccountDao;
-import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
-import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
+import es.uji.ei1027.SgOviProject.dao.*;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
-import es.uji.ei1027.SgOviProject.model.Account;
-import es.uji.ei1027.SgOviProject.model.Candidacy;
-import es.uji.ei1027.SgOviProject.model.PapPati;
+import es.uji.ei1027.SgOviProject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -24,6 +20,9 @@ public class CandidacyService {
 
     @Autowired
     private AccountDao accountDao;
+
+    @Autowired
+    private AssistanceRequestDao assistanceRequestDao;
 
     public List<CandidacyDTO> getCandidaciesWithDetailsByIdApRequest(int idApRequest) {
         List<Candidacy> basicCandidacies = candidacyDao.getCandidaciesByIdApRequest(idApRequest);
@@ -66,5 +65,17 @@ public class CandidacyService {
         Account account = accountDao.getAccount(dni);
 
         return new CandidacyDTO(candidacy, papPati, account);
+    }
+
+    public boolean isCandidacyFromOviUser(Candidacy candidacy, OviUser oviUser){
+        List<AssistanceRequest> assistanceRequests = assistanceRequestDao.getAssistanceRequestsByDni(oviUser.getDni());
+
+        if (assistanceRequests.isEmpty()) return false;
+
+        for (AssistanceRequest req : assistanceRequests){
+            if (req.getIdApRequest() == candidacy.getIdApRequest())
+                return true;
+        }
+        return false;
     }
 }
