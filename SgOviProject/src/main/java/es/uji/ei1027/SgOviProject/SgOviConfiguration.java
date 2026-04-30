@@ -77,7 +77,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                 .addPathPatterns(
                         "/oviUser/**",
                         "/assistanceRequest/add",       // Rutas específica
-                        "/assistanceRequest/list",
+                        "/assistanceRequest/list/**",
                         "/assistanceRequest/details/**",
                         "/assistanceRequest/update/**",
                         "/candidacy/listCandidates/**",
