@@ -82,7 +82,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/assistanceRequest/update/**",
                         "/candidacy/listCandidates/**",
                         "/candidacy/details/**",
-                        "candidacy/reject/**"
+                        "/candidacy/reject/**"
                 );
         // TECHNICIAN
         registry.addInterceptor(new RoleInterceptor(AccountType.TECHNICIAN))
