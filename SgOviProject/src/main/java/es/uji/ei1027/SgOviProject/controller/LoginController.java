@@ -60,7 +60,7 @@ public class LoginController {
 
         } else {
 
-            Account account = accountDao.getAccountByLoginDetails(details);
+            Account account = accountDao.getAccountByLoginDetails(details); // devuelve cuenta sin contraseña
             if (account == null) {
                 bindingResult.reject("badCredentials", "El correu o la contrasenya són incorrectes");
                 return "login";
