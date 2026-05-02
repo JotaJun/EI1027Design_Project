@@ -14,7 +14,7 @@ import org.springframework.transaction.annotation.Transactional;
 
 @Service
 @Transactional  // Mirar documentación Spring lo que significa
-public class ImplAccountRegisterSvc implements  IntAccountRegisterSvc{
+public class ImplAccountSvc implements IntAccountSvc {
 
     @Autowired
     AccountDao accountDao;
@@ -49,6 +49,16 @@ public class ImplAccountRegisterSvc implements  IntAccountRegisterSvc{
         oviUser.setDni(account.getDni());
 
         oviUserDao.addOviUser(oviUser);
+    }
+
+    @Override
+    public void updateOviUser(Account account, OviUser oviUser) {
+        accountDao.updateAccount(account);
+
+        // Si oviUser no tiene el dni, se lo asignamos
+        oviUser.setDni(account.getDni());
+
+        oviUserDao.updateOviUser(oviUser);
     }
 
     @Override

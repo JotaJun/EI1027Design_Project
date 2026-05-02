@@ -2,8 +2,7 @@ package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.LegalGuardian;
-import es.uji.ei1027.SgOviProject.model.PapPati;
-import es.uji.ei1027.SgOviProject.services.IntAccountRegisterSvc;
+import es.uji.ei1027.SgOviProject.services.IntAccountSvc;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,13 +12,12 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.thymeleaf.standard.expression.LessOrEqualToExpression;
 
 @Controller
 @RequestMapping("/legalGuardian")
 public class LegalGuardianController {
     @Autowired
-    private IntAccountRegisterSvc registerService;
+    private IntAccountSvc registerService;
 
 
     @GetMapping("/register")

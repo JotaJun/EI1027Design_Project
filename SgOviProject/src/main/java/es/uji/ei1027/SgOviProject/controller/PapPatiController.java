@@ -3,7 +3,7 @@ package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.PapPati;
-import es.uji.ei1027.SgOviProject.services.IntAccountRegisterSvc;
+import es.uji.ei1027.SgOviProject.services.IntAccountSvc;
 import jakarta.servlet.http.HttpSession;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 @RequestMapping("/papPati")
 public class PapPatiController {
     @Autowired
-    private IntAccountRegisterSvc registerService;
+    private IntAccountSvc registerService;
 
 
     @GetMapping("/register")

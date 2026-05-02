@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Modificar Perfil - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="assistance-card">
+            <div class="requests-header-action">
+                <a th:href="@{/oviUser/details}" class="btn-back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Cancel·lar i tornar
+                </a>
+            </div>
+
+            <div class="login-header">
+                <h2 class="card-title">Modificar les meves dades</h2>
+                <p class="card-subtitle">Actualitza la informació del teu perfil d'usuari OVI.</p>
+            </div>
+
+            <form th:action="@{/oviUser/update}" method="post" th:object="${updateForm}" class="assistance-form">
+
+                <h3 class="detail-section-title mt-10">Dades Personals</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="name">Nom <span class="required-asterisk">*</span></label>
+                        <input type="text" id="name" th:field="*{account.name}"
+                               th:classappend="${#fields.hasErrors('account.name')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.name')}" class="error-message" th:errors="*{account.name}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="surname">Cognoms <span class="required-asterisk">*</span></label>
+                        <input type="text" id="surname" th:field="*{account.surname}"
+                               th:classappend="${#fields.hasErrors('account.surname')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.surname')}" class="error-message" th:errors="*{account.surname}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="birthday">Data de naixement <span class="required-asterisk">*</span></label>
+                        <input type="date" id="birthday" th:field="*{account.birthday}"
+                               th:classappend="${#fields.hasErrors('account.birthday')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.birthday')}" class="error-message" th:errors="*{account.birthday}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Gènere <span class="required-asterisk">*</span></label>
+                        <select id="gender" th:field="*{account.gender}" th:classappend="${#fields.hasErrors('account.gender')} ? 'input-error'">
+                            <option value="">Selecciona gènere...</option>
+                            <option th:each="g : ${genderList}" th:value="${g.name()}" th:text="${g.description}"></option>
+                        </select>
+                        <span th:if="${#fields.hasErrors('account.gender')}" class="error-message" th:errors="*{account.gender}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="dniLegalGuardian">
+                            DNI Tutor Legal
+                            <span class="info-tooltip">
+                                (?)
+                                <span class="tooltip-text">Aquest camp no és obligatori. Pots indicar un tutor si vols que estigui vinculat al teu perfil, però ha d'estar registrat prèviament.</span>
+                            </span>
+                        </label>
+                        <input type="text" id="dniLegalGuardian" th:field="*{oviUser.dniLegalGuardian}"
+                               placeholder="Ex: 12345678A"
+                               th:classappend="${#fields.hasErrors('oviUser.dniLegalGuardian')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('oviUser.dniLegalGuardian')}" class="error-message" th:errors="*{oviUser.dniLegalGuardian}"></span>
+                    </div>
+                </div>
+
+                <h3 class="detail-section-title">Dades de Contacte</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="email">Correu electrònic <span class="required-asterisk">*</span></label>
+                        <input type="email" id="email" th:field="*{account.email}"
+                               th:classappend="${#fields.hasErrors('account.email')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.email')}" class="error-message" th:errors="*{account.email}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="phoneNumber">Telèfon <span class="required-asterisk">*</span></label>
+                        <input type="text" id="phoneNumber" th:field="*{account.phoneNumber}"
+                               th:classappend="${#fields.hasErrors('account.phoneNumber')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.phoneNumber')}" class="error-message" th:errors="*{account.phoneNumber}"></span>
+                    </div>
+                </div>
+
+                <h3 class="detail-section-title">Adreça</h3>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="city">Població <span class="required-asterisk">*</span></label>
+                        <input type="text" id="city" th:field="*{account.city}"
+                               th:classappend="${#fields.hasErrors('account.city')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.city')}" class="error-message" th:errors="*{account.city}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="street">Carrer / Via <span class="required-asterisk">*</span></label>
+                        <input type="text" id="street" th:field="*{account.street}"
+                               th:classappend="${#fields.hasErrors('account.street')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.street')}" class="error-message" th:errors="*{account.street}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="zipCode">Codi Postal <span class="required-asterisk">*</span></label>
+                        <input type="text" id="zipCode" th:field="*{account.zipCode}"
+                               th:classappend="${#fields.hasErrors('account.zipCode')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('account.zipCode')}" class="error-message" th:errors="*{account.zipCode}"></span>
+                    </div>
+                </div>
+
+                <h3 class="detail-section-title">Canviar Contrasenya (Opcional)</h3>
+                <p class="card-subtitle mb-4">Deixa aquests camps en blanc si no vols canviar la teva contrasenya actual.</p>
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="newPassword">Nova contrasenya</label>
+                        <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Mínim 8 caràcters"
+                               th:classappend="${#fields.hasErrors('newPassword')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('newPassword')}" class="error-message" th:errors="*{newPassword}"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="confirmPassword">Repetir nova contrasenya</label>
+                        <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                               th:classappend="${#fields.hasErrors('confirmPassword')} ? 'input-error'" />
+                        <span th:if="${#fields.hasErrors('confirmPassword')}" class="error-message" th:errors="*{confirmPassword}"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions-centered actions-bordered">
+                    <button type="submit" class="btn-primary btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+                            <polyline points="17 21 17 13 7 13 7 21"></polyline>
+                            <polyline points="7 3 7 8 15 8"></polyline>
+                        </svg>
+                        Guardar canvis
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

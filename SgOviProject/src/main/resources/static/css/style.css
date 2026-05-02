@@ -943,8 +943,10 @@ select:focus {
 }
 
 .assistance-form input[type="text"],
+.assistance-form input[type="email"],
 .assistance-form input[type="date"],
 .assistance-form input[type="number"],
+.assistance-form input[type="password"],
 .assistance-form select,
 .assistance-form textarea {
     width: 100%;
@@ -1027,6 +1029,22 @@ select:focus {
 /* Utilidad de margen */
 .mt-15 {
     margin-top: 15px;
+}
+
+/* --- CLASES DE UTILIDAD Y ESTADOS --- */
+
+/* Modificadores de margen */
+.mt-10 {
+    margin-top: 10px;
+}
+
+.m-0 {
+    margin: 0;
+}
+
+/* AFEGEIX AQUESTA NOVA CLASSE */
+.mb-4 {
+    margin-bottom: 24px; /* Pots ajustar aquest valor (ex: 20px, 1.5rem) segons l'espai que vulguis */
 }
 
 
@@ -1328,4 +1346,68 @@ margin-bottom: 25px;
 .filter-form .select-wrapper {
     display: flex;
     align-items: center;
+}
+
+label-hint {
+    font-weight: 400;
+    font-size: 0.85rem;
+    color: var(--color-secondary);
+    opacity: 0.8;
+    margin-left: 5px;
+}
+
+/* Contenedor del icono de ayuda */
+.info-tooltip {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    width: 16px;
+    height: 16px;
+    background-color: var(--color-secondary);
+    color: white;
+    border-radius: 50%;
+    font-size: 11px;
+    margin-left: 5px;
+    cursor: help;
+    position: relative;
+}
+
+/* El texto oculto (el globo) */
+.info-tooltip .tooltip-text {
+    visibility: hidden;
+    width: 200px;
+    background-color: #333;
+    color: #fff;
+    text-align: center;
+    border-radius: 6px;
+    padding: 8px;
+    position: absolute;
+    z-index: 1;
+    bottom: 125%; /* Aparece arriba del icono */
+    left: 50%;
+    transform: translateX(-50%);
+    opacity: 0;
+    transition: opacity 0.3s;
+    font-family: var(--font-body);
+    font-weight: 400;
+    line-height: 1.4;
+    pointer-events: none; /* Para que no moleste al mover el ratón */
+}
+
+/* Triangulito del globo */
+.info-tooltip .tooltip-text::after {
+    content: "";
+    position: absolute;
+    top: 100%;
+    left: 50%;
+    margin-left: -5px;
+    border-width: 5px;
+    border-style: solid;
+    border-color: #333 transparent transparent transparent;
+}
+
+/* Mostrar al pasar el ratón */
+.info-tooltip:hover .tooltip-text {
+    visibility: visible;
+    opacity: 1;
 }

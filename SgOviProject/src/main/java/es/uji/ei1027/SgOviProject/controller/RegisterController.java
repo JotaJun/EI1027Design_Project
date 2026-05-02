@@ -3,7 +3,7 @@ package es.uji.ei1027.SgOviProject.controller;
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.model.*;
-import es.uji.ei1027.SgOviProject.services.IntAccountRegisterSvc;
+import es.uji.ei1027.SgOviProject.services.IntAccountSvc;
 import jakarta.servlet.http.HttpSession;
 import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -20,8 +20,9 @@ public class RegisterController {
 
     @Autowired
     private AccountDao accountDao;
+
     @Autowired
-    private IntAccountRegisterSvc registerService;
+    private IntAccountSvc registerService;
 
     @GetMapping("/register")
     public String register(Model model) {

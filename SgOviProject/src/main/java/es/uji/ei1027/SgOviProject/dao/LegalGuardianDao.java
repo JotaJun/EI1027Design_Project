@@ -50,6 +50,16 @@ public class LegalGuardianDao {
         }
     }
 
+    public boolean existsLegalGuardian(String dni) {
+        try {
+                Integer count = jdbcTemplate.queryForObject("SELECT COUNT(*) FROM LegalGuardian WHERE dni = ?",
+                        Integer.class, dni);
+                return count != null && count > 0;
+        } catch(EmptyResultDataAccessException e) {
+            return false;
+        }
+    }
+
     public List<LegalGuardian> getLegalGuardians() {
         try {
             return jdbcTemplate.query("SELECT * FROM LegalGuardian",
