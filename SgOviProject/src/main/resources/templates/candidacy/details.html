@@ -34,12 +34,11 @@
           <p class="card-subtitle m-0" th:text="'DNI: ' + ${candidacyDto.account.dni}">DNI: 12345678A</p>
         </div>
 
-        <div th:switch="${candidacyDto.candidacy.candidacyStatus.name()}">
-          <span th:case="'CONTRACTED'" class="status-badge badge-accepted">Contractat</span>
-          <span th:case="'INTALKS'" class="status-badge badge-pending">En converses</span>
-          <span th:case="'TALKSNOTSTARTED'" class="status-badge badge-grey">Pendent</span>
-          <span th:case="'TALKSENDED'" class="status-badge badge-rejected">Finalitzat</span>
-        </div>
+        <span class="status-badge"
+              th:classappend="${'badge-' + #strings.toLowerCase(candidacyDto.candidacy.candidacyStatus.name())}"
+              th:text="${candidacyDto.candidacy.candidacyStatus.description}">
+          Estat
+        </span>
       </div>
 
       <h3 class="detail-section-title mt-10">Dades Personals</h3>
