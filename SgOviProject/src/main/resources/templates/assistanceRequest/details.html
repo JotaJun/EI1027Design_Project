@@ -31,12 +31,11 @@
       <div class="header-flex">
         <h2 class="card-title">Sol·licitud amb ID: #<span th:text="${req.idApRequest}">123</span></h2>
 
-        <div th:switch="${req.status.name()}">
-          <span th:case="'PENDING'" class="status-badge badge-pending">Pendent</span>
-          <span th:case="'ACCEPTED'" class="status-badge badge-accepted">Acceptada</span>
-          <span th:case="'REJECTED'" class="status-badge badge-rejected">Rebutjada</span>
-          <span th:case="*" class="status-badge" th:text="${req.status}">Sense estat</span>
-        </div>
+        <span class="status-badge"
+              th:classappend="${'badge-' + #strings.toLowerCase(req.status.name())}"
+              th:text="${req.status.description}">
+          Estado por defecto
+        </span>
       </div>
 
       <div th:if="${req.status.name() == 'REJECTED' and req.deniedReason != null}" class="alert-box alert-rejected">

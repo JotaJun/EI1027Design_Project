@@ -66,12 +66,11 @@
                     <td th:text="${req.monthsRequired} + ' mesos'">6 mesos</td>
 
                     <td class="text-center">
-                        <div th:switch="${req.status.name()}">
-                            <span th:case="'PENDING'" class="table-badge badge-pending">Pendent</span>
-                            <span th:case="'ACCEPTED'" class="table-badge badge-accepted">Acceptat</span>
-                            <span th:case="'REJECTED'" class="table-badge badge-rejected">Rebutjat</span>
-                            <span th:case="*" class="table-badge" th:text="${req.status}">Sense estat</span>
-                        </div>
+                        <span class="table-badge"
+                              th:classappend="${'badge-' + #strings.toLowerCase(req.status.name())}"
+                              th:text="${req.status.description}">
+                            Estado
+                        </span>
                     </td>
 
                     <td class="text-center">
