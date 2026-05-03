@@ -603,17 +603,20 @@ select:focus {
 }
 
 /* --- COLORES PARA LOS ESTADOS DE LA CUENTA --- */
-.badge-accepted {
+.badge-accepted,
+.badge-contracted{
     background-color: var(--color-success-bg);
     color: var(--color-success-text);
 }
 
-.badge-pending {
+.badge-pending,
+.badge-intalks{
     background-color: var(--color-pending-bg);
     color: var(--color-pending-text);
 }
 
-.badge-rejected {
+.badge-rejected,
+.badge-talksended{
     background-color: var(--color-danger-bg);
     color: var(--color-danger-text);
 }
@@ -717,10 +720,11 @@ select:focus {
     color: #853A00; /*  naranja oscuro casi marrón para accesibilidad */
 }
 
+.badge-talksnotstarted,
 .badge-grey {
-    background-color: #F3F4F6;
-    color: #4B5563;
-    border: 1px solid #D1D5DB
+    background-color: var(--color-border-light);
+    color: var(--color-secondary);
+    border: 1px solid var(--color-border-main);
 }
 
 .dash-card-body {

@@ -74,13 +74,11 @@
           </td>
 
           <td class="text-center">
-            <div th:switch="${cand.candidacy.candidacyStatus.name()}">
-              <span th:case="'CONTRACTED'" class="table-badge badge-accepted">Contractat</span>
-              <span th:case="'INTALKS'" class="table-badge badge-pending">En converses</span>
-              <span th:case="'TALKSNOTSTARTED'" class="table-badge badge-grey">Pendent</span>
-              <span th:case="'TALKSENDED'" class="table-badge badge-rejected">Finalitzat</span>
-              <span th:case="*" class="table-badge badge-grey" th:text="${cand.candidacy.candidacyStatus}">Desconegut</span>
-            </div>
+            <span class="table-badge"
+                  th:classappend="${'badge-' + #strings.toLowerCase(cand.candidacy.candidacyStatus.name())}"
+                  th:text="${cand.candidacy.candidacyStatus.description}">
+                Estat
+            </span>
           </td>
 
           <td class="text-center">
