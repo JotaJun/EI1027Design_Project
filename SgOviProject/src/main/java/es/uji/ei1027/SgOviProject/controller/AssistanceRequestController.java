@@ -195,6 +195,22 @@ public class AssistanceRequestController {
         return "redirect:/assistanceRequest/done";
     }
 
+    @GetMapping(value="/delete/{idApRequest}")
+    public String deleteApRequest(Model model, @PathVariable int idApRequest, HttpSession session) {
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        // Comprobar que la solicitud existe, pertenece al usuario actual y está en estado PENDING
+        if (request == null || !request.getDniOviUser().equals(currentUser.getDni()) || request.getStatus() != Status.PENDING) {
+            return "redirect:/assistanceRequest/list";
+        }
+
+        assistanceRequestDao.deleteAssistanceRequest(idApRequest);
+
+        return "redirect:/assistanceRequest/list";
+    }
+
     @RequestMapping("/done")
     public String apRequestDone() {
         return "assistanceRequest/done";

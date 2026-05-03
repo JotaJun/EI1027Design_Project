@@ -80,6 +80,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/assistanceRequest/list/**",
                         "/assistanceRequest/details/**",
                         "/assistanceRequest/update/**",
+                        "/assistanceRequest/delete/**",
                         "/candidacy/listCandidates/**",
                         "/candidacy/details/**",
                         "/candidacy/reject/**"
