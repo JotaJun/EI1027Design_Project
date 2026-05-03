@@ -1134,6 +1134,14 @@ select:focus {
     border-bottom: none;
 }
 
+/* Clase para celdas con múltiples botones de acción */
+.actions-cell {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    gap: 15px; /* Aquí puedes cambiar la separación fácilmente (12px, 20px, etc.) */
+}
+
 .action-btn {
     background: none;
     border: none;
