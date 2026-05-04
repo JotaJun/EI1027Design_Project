@@ -1,0 +1,106 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Històric de Contractes - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <!-- BOTÓN DE VOLVER ATRÁS -->
+        <div class="requests-header-action">
+            <a th:href="@{/candidacy/details/{id}(id=${idCandidacy})}" class="btn-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Tornar a la candidatura
+            </a>
+        </div>
+
+        <br>
+
+        <div class="requests-header-action">
+            <h2 class="welcome-title">Històric de Contractes</h2>
+
+            <div class="header-actions-group">
+                <a th:href="@{/contract/add/{id}(id=${idCandidacy})}" class="btn-primary">+ Nou Contracte</a>
+            </div>
+        </div>
+
+        <div th:if="${#lists.isEmpty(contractsPaged)}" class="empty-state">
+            <p>No s'han trobat contractes per a aquesta candidatura.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(contractsPaged)}" class="table-card" th:with="contractsPage=${contractsPaged[__${selectedPage}__]}">
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>DATA CREACIÓ</th>
+                    <th>DATA INICI</th>
+                    <th>DATA FI</th>
+                    <th>SALARI/HORA</th>
+                    <th class="text-center">ACCIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="contract : ${contractsPage}">
+
+                    <td th:text="${#temporals.format(contract.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
+
+                    <td th:text="${#temporals.format(contract.startDate, 'dd/MM/yyyy')}">01/04/2026</td>
+
+                    <td th:text="${#temporals.format(contract.endDate, 'dd/MM/yyyy')}">30/09/2026</td>
+
+                    <td><strong th:text="${contract.hourlySalary} + ' €'">12.50 €</strong></td>
+
+                    <td class="actions-cell">
+                        <!-- Botón Veure Detall (Contracte) -->
+                        <a th:href="@{/contract/view/{idContract}(idContract=${contract.idContract})}" class="action-btn" title="Veure detall del contracte">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                <circle cx="12" cy="12" r="3"></circle>
+                            </svg>
+                        </a>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(contractsPaged)}" class="results-count">
+            Mostrant del
+            <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+            al
+            <strong th:text="${(selectedPage * pageLength) + #lists.size(contractsPaged[selectedPage])}">5</strong>
+            de
+            <strong th:text="${totalContracts}">12</strong> contractes
+        </div>
+
+        <nav aria-label="Selecció de pàgina en llistat de contractes"
+             th:unless="${#lists.isEmpty(contractsPaged)}"
+             class="pagination-container">
+            <ul class="pagination">
+                <li class="page-item"
+                    th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+                    th:each="pageNumber : ${pageNumbers}">
+
+                    <a th:href="@{/contract/list/{idCandidacy}(idCandidacy=${idCandidacy}, page=${pageNumber - 1})}"
+                       th:text="${pageNumber}"
+                       class="page-link">1</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</main>
+
+</body>
+</html>

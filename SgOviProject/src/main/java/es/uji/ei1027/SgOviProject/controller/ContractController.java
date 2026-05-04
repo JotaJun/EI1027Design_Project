@@ -1,5 +1,6 @@
 package es.uji.ei1027.SgOviProject.controller;
 
+import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
 import es.uji.ei1027.SgOviProject.model.Contract;
 import es.uji.ei1027.SgOviProject.model.OviUser;
@@ -18,6 +19,11 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.nio.file.StandardCopyOption;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.IntStream;
 
 @Controller
 @RequestMapping("/contract")
@@ -48,8 +54,7 @@ public class ContractController {
     }
 
     @PostMapping("/add")
-    public String processAddContractForm(Model model,
-                                         @ModelAttribute("contract") Contract contract,
+    public String processAddContractForm(@ModelAttribute("contract") Contract contract,
                                          BindingResult bindingResult,
                                          HttpSession session,
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
@@ -101,6 +106,64 @@ public class ContractController {
         candidacyService.contractDone(contract);
 
         return "redirect:/contract/done";
+    }
+
+    // Número de contratos que queremos mostrar por página
+    private int pageLength = 5;
+
+    @GetMapping("/list/{idCandidacy}")
+    public String listContracts(Model model,
+                                @PathVariable int idCandidacy,
+                                @RequestParam("page") Optional<Integer> page,
+                                HttpSession session) {
+
+        // Seguridad
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        if (!candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) {
+            return "redirect:/oviUser/main";
+        }
+
+        List<Contract> contracts = contractDao.getContractsByIdCandidacy(idCandidacy);
+
+        contracts.sort(new ContractComparator());
+
+        // Crear la lista paginada
+        ArrayList<ArrayList<Contract>> contractsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= contracts.size()) {
+            contractsPaged.add(new ArrayList<>(contracts.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < contracts.size()) {
+            contractsPaged.add(new ArrayList<>(contracts.subList(ini, contracts.size())));
+        }
+
+        // Crear la lista de números de página para la barra de navegación
+        int totalPages = contractsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+
+        // PASAR DATOS AL MODELO
+        model.addAttribute("contractsPaged", contractsPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalContracts", contracts.size());
+        model.addAttribute("pageLength", pageLength);
+        model.addAttribute("idCandidacy", idCandidacy);
+
+        // Guardar URL exacta para el botón de volver (útil cuando vayamos al details del contrato)
+        String exactUrl = "/contract/list/" + idCandidacy + "?page=" + currentPage;
+        session.setAttribute("lastContractListUrl", exactUrl);
+
+        return "contract/list";
     }
 
 

@@ -4,6 +4,8 @@ import es.uji.ei1027.SgOviProject.model.Contract;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.time.LocalDate;
+
 public class ContractValidator implements Validator {
 
     @Override

@@ -70,4 +70,13 @@ public class ContractDao {
             return new ArrayList<Contract>();
         }
     }
+
+    public List<Contract> getContractsByIdCandidacy(int idCandidacy) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM Contract WHERE idCandidacy=?",
+                    new ContractRowMapper(), idCandidacy);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Contract>();
+        }
+    }
 }
