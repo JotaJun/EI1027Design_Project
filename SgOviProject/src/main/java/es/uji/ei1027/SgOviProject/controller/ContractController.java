@@ -119,7 +119,7 @@ public class ContractController {
         // Cambiar la candidatura de estado
         candidacyService.contractDone(contract);
 
-        return "redirect:/contract/list/" + contract.getIdCandidacy() + "?nou=" + contract.getIdContract();
+        return "redirect:/contract/done/" + contract.getIdCandidacy() + "/" + contract.getIdContract();
     }
 
     // Número de contratos que queremos mostrar por página
@@ -214,8 +214,13 @@ public class ContractController {
     }
 
 
-    @RequestMapping("/done")
-    public String contractDone() {
+    @GetMapping("/done/{idCandidacy}/{idContract}")
+    public String contractDone(Model model,
+                               @PathVariable int idCandidacy,
+                               @PathVariable int idContract) {
+        model.addAttribute("idCandidacy", idCandidacy);
+        model.addAttribute("idContract", idContract);
+
         return "contract/done";
     }
 

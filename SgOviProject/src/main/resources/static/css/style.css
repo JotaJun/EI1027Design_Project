@@ -1461,3 +1461,16 @@ label-hint {
     width: 4px;
     background-color: var(--color-primary);
 }
+
+
+/* =========================================
+   MODIFICADORES: Grupos de botones
+   ========================================= */
+
+/* Para botones apilados verticalmente en tarjetas (ej. vista done) */
+.stacked-btn-group {
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    margin-top: 30px;
+}
