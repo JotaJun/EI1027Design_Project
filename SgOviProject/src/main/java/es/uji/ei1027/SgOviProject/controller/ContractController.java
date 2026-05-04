@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
+import org.springframework.util.StringUtils;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.multipart.MultipartFile;
@@ -54,7 +55,8 @@ public class ContractController {
     }
 
     @PostMapping("/add")
-    public String processAddContractForm(@ModelAttribute("contract") Contract contract,
+    public String processAddContractForm(Model model,
+                                         @ModelAttribute("contract") Contract contract,
                                          BindingResult bindingResult,
                                          HttpSession session,
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
@@ -73,17 +75,29 @@ public class ContractController {
         }
 
         if (bindingResult.hasErrors()) {
+            // Por motivos de seguridad este campo si falla algo se limpia, mejor avisar al usuario
+            model.addAttribute("avisoPdf", "S'han trobat errors en el formulari. Si us plau, recorda tornar a adjuntar el document PDF.");
             return "contract/add";
         }
 
         // GUARDAR EL FICHERO EN EL DISCO
         if (ficheroPdf != null && !ficheroPdf.isEmpty()) {
             try {
-                // milisegundos para hacer nombre único y evitar sobreescribir + Obtenemos el nombre original del archivo
-                String nombreArchivo = System.currentTimeMillis() + "_" + ficheroPdf.getOriginalFilename();
+                String originalFilename = ficheroPdf.getOriginalFilename();
+
+                // Limpiamos la ruta de caracteres extraños o saltos de directorio
+                String cleanFilename = StringUtils.cleanPath(originalFilename);
+
+                // milisegundos para hacer nombre único y evitar sobreescribir
+                String nombreArchivo = System.currentTimeMillis() + "_" + cleanFilename;
 
                 // Construimos la ruta completa donde se va a guardar
-                Path rutaDestino = Paths.get(uploadDirectory + nombreArchivo);
+                Path rutaDestino = Paths.get(uploadDirectory, nombreArchivo);
+
+                // Si no existe directorio, lo creamos
+                if (!Files.exists(rutaDestino.getParent())) {
+                    Files.createDirectories(rutaDestino.getParent());
+                }
 
                 // Copiamos el archivo al disco duro.
                 // REPLACE_EXISTING hace que si subes otro con el mismo nombre, lo sobreescriba (no debería pasar por el nombre único pero por seguridad)
