@@ -42,6 +42,7 @@ public class CandidacyDao {
 
     /* Actualizar una candidatura */
     public void updateCandidacy(Candidacy candidacy) {
+        candidacy.setDateLastModified(LocalDate.now());
         jdbcTemplate.update("UPDATE Candidacy SET dateLastModified=?, candidacyStatus=?, idApRequest=?, dniPapPati=? WHERE idCandidacy=?",
                 candidacy.getDateLastModified(),
                 candidacy.getCandidacyStatus() != null ? candidacy.getCandidacyStatus().name().toLowerCase() : "talksnotstarted",
