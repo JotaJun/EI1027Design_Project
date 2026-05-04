@@ -139,7 +139,7 @@ public class CandidacyController {
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
         // Si la candidatura no es del usuario actual, devolver a la lista de aprequest
-        if (! candidacyService.isCandidacyFromOviUser(candidacy, currentUser)){
+        if (! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)){
             return "redirect:/assistanceRequest/list";
         }
 

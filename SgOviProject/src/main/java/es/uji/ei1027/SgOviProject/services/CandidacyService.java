@@ -2,6 +2,7 @@ package es.uji.ei1027.SgOviProject.services;
 
 import es.uji.ei1027.SgOviProject.dao.*;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
+import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -67,15 +68,23 @@ public class CandidacyService {
         return new CandidacyDTO(candidacy, papPati, account);
     }
 
-    public boolean isCandidacyFromOviUser(Candidacy candidacy, OviUser oviUser){
+    public boolean isCandidacyFromOviUser(int idCandidacy, OviUser oviUser){
         List<AssistanceRequest> assistanceRequests = assistanceRequestDao.getAssistanceRequestsByDni(oviUser.getDni());
 
         if (assistanceRequests.isEmpty()) return false;
 
         for (AssistanceRequest req : assistanceRequests){
-            if (req.getIdApRequest() == candidacy.getIdApRequest())
+            if (req.getIdApRequest() == idCandidacy)
                 return true;
         }
         return false;
+    }
+
+    public void contractDone(Contract contract){
+        Candidacy candidacy = candidacyDao.getCandidacyById(contract.getIdCandidacy());
+
+        candidacy.setCandidacyStatus(CandidacyStatus.CONTRACTED);
+
+        candidacyDao.updateCandidacy(candidacy);
     }
 }
