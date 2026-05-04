@@ -53,7 +53,7 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.addAssistanceRequest(assistanceRequest);
 
-        return "redirect:/assistanceRequest/done";
+        return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest();
     }
 
     // Número de peticiones que queremos mostrar al usuario
@@ -62,7 +62,8 @@ public class AssistanceRequestController {
     @GetMapping({"/list", "/list/{status}"}) // Acepta la ruta base o con filtro
     public String showList(Model model, HttpSession session,
                            @PathVariable(required = false) String status,
-                           @RequestParam("page") Optional<Integer> page) {
+                           @RequestParam("page") Optional<Integer> page,
+                           @RequestParam("nova") Optional<Integer> nova) {
         // No hace falta comprobar si es null, ya se encarga interceptor
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
@@ -102,7 +103,10 @@ public class AssistanceRequestController {
 
         // Determinar la página seleccionada (por defecto la 0 si no se indica)
         int currentPage = page.orElse(0);
+        int novaReqId = nova.orElse(-1);
+
         model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("nova", novaReqId);
         // PASAMOS LOS DATOS TOTALES PARA EL CONTADOR
         model.addAttribute("totalRequests", requests.size());
         model.addAttribute("pageLength", pageLength);
@@ -211,8 +215,10 @@ public class AssistanceRequestController {
         return "redirect:/assistanceRequest/list";
     }
 
-    @RequestMapping("/done")
-    public String apRequestDone() {
+    @GetMapping("/done/{idApRequest}")
+    public String apRequestDone(Model model, @PathVariable int idApRequest) {
+        // Pasamos el ID a la vista done.html para que pueda usarlo en el botón de "Volver"
+        model.addAttribute("idApRequest", idApRequest);
         return "assistanceRequest/done";
     }
 }

@@ -55,7 +55,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="req : ${requestsPage}">
+                <tr th:each="req : ${requestsPage}"
+                    th:classappend="${req.idApRequest == nova} ? 'row-newly-added' : ''">
 
                     <td th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
 

@@ -26,23 +26,36 @@ public class AssistanceRequestDao {
     }
 
     public void addAssistanceRequest(AssistanceRequest request) {
-        jdbcTemplate.update(
-                "INSERT INTO AssistanceRequest(creationDate, description, assistantType, gender, city, drivingLicense, yearsOfExperience, initialDateRequired, monthsRequired, status, deniedReason, dniOviUser, approvedByGuardian, dniLegalGuardian) VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
-                request.getCreationDate(),
-                request.getDescription(),
-                request.getAssistantType().name(),
-                (request.getGender() != null) ? request.getGender().name() : null,
-                request.getCity(),
-                request.getDrivingLicense(),
-                request.getYearsOfExperience(),
-                request.getInitialDateRequired(),
-                request.getMonthsRequired(),
-                request.getStatus() != null ? request.getStatus().name().toLowerCase() : "pending",
-                request.getDeniedReason(),
-                request.getDniOviUser(),
-                request.getApprovedByGuardian(),
-                request.getDniLegalGuardian()
-        );
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO AssistanceRequest(creationDate, description, assistantType, gender, city, drivingLicense, yearsOfExperience, initialDateRequired, monthsRequired, status, deniedReason, dniOviUser, approvedByGuardian, dniLegalGuardian) " +
+                            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    new String[] {"idaprequest"});
+
+            ps.setObject(1, request.getCreationDate());
+            ps.setString(2, request.getDescription());
+            ps.setString(3, request.getAssistantType() != null ? request.getAssistantType().name() : null);
+            ps.setString(4, (request.getGender() != null) ? request.getGender().name() : null);
+            ps.setString(5, request.getCity());
+            ps.setObject(6, request.getDrivingLicense());
+            ps.setObject(7, request.getYearsOfExperience());
+            ps.setObject(8, request.getInitialDateRequired());
+            ps.setInt(9, request.getMonthsRequired());
+            ps.setString(10, request.getStatus() != null ? request.getStatus().name().toLowerCase() : "pending");
+            ps.setString(11, request.getDeniedReason());
+            ps.setString(12, request.getDniOviUser());
+            ps.setObject(13, request.getApprovedByGuardian());
+
+            ps.setString(14, request.getDniLegalGuardian());
+            return ps;
+        }, keyHolder);
+
+        // Recuperamos el ID generado y lo seteamos en el objeto original
+        if (keyHolder.getKey() != null) {
+            request.setIdApRequest(keyHolder.getKey().intValue());
+        }
     }
 
     public void deleteAssistanceRequest(int idApRequest) {
