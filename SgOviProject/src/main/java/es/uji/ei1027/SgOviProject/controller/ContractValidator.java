@@ -17,6 +17,10 @@ public class ContractValidator implements Validator {
 
         if (contract.getStartDate() == null) {
             errors.rejectValue("startDate", "required", "La data d'inici és obligatòria");
+        }else {
+            if (contract.getStartDate().isBefore(LocalDate.now())) {
+                errors.rejectValue("startDate", "pastDate", "La data d'inici no pot ser anterior a la data actual");
+            }
         }
 
         if (contract.getEndDate() == null) {
