@@ -51,7 +51,8 @@
                 </tr>
                 </thead>
                 <tbody>
-                <tr th:each="contract : ${contractsPage}">
+                <tr th:each="contract : ${contractsPage}"
+                    th:classappend="${nou == contract.idContract} ? 'row-newly-added' : ''">
 
                     <td th:text="${#temporals.format(contract.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
 
@@ -63,7 +64,7 @@
 
                     <td class="actions-cell">
                         <!-- Botón Veure Detall (Contracte) -->
-                        <a th:href="@{/contract/view/{idContract}(idContract=${contract.idContract})}" class="action-btn" title="Veure detall del contracte">
+                        <a th:href="@{/contract/details/{idContract}(idContract=${contract.idContract})}" class="action-btn" title="Veure detall del contracte">
                             <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                                 <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
                                 <circle cx="12" cy="12" r="3"></circle>

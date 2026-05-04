@@ -4,9 +4,13 @@ import es.uji.ei1027.SgOviProject.model.Contract;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.jdbc.support.GeneratedKeyHolder;
+import org.springframework.jdbc.support.KeyHolder;
 import org.springframework.stereotype.Repository;
 
 import javax.sql.DataSource;
+import java.sql.PreparedStatement;
+import java.sql.Statement;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -20,16 +24,14 @@ public class ContractDao {
         this.jdbcTemplate = new JdbcTemplate(dataSource);
     }
 
-    /* Añadir un contrato */
+    /* Añadir un contrato recuperando la ID generada */
     public void addContract(Contract contract) {
-        // Objeto que guardará la clave autogenerada por la base de datos
         KeyHolder keyHolder = new GeneratedKeyHolder();
 
         jdbcTemplate.update(connection -> {
-            // Preparamos la consulta indicando que queremos recuperar las claves generadas
             PreparedStatement ps = connection.prepareStatement(
                     "INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, urlDocument) VALUES(?, ?, ?, ?, ?, ?)",
-                    Statement.RETURN_GENERATED_KEYS);
+                    new String[] {"idcontract"}); // Forzamos a que solo devuelva esta columna
 
             ps.setInt(1, contract.getIdCandidacy());
             ps.setObject(2, contract.getStartDate());
@@ -40,7 +42,6 @@ public class ContractDao {
             return ps;
         }, keyHolder);
 
-        // Si se ha generado una clave, se la asignamos al objeto contract
         if (keyHolder.getKey() != null) {
             contract.setIdContract(keyHolder.getKey().intValue());
         }

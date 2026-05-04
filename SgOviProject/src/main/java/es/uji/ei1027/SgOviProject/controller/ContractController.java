@@ -119,7 +119,7 @@ public class ContractController {
         // Cambiar la candidatura de estado
         candidacyService.contractDone(contract);
 
-        return "redirect:/contract/done";
+        return "redirect:/contract/list/" + contract.getIdCandidacy() + "?nou=" + contract.getIdContract();
     }
 
     // Número de contratos que queremos mostrar por página
@@ -129,6 +129,7 @@ public class ContractController {
     public String listContracts(Model model,
                                 @PathVariable int idCandidacy,
                                 @RequestParam("page") Optional<Integer> page,
+                                @RequestParam("nou") Optional<Integer> nou,
                                 HttpSession session) {
 
         // Seguridad
@@ -165,6 +166,7 @@ public class ContractController {
         }
 
         int currentPage = page.orElse(0);
+        Integer nouContracte = nou.orElse(-1);
 
         // PASAR DATOS AL MODELO
         model.addAttribute("contractsPaged", contractsPaged);
@@ -172,12 +174,43 @@ public class ContractController {
         model.addAttribute("totalContracts", contracts.size());
         model.addAttribute("pageLength", pageLength);
         model.addAttribute("idCandidacy", idCandidacy);
+        model.addAttribute("nou", nouContracte);
 
         // Guardar URL exacta para el botón de volver (útil cuando vayamos al details del contrato)
         String exactUrl = "/contract/list/" + idCandidacy + "?page=" + currentPage;
         session.setAttribute("lastContractListUrl", exactUrl);
 
         return "contract/list";
+    }
+
+    @GetMapping("/details/{idContract}")
+    public String showContractDetails(Model model,
+                                      HttpSession session,
+                                      @PathVariable int idContract) {
+
+        Contract contract = contractDao.getContract(idContract);
+
+        if (contract == null) {
+            return "redirect:/oviUser/main";
+        }
+
+        // Comprobar que el contrato pertenece a una candidatura del usuario loggeado
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
+            return "redirect:/oviUser/main";
+        }
+
+        // 3. Recuperar la URL exacta de la lista (con su paginación) para el botón de volver
+        String backUrl = (String) session.getAttribute("lastContractListUrl");
+        // Si por algún motivo se entra directamente y no hay variable de sesión, ponemos manualmente para evitar errores
+        if (backUrl == null) {
+            backUrl = "/contract/list/" + contract.getIdCandidacy();
+        }
+
+        model.addAttribute("contract", contract);
+        model.addAttribute("backUrl", backUrl);
+
+        return "contract/details";
     }
 
 
