@@ -19,6 +19,7 @@ public final class ContractRowMapper implements RowMapper<Contract> {
         contract.setHourlySalary(rs.getDouble("hourlySalary"));
         contract.setSchedule(rs.getString("schedule"));
         contract.setUrlDocument(rs.getString("urlDocument"));
+        contract.setCreationDate(rs.getObject("creationDate", LocalDate.class));
 
         return contract;
     }

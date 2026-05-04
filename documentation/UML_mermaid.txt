@@ -139,6 +139,7 @@ classDiagram
         -double hourlySalary
         -String schedule
         -String urlDocument
+	-date creationDate
         +generateDocument()
     }
 

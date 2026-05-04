@@ -11,6 +11,7 @@ public class Contract {
     private double hourlySalary;
     private String schedule;
     private String urlDocument;
+    private LocalDate creationDate = LocalDate.now();
 
     public int getIdContract() {
         return idContract;
@@ -68,6 +69,14 @@ public class Contract {
         this.urlDocument = urlDocument;
     }
 
+    public LocalDate getCreationDate() {
+        return creationDate;
+    }
+
+    public void setCreationDate(LocalDate creationDate) {
+        this.creationDate = creationDate;
+    }
+
     @Override
     public String toString() {
         return "Contract{" +
@@ -78,6 +87,7 @@ public class Contract {
                 ", hourlySalary=" + hourlySalary +
                 ", schedule='" + schedule + '\'' +
                 ", urlDocument='" + urlDocument + '\'' +
+                ", creationDate=" + creationDate +
                 '}';
     }
 }
