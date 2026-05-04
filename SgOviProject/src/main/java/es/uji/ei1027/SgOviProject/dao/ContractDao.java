@@ -22,13 +22,28 @@ public class ContractDao {
 
     /* Añadir un contrato */
     public void addContract(Contract contract) {
-        jdbcTemplate.update("INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, urlDocument) VALUES(?, ?, ?, ?, ?, ?)",
-                contract.getIdCandidacy(),
-                contract.getStartDate(),
-                contract.getEndDate(),
-                contract.getHourlySalary(),
-                contract.getSchedule(),
-                contract.getUrlDocument());
+        // Objeto que guardará la clave autogenerada por la base de datos
+        KeyHolder keyHolder = new GeneratedKeyHolder();
+
+        jdbcTemplate.update(connection -> {
+            // Preparamos la consulta indicando que queremos recuperar las claves generadas
+            PreparedStatement ps = connection.prepareStatement(
+                    "INSERT INTO Contract (idCandidacy, startDate, endDate, hourlySalary, schedule, urlDocument) VALUES(?, ?, ?, ?, ?, ?)",
+                    Statement.RETURN_GENERATED_KEYS);
+
+            ps.setInt(1, contract.getIdCandidacy());
+            ps.setObject(2, contract.getStartDate());
+            ps.setObject(3, contract.getEndDate());
+            ps.setDouble(4, contract.getHourlySalary());
+            ps.setString(5, contract.getSchedule());
+            ps.setString(6, contract.getUrlDocument());
+            return ps;
+        }, keyHolder);
+
+        // Si se ha generado una clave, se la asignamos al objeto contract
+        if (keyHolder.getKey() != null) {
+            contract.setIdContract(keyHolder.getKey().intValue());
+        }
     }
 
     /* Borrar un contrato */
