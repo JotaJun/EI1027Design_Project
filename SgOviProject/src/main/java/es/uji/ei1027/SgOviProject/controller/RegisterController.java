@@ -74,7 +74,7 @@ public class RegisterController {
                 return "redirect:/pappati/register";
 
             case LEGALGUARDIAN:
-                return "redirect:/guardian/register";
+                return "redirect:/legalGuardian/register";
 
             default:
                 return "register";

@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/guardian")
+@RequestMapping("/legalGuardian")
 public class LegalGuardianController {
     @Autowired
     private IntAccountSvc registerService;
@@ -41,7 +41,7 @@ public class LegalGuardianController {
         guardianValidator.validate(guardian, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "guardian/register";
+            return "legalGuardian/register";
         }
 
         Account account = (Account) session.getAttribute("pendingAccount");
