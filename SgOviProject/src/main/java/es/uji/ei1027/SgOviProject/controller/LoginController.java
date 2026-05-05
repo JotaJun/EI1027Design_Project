@@ -15,6 +15,9 @@ import org.springframework.web.bind.annotation.RequestMethod;
 import org.springframework.validation.BindingResult;
 import org.springframework.ui.Model;
 
+import java.util.Arrays;
+import java.util.List;
+
 @Controller
 public class LoginController {
 
@@ -27,6 +30,10 @@ public class LoginController {
     @Autowired
     private IntLoginService loginService;
 
+    @ModelAttribute("accountTypes")
+    public List<AccountType> accountTypes() {
+        return Arrays.asList(AccountType.values());
+    }
 
     @RequestMapping("/login")
     public String login(Model model) {

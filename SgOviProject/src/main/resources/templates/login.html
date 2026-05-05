@@ -32,10 +32,11 @@
                 <label for="tipus_compte">Tipus de compte</label>
                 <div class="select-wrapper">
                     <select id="tipus_compte" th:field="*{accountType}" aria-describedby="tipus-error" required>
-                        <option value="OVIUSER" selected>Usuari OVI</option>
-                        <option value="PAPPATI">Personal d'assistència professional</option>
-                        <option value="LEGALGUARDIAN">Tutor Legal</option>
-                        <option value="TECHNICIAN">Tècnic</option>
+                        <!-- Opciones dinámicas generadas desde el Enum AccountType -->
+                        <option th:each="type : ${accountTypes}"
+                                th:value="${type.name()}"
+                                th:text="${type.getDescription()}">
+                        </option>
                     </select>
                 </div>
                 <span id="tipus-error" th:if="${#fields.hasErrors('accountType')}" th:errors="*{accountType}" class="error-message"></span>
