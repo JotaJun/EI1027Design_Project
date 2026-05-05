@@ -233,4 +233,72 @@ public class AssistanceRequestController {
         model.addAttribute("idApRequest", idApRequest);
         return "assistanceRequest/done";
     }
+
+    @GetMapping("/manage/list") // Acepta la ruta base o con filtro
+    public String showManageList(Model model, HttpSession session,
+                           @RequestParam("page") Optional<Integer> page) {
+
+
+        // Obtener la lista de pendientes
+        List<AssistanceRequest> requests = assistanceRequestDao.getPendingRequests();
+
+        requests.sort(new AssistanceRequestComparator());   // ordenar la lista
+
+        // Crear la lista paginada (una lista de listas)
+        ArrayList<ArrayList<AssistanceRequest>> requestsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        // Añadir los elementos sobrantes si la división no es exacta
+        if (ini < requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, requests.size())));
+        }
+
+        model.addAttribute("requestsPaged", requestsPaged);
+
+        // Crear la lista de números de página para la barra de navegación
+        int totalPages = requestsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        // Determinar la página seleccionada (por defecto la 0 si no se indica)
+        int currentPage = page.orElse(0);
+
+        model.addAttribute("selectedPage", currentPage);
+        // PASAMOS LOS DATOS TOTALES PARA EL CONTADOR
+        model.addAttribute("totalRequests", requests.size());
+        model.addAttribute("pageLength", pageLength);
+
+        model.addAttribute("requestsPaged", requestsPaged);
+
+
+        // Guardamos la URL exacta (con su estado y página) para el botón de volver de assistanceRequest/manage/details
+        String exactUrl = "/assistanceRequest/manage/list" + "?page=" + currentPage;
+        session.setAttribute("lastRequestListUrl", exactUrl);
+
+        return "assistanceRequest/manage/list";
+    }
+
+    @GetMapping(value="/manage/details/{idApRequest}")
+    public String showManageDetails(Model model, @PathVariable int idApRequest, HttpSession session) {
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        if (request == null) {
+            return "redirect:/assistanceRequest/manage/list";
+        }
+
+        model.addAttribute("req", request);
+
+        return "assistanceRequest/manage/details";
+    }
+
 }
