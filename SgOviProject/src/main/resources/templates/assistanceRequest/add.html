@@ -43,8 +43,11 @@
                         <div class="select-wrapper">
                             <select id="assistantType" th:field="*{assistantType}" required>
                                 <option value="" disabled selected>Selecciona una opció</option>
-                                <option value="PAP">Personal d'Assistència Personal (PAP)</option>
-                                <option value="PATI">Personal Tècnic (PATI)</option>
+                                <!-- Generación dinámica desde el Enum StaffType -->
+                                <option th:each="type : ${staffTypeList}"
+                                        th:value="${type.name()}"
+                                        th:text="${type.getDescription()}">
+                                </option>
                             </select>
                         </div>
                         <span th:if="${#fields.hasErrors('assistantType')}" th:errors="*{assistantType}" class="error-text"></span>
@@ -82,9 +85,11 @@
                         <div class="select-wrapper">
                             <select id="gender" th:field="*{gender}">
                                 <option value="">Sense preferència</option>
-                                <option value="M">Home</option>
-                                <option value="F">Dona</option>
-                                <option value="X">Altre</option>
+                                <!-- Generación dinámica desde el Enum Gender -->
+                                <option th:each="gen : ${genderList}"
+                                        th:value="${gen.name()}"
+                                        th:text="${gen.getDescription()}">
+                                </option>
                             </select>
                         </div>
                     </div>

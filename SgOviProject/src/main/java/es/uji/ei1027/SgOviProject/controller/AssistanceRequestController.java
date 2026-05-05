@@ -3,6 +3,8 @@ package es.uji.ei1027.SgOviProject.controller;
 import es.uji.ei1027.SgOviProject.comparator.AssistanceRequestComparator;
 import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
+import es.uji.ei1027.SgOviProject.enums.Gender;
+import es.uji.ei1027.SgOviProject.enums.StaffType;
 import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
@@ -27,6 +29,16 @@ public class AssistanceRequestController {
 
     @Autowired
     private AssistanceRequestDao assistanceRequestDao;
+
+    @ModelAttribute("genderList")
+    public List<Gender> genderList() {
+        return Arrays.asList(Gender.values());
+    }
+
+    @ModelAttribute("staffTypeList")
+    public List<StaffType> staffTypeList() {
+        return Arrays.asList(StaffType.values());
+    }
 
     @GetMapping("/add")
     public String showAddAssistanceForm(Model model) {
