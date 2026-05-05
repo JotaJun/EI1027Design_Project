@@ -70,7 +70,11 @@
                     <div class="form-group">
                         <label for="startDate">Data d'inici <span class="required-asterisk">*</span></label>
                         <div class="input-wrapper">
-                            <input type="date" id="startDate" th:field="*{startDate}" required>
+                            <input type="date"
+                                   id="startDate"
+                                   th:field="*{startDate}"
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   required>
                         </div>
                         <span th:if="${#fields.hasErrors('startDate')}" th:errors="*{startDate}" class="error-text"></span>
                     </div>
@@ -78,7 +82,11 @@
                     <div class="form-group">
                         <label for="endDate">Data de fi <span class="required-asterisk">*</span></label>
                         <div class="input-wrapper">
-                            <input type="date" id="endDate" th:field="*{endDate}" required>
+                            <input type="date"
+                                   id="endDate"
+                                   th:field="*{endDate}"
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   required>
                         </div>
                         <span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="error-text"></span>
                     </div>

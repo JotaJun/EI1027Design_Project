@@ -45,8 +45,8 @@ public class ContractController {
                                    @PathVariable int idCandidacy) {
         // Comprobar que la idCandidacy corresponde al usuario loggeado
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-        if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser))
-            return "redirect:/oviUser/main";
+
+        if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) return "redirect:/oviUser/main";
 
         Contract contract = new Contract();
         contract.setIdCandidacy(idCandidacy);

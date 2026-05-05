@@ -53,7 +53,10 @@
                     <div class="form-group">
                         <label for="initialDateRequired">Data d'inici necessària <span class="required-asterisk">*</span></label>
                         <div class="input-wrapper">
-                            <input type="date" id="initialDateRequired" th:field="*{initialDateRequired}" required>
+                            <input type="date" id="initialDateRequired"
+                                   th:field="*{initialDateRequired}"
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   required>
                         </div>
                         <span th:if="${#fields.hasErrors('initialDateRequired')}" th:errors="*{initialDateRequired}" class="error-text"></span>
                     </div>
