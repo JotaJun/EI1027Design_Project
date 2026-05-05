@@ -104,7 +104,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/candidacy/reject/**",
                         "/contract/add/**",
                         "/contract/list/**",
-                        "/contract/details/**"
+                        "/contract/details/**",
+                        "/communication/chat/**"
                 );
         // TECHNICIAN
         registry.addInterceptor(new RoleInterceptor(AccountType.TECHNICIAN))
@@ -116,7 +117,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(new RoleInterceptor(AccountType.PAPPATI))
                 .addPathPatterns(
                         "/papPati/**",
-                        "/candidacy/listRequests/**"
+                        "/candidacy/listRequests/**",
+                        "/communication/chat/**"
                 );
 
         // LEGALGUARDIAN

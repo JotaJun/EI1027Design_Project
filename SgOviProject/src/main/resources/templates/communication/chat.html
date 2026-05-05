@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+  <title>Xat - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+  <div th:replace="~{fragments/chat-header :: chat-header}"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container dashboard-main">
+
+    <div class="assistance-card chat-card">
+
+      <!-- 1. Botón de retroceso dentro de la tarjeta diferenciado por rol -->
+      <div class="requests-header-action">
+
+        <!-- Tornar para OviUser -->
+        <a th:if="${userRole.name() == 'OVIUSER'}"
+           th:href="${'/candidacy/details/' + candidacy.idApRequest}"
+           class="btn-back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Tornar a la candidatura
+        </a>
+
+        <!-- Tornar para PapPati -->
+        <a th:if="${userRole.name() == 'PAPPATI'}"
+           th:href="@{/candidacy/listRequests/{dni}(dni=${currentUser.dni})}"
+           class="btn-back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Tornar a les Peticions
+        </a>
+
+      </div>
+
+      <br>
+
+      <div class="header-flex">
+        <div class="chat-title-group">
+          <h2 class="card-title">Espai de Comunicació</h2>
+          <!-- Mostramos dinámicamente el nombre de la otra persona -->
+          <p class="card-subtitle m-0" th:text="'Xat amb ' + ${otherUserName}">Xat amb...</p>
+        </div>
+
+        <span class="status-badge"
+              th:classappend="${'badge-' + #strings.toLowerCase(candidacy.candidacyStatus.name())}"
+              th:text="${candidacy.candidacyStatus.description}">
+          Estat
+        </span>
+      </div>
+
+      <div class="chat-history mt-10">
+        <div th:if="${chatHistory.empty}" class="empty-state">
+          <p>No hi ha missatges encara. Sigues el primer en escriure!</p>
+        </div>
+
+        <div th:each="msg : ${chatHistory}"
+             th:class="${msg.transmitterName == (currentUser.name + ' ' + currentUser.surname)} ? 'chat-message sent' : 'chat-message received'">
+
+          <div class="message-bubble">
+            <div class="message-author" th:text="${msg.transmitterName}">Nom</div>
+            <div class="message-text" th:text="${msg.information}">Contingut del missatge</div>
+            <div class="message-time" th:text="${#temporals.format(msg.dateCommunication, 'dd/MM/yyyy')}">01/01/2024</div>
+          </div>
+        </div>
+      </div>
+
+      <div class="chat-input-area mt-15">
+        <form th:action="@{/communication/chat/{id}/send(id=${candidacy.idCandidacy})}"
+              th:object="${newCommunication}"
+              method="post"
+              class="chat-form">
+
+          <textarea th:field="*{information}"
+                    aria-label="Escriu el teu missatge aquí"
+                    placeholder="Escriu el teu missatge aquí..."
+                    required
+                    class="chat-textarea"></textarea>
+
+          <button type="submit" class="btn-primary btn-chat-send">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <line x1="22" y1="2" x2="11" y2="13"></line>
+              <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+            </svg>
+            Enviar
+          </button>
+        </form>
+      </div>
+
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
