@@ -111,7 +111,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         // TECHNICIAN
         registry.addInterceptor(new RoleInterceptor(AccountType.TECHNICIAN))
                 .addPathPatterns(
-                        "/technician/**" // faltan por poner; por ejemplo las de assistance request
+                        "/technician/**",
+                        "/assistanceRequest/manage/**"
                 );
 
         // PAPPATI

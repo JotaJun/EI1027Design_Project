@@ -1,10 +1,86 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Detalls de la Sol·licitud - SgOVI</title>
 </head>
 <body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+        <div class="details-card">
+            <div class="details-header">
+                <h2 class="details-title">Revisió de Sol·licitud #<span th:text="${req.idApRequest}">1</span></h2>
+                <span class="table-badge badge-pending">PENDENT DE REVISIÓ</span>
+            </div>
+
+            <div class="details-grid">
+                <div class="detail-item">
+                    <span class="detail-label">Usuari Sol·licitant (DNI)</span>
+                    <span class="detail-value" th:text="${req.dniOviUser}">12345678A</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Data de Creació</span>
+                    <span class="detail-value" th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Tipus d'Assistent</span>
+                    <span class="detail-value" th:text="${req.assistantType}">PAP</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Població</span>
+                    <span class="detail-value" th:text="${req.city}">Castelló</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Data d'Inici Requerida</span>
+                    <span class="detail-value" th:text="${#temporals.format(req.initialDateRequired, 'dd/MM/yyyy')}">01/04/2026</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Duració</span>
+                    <span class="detail-value" th:text="${req.monthsRequired} + ' mesos'">6 mesos</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Gènere preferit</span>
+                    <span class="detail-value" th:text="${req.gender}">Indiferent</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Carnet de conduir</span>
+                    <span class="detail-value" th:text="${req.drivingLicense ? 'Sí' : 'No'}">No</span>
+                </div>
+                <div class="detail-item">
+                    <span class="detail-label">Anys d'experiència mínims</span>
+                    <span class="detail-value" th:text="${req.yearsOfExperience}">0</span>
+                </div>
+            </div>
+
+            <div class="detail-section">
+                <span class="detail-label">Descripció / Observacions</span>
+                <p class="detail-description" th:text="${req.description}">Descripció de la petició...</p>
+            </div>
+
+            <div class="management-actions">
+                <form th:action="@{/assistanceRequest/manage/approve/{id}(id=${req.idApRequest})}" method="post" style="display: inline;">
+                    <button type="submit" class="btn-primary" style="background-color: #28a745; border-color: #28a745;">
+                        Aprovar Sol·licitud
+                    </button>
+                </form>
+
+                <a th:href="@{/assistanceRequest/manage/reject/{id}(id=${req.idApRequest})}" class="btn-secondary" style="background-color: #dc3545; border-color: #dc3545; color: white;">
+                    Denegar / Cercar Candidats Manualment
+                </a>
+
+                <a th:href="${session.lastRequestListUrl != null ? session.lastRequestListUrl : '/assistanceRequest/manage/list'}" class="btn-outline">
+                    Tornar al llistat
+                </a>
+            </div>
+        </div>
+    </div>
+</main>
 
 </body>
 </html>

@@ -1,10 +1,90 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
 <head>
-    <meta charset="UTF-8">
-    <title>Title</title>
+    <title>Gestió de Sol·licituds - SgOVI</title>
 </head>
 <body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="requests-header-action">
+            <h2 class="welcome-title">Gestió de Sol·licituds Pendents</h2>
+        </div>
+
+        <div th:if="${#lists.isEmpty(requestsPaged)}" class="empty-state">
+            <p>No hi ha sol·licituds pendents de gestionar actualment.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(requestsPaged)}" class="table-card" th:with="requestsPage=${requestsPaged[__${selectedPage}__]}">
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>DATA DE CREACIÓ</th>
+                    <th>USUARI (DNI)</th>
+                    <th>TIPUS</th>
+                    <th>POBLACIÓ</th>
+                    <th>DURACIÓ</th>
+                    <th class="text-center">ESTAT</th>
+                    <th class="text-center">ACCIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="req : ${requestsPage}">
+                    <td th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
+                    <td th:text="${req.dniOviUser}">12345678A</td>
+                    <td><strong th:text="${req.assistantType}">PAP</strong></td>
+                    <td th:text="${req.city}">Castelló</td>
+                    <td th:text="${req.monthsRequired} + ' mesos'">6 mesos</td>
+                    <td class="text-center">
+                        <span class="table-badge badge-pending">
+                            Pendent
+                        </span>
+                    </td>
+                    <td class="text-center">
+                        <div class="actions-cell">
+                            <a th:href="@{/assistanceRequest/manage/details/{id}(id=${req.idApRequest})}" class="btn-secondary btn-sm" style="padding: 5px 10px; font-size: 0.8rem;">
+                                Gestionar
+                            </a>
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(requestsPaged)}" class="results-count">
+            Mostrant del
+            <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+            al
+            <strong th:text="${(selectedPage * pageLength) + #lists.size(requestsPaged[selectedPage])}">5</strong>
+            de
+            <strong th:text="${totalRequests}">12</strong> sol·licituds pendents
+        </div>
+
+        <nav aria-label="Selecció de pàgina"
+             th:unless="${#lists.isEmpty(requestsPaged)}"
+             class="pagination-container">
+            <ul class="pagination">
+                <li class="page-item"
+                    th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+                    th:each="pageNumber : ${pageNumbers}">
+
+                    <a th:href="@{/assistanceRequest/manage/list(page=${pageNumber - 1})}"
+                       th:text="${pageNumber}"
+                       class="page-link">1</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</main>
 
 </body>
 </html>

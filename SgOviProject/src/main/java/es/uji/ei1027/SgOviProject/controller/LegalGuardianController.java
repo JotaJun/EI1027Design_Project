@@ -4,6 +4,7 @@ import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.LegalGuardian;
 import es.uji.ei1027.SgOviProject.services.IntAccountSvc;
 import jakarta.servlet.http.HttpSession;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -14,7 +15,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
 @Controller
-@RequestMapping("/legalGuardian")
+@RequestMapping("/guardian")
 public class LegalGuardianController {
     @Autowired
     private IntAccountSvc registerService;
@@ -40,11 +41,13 @@ public class LegalGuardianController {
         guardianValidator.validate(guardian, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            return "legalGuardian/register";
+            return "guardian/register";
         }
 
         Account account = (Account) session.getAttribute("pendingAccount");
-
+        BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+        String encryptedSignature = passwordEncryptor.encryptPassword(guardian.getSignatureCode());
+        guardian.setSignatureCode(encryptedSignature);
 
         registerService.addLegalGuardian(account, guardian);
         session.removeAttribute("pendingAccount");

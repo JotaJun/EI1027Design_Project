@@ -301,4 +301,29 @@ public class AssistanceRequestController {
         return "assistanceRequest/manage/details";
     }
 
+    @PostMapping(value="/manage/approve/{idApRequest}")
+    public String manageDoApprove(Model model, @PathVariable int idApRequest, HttpSession session) {
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        if (request == null) {
+            return "redirect:/assistanceRequest/manage/list";
+        }
+
+        request.setStatus(Status.ACCEPTED);
+        assistanceRequestDao.updateAssistanceRequest(request);
+
+
+        return "redirect:/AQUI VA LA DIRECCION DEL GENERADOR DE CANDIDATOS"; //@JOEL
+    }
+
+    @GetMapping(value="/manage/reject/{idApRequest}")
+    public String manageDoReject(Model model, @PathVariable int idApRequest, HttpSession session) {
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        if (request == null) {
+            return "redirect:/assistanceRequest/manage/list";
+        }
+
+        return "redirect:/assistanceRequest/manage/rejectReason";
+    }
 }
