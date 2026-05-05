@@ -123,4 +123,13 @@ public class AssistanceRequestDao {
             return new ArrayList<AssistanceRequest>();
         }
     }
+
+    public List<AssistanceRequest> getPendingRequests() {
+        try {
+            return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE status=?",
+                    new AssistanceRequestRowMapper(), "pending");
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
 }

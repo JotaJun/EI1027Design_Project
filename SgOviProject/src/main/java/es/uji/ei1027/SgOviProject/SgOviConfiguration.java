@@ -83,7 +83,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/papPati/register",
                         "/legalGuardian/register",
                         "/css/**",          // Archivos de estilos
-                        "/images/**"        // Imágenes
+                        "/images/**",       // Imágenes
+                        "/account/**"
                 );
 
         // Interceptor para roles
