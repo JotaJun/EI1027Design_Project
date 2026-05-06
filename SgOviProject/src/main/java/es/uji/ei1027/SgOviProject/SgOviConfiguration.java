@@ -104,7 +104,6 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/candidacy/details/**",
                         "/candidacy/reject/**",
                         "/contract/add/**",
-                        "/contract/list/**",
                         "/contract/details/**"
                 );
 
@@ -133,7 +132,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         // Rutas a las que pueden acceder tanto OVIUSER como PAPPATI
         registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.PAPPATI))
                 .addPathPatterns(
-                        "/communication/chat/**"
+                        "/communication/chat/**",
+                        "/contract/list/**"
                 );
     }
 }

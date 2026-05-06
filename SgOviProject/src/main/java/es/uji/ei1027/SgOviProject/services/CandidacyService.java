@@ -91,6 +91,12 @@ public class CandidacyService {
         return false;
     }
 
+    public boolean isCandidacyFromPapPati(int idCandidacy, PapPati papPati){
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+
+        return candidacy.getDniPapPati().equals(papPati.getDni());
+    }
+
     public void contractDone(Contract contract){
         Candidacy candidacy = candidacyDao.getCandidacyById(contract.getIdCandidacy());
 

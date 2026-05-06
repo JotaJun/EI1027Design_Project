@@ -50,6 +50,7 @@
                 <thead>
                 <tr>
                     <th>USUARI / SOL·LICITANT</th>
+                    <th>DATA PETICIÓ</th>
                     <th>POBLACIÓ</th>
                     <th>DURADA</th>
                     <th class="text-center">ESTAT</th>
@@ -61,6 +62,8 @@
 
                     <!-- Nombre y apellidos desde Account -->
                     <td><strong th:text="${cand.oviUserAccount.name + ' ' + cand.oviUserAccount.surname}">Joan Pérez</strong></td>
+
+                    <td th:text="${#temporals.format(cand.assistanceRequest.creationDate, 'dd/MM/yyyy')}">01/05/2024</td>
 
                     <!-- Ciudad de la petición -->
                     <td th:text="${cand.assistanceRequest.city}">Castelló</td>

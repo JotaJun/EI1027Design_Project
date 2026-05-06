@@ -2,8 +2,10 @@ package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
+import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.model.Contract;
 import es.uji.ei1027.SgOviProject.model.OviUser;
+import es.uji.ei1027.SgOviProject.model.PapPati;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -132,10 +134,9 @@ public class ContractController {
                                 @RequestParam("nou") Optional<Integer> nou,
                                 HttpSession session) {
 
-        // Seguridad
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-        if (!candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) {
-            return "redirect:/oviUser/main";
+        String unauthorizedRedirect = getRedirectUrlIfUnauthorized(session, idCandidacy);
+        if (unauthorizedRedirect != null) {
+            return unauthorizedRedirect;
         }
 
         List<Contract> contracts = contractDao.getContractsByIdCandidacy(idCandidacy);
@@ -194,13 +195,12 @@ public class ContractController {
             return "redirect:/oviUser/main";
         }
 
-        // Comprobar que el contrato pertenece a una candidatura del usuario loggeado
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-        if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
-            return "redirect:/oviUser/main";
+        String unauthorizedRedirect = getRedirectUrlIfUnauthorized(session, contract.getIdCandidacy());
+        if (unauthorizedRedirect != null) {
+            return unauthorizedRedirect;
         }
 
-        // 3. Recuperar la URL exacta de la lista (con su paginación) para el botón de volver
+        // Recuperar la URL exacta de la lista (con su paginación) para el botón de volver
         String backUrl = (String) session.getAttribute("lastContractListUrl");
         // Si por algún motivo se entra directamente y no hay variable de sesión, ponemos manualmente para evitar errores
         if (backUrl == null) {
@@ -224,5 +224,22 @@ public class ContractController {
         return "contract/done";
     }
 
+    private String getRedirectUrlIfUnauthorized(HttpSession session, int idCandidacy) {
+        AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
+        // Seguridad
+        if (userRole == AccountType.OVIUSER) {
+            OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromOviUser(idCandidacy, oviUser)) {
+                return "redirect:/oviUser/main";
+            }
+        } else if (userRole == AccountType.PAPPATI) {
+            PapPati papPati = (PapPati) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromPapPati(idCandidacy, papPati)) {
+                return "redirect:/papPati/main";
+            }
+        } // no hace falta mirar else, ya que eso es mirado por el interceptor
+
+        return null;
+    }
 
 }
