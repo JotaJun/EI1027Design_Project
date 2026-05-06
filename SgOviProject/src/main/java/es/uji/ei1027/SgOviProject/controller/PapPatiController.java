@@ -136,13 +136,6 @@ public class PapPatiController {
         validator.validate(form, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            // --- CODI DE DEPURACIÓ PER A LA CONSOLA ---
-            System.out.println("❌ ERROR DE VALIDACIÓ AL FORMULARI UPDATE PAPPATI:");
-            bindingResult.getAllErrors().forEach(error -> {
-                System.out.println("   - " + error.toString());
-            });
-            System.out.println("---------------------------------------------------");
-            // ------------------------------------------
             form.getAccount().setPassword(null); // La limpiamos por si acaso antes de volver a la vista
             return "papPati/update";
         }
@@ -155,21 +148,6 @@ public class PapPatiController {
             Account accountDb = accountDao.getAccount(account.getDni());
             form.getAccount().setPassword(accountDb.getPassword());
         }
-
-//        // Ponemos los dnis y status para que no aparezcan en el html, ya que ya está registrado
-//        form.getAccount().setDni(account.getDni());
-//        form.getAccount().setStatus(account.getStatus());
-//        form.getPapPati().setDni(papPati.getDni());
-//
-//        // Logica de la contraseña
-//        if (form.getNewPassword() != null && !form.getNewPassword().trim().isEmpty()) {
-//            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
-//            String encryptedPassword = passwordEncryptor.encryptPassword(form.getNewPassword());
-//            form.getAccount().setPassword(encryptedPassword);
-//        } else {
-//            Account accountDb = accountDao.getAccount(account.getDni());
-//            form.getAccount().setPassword(accountDb.getPassword());
-//        }
 
         accountSvc.updatePapPati(form.getAccount(), form.getPapPati());
 
