@@ -1026,6 +1026,7 @@ select:focus {
 .form-actions-centered {
     display: flex;
     justify-content: center;
+    align-items: stretch;
     flex-wrap: wrap; /* Añadido para que los botones se adapten en pantallas pequeñas */
     gap: 20px;
     margin-top: 40px;
@@ -1037,6 +1038,31 @@ select:focus {
     justify-content: center;
     gap: 8px;
     min-width: 200px;
+    box-sizing: border-box;
+}
+
+/* Enllaços amb icona: mateixa base d'ample (details OVI, manage, update quan són germans) */
+.form-actions-centered > a.btn-icon {
+    flex: 1 1 240px;
+    max-width: 420px;
+    min-width: 0;
+}
+
+/* POST sense trencar layout: el formulari no és caixa flex; el botó sí */
+.form-actions-centered > form.form-actions-inline-post {
+    display: contents;
+}
+
+.form-actions-centered > button.btn-icon,
+.form-actions-centered > form.form-actions-inline-post button.btn-icon {
+    flex: 1 1 240px;
+    max-width: 420px;
+    min-width: 0;
+    width: 100%;
+    cursor: pointer;
+    font-family: var(--font-body);
+    -webkit-appearance: none;
+    appearance: none;
 }
 
 /* Ajustes específicos para el textarea */
@@ -1193,6 +1219,23 @@ select:focus {
 
 .action-btn:hover {
     color: var(--color-primary);
+}
+
+/* Formulari POST dins cel·la d'accions (p. ex. aprovar): alinear amb els <a> */
+.actions-cell > form {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    margin: 0;
+    padding: 0;
+    align-self: center;
+    line-height: 0;
+}
+
+.actions-cell button.action-btn {
+    padding: 0;
+    margin: 0;
+    line-height: 0;
 }
 
 .table-badge {

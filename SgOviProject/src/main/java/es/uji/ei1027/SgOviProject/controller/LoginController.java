@@ -59,6 +59,7 @@ public class LoginController {
             if (technician == null) {
                 bindingResult.reject("badCredentials", "El correu o la contrasenya són incorrectes");
                 return "login";
+
             }
             // Autenticados como técnico
             session.setAttribute("technician", technician);

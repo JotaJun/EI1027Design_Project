@@ -1,12 +1,14 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.AssistanceRequestComparator;
+import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.enums.Gender;
 import es.uji.ei1027.SgOviProject.enums.StaffType;
 import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
+import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import jakarta.servlet.http.HttpSession;
@@ -18,7 +20,9 @@ import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.stream.Collectors;
 import java.util.stream.IntStream;
@@ -29,6 +33,9 @@ public class AssistanceRequestController {
 
     @Autowired
     private AssistanceRequestDao assistanceRequestDao;
+
+    @Autowired
+    private AccountDao accountDao;
 
     @ModelAttribute("genderList")
     public List<Gender> genderList() {
@@ -244,6 +251,22 @@ public class AssistanceRequestController {
 
         requests.sort(new AssistanceRequestComparator());   // ordenar la lista
 
+        // Preparamos nombre+apellidos por DNI para la vista
+        Map<String, String> userNameByDni = new HashMap<>();
+        List<String> dnis = requests.stream()
+                .map(AssistanceRequest::getDniOviUser)
+                .distinct()
+                .collect(Collectors.toList());
+        for (String dni : dnis) {
+            Account acc = accountDao.getAccount(dni);
+            if (acc != null) {
+                userNameByDni.put(dni, acc.getName() + " " + acc.getSurname());
+            } else {
+                userNameByDni.put(dni, "");
+            }
+        }
+        model.addAttribute("userNameByDni", userNameByDni);
+
         // Crear la lista paginada (una lista de listas)
         ArrayList<ArrayList<AssistanceRequest>> requestsPaged = new ArrayList<>();
         int ini = 0;
@@ -297,6 +320,12 @@ public class AssistanceRequestController {
         }
 
         model.addAttribute("req", request);
+        Account requester = accountDao.getAccount(request.getDniOviUser());
+        if (requester != null) {
+            model.addAttribute("requesterFullName", requester.getName() + " " + requester.getSurname());
+        } else {
+            model.addAttribute("requesterFullName", "");
+        }
 
         return "assistanceRequest/manage/details";
     }
@@ -313,18 +342,9 @@ public class AssistanceRequestController {
         assistanceRequestDao.updateAssistanceRequest(request);
 
 
-        return "redirect:/AQUI VA LA DIRECCION DEL GENERADOR DE CANDIDATOS"; //@JOEL
+        return "redirect:/AQUI VA LA DIRECCION DEL GENERADOR"; //@JOEL
     }
 
-    @GetMapping(value="/manage/reject/{idApRequest}")
-    public String manageDoReject(Model model, @PathVariable int idApRequest, HttpSession session) {
-        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
-
-        if (request == null) {
-            return "redirect:/assistanceRequest/manage/list";
-        }
-        return "redirect:/assistanceRequest/manage/rejectReason/"+idApRequest;
-    }
 
     @GetMapping(value="/manage/rejectReason/{idApRequest}")
     public String showRejectReason(Model model, @PathVariable int idApRequest) {
@@ -335,8 +355,8 @@ public class AssistanceRequestController {
 
     @PostMapping(value="/manage/rejectReason")
     public String doRejectReason(@ModelAttribute("req") AssistanceRequest request, BindingResult bindingResult) {
-        //creo solo un validator para esto ¿? porque es un caso excepcional donde no debe ser null
-        if (request.getDeniedReason() != null) {
+
+        if (request.getDeniedReason() == null) {
             bindingResult.rejectValue("deniedReason", "required", "El motiu del rebuig és obligatori");
             return "assistanceRequest/manage/rejectReason";
         }
@@ -345,15 +365,20 @@ public class AssistanceRequestController {
             return "assistanceRequest/manage/rejectReason";
         }
 
-        request.setStatus(Status.REJECTED);
+        AssistanceRequest original = assistanceRequestDao.getAssistanceRequest(request.getIdApRequest());
+        if (original == null) {
+            return "redirect:/assistanceRequest/manage/list";
+        }
+        original.setDeniedReason(request.getDeniedReason());
+        original.setStatus(Status.REJECTED);
+        assistanceRequestDao.updateAssistanceRequest(original);
 
-        assistanceRequestDao.updateAssistanceRequest(request);
-
-        return "redirect:/assistanceRequest/manage/done";
+        return "redirect:/assistanceRequest/manage/done?result=rejected";
     }
 
     @GetMapping("/manage/done")
-    public String manageApDone() {
+    public String manageApDone(Model model, @RequestParam(value = "result", required = false) String result) {
+        model.addAttribute("result", result);
         return "assistanceRequest/manage/done";
     }
 }

@@ -23,7 +23,7 @@ CREATE TABLE AssistanceRequest(
 
 	CONSTRAINT chk_assistantType CHECK(assistantType IN ('PAP', 'PATI')),
     CONSTRAINT chk_status CHECK (status IN ('pending', 'accepted', 'rejected')),
-    CONSTRAINT chk_initialDate CHECK (initialDateRequired >= CURRENT_DATE),
+    --CONSTRAINT chk_initialDate CHECK (initialDateRequired >= CURRENT_DATE),
 	
 	CONSTRAINT fk_OVIUser_dni FOREIGN KEY (dniOviUser)
 			REFERENCES OviUser(dni)

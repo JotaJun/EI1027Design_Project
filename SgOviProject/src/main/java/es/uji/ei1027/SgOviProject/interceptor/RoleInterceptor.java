@@ -21,17 +21,13 @@ public class RoleInterceptor implements HandlerInterceptor {
     public boolean preHandle(HttpServletRequest request, HttpServletResponse response, Object handler) throws Exception {
         HttpSession session = request.getSession();
 
-        if (session.getAttribute("account") == null) {
-            response.sendRedirect("/login");
-            return false;
-        }
-
         String currentRole = (String) session.getAttribute("userRole");
 
         // Verificamos si el currentRole coincide con ALGUNO de los roles permitidos
         boolean hasRole = allowedRoles.stream()
                 .anyMatch(role -> role.name().equals(currentRole));
 
+        // Si no hay rol, o no coincide con ninguno permitido, fuera
         // Si hay usuario, pero NO tiene NINGUNO de los roles adecuados
         if (currentRole == null || !hasRole) {
 
@@ -43,6 +39,19 @@ public class RoleInterceptor implements HandlerInterceptor {
                 response.sendRedirect("/index");
             }
             return false;
+        }
+
+
+        if (AccountType.TECHNICIAN.name().equals(currentRole)) {
+            if (session.getAttribute("technician") == null) {
+                response.sendRedirect("/login");
+                return false;
+            }
+        } else {
+            if (session.getAttribute("account") == null) {
+                response.sendRedirect("/login");
+                return false;
+            }
         }
 
         return true; // Todo correcto, le dejamos pasar
