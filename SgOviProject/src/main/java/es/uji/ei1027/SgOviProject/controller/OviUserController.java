@@ -21,6 +21,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
 import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
 
 @Controller
@@ -35,6 +36,11 @@ public class OviUserController {
 
     @Autowired
     private LegalGuardianDao legalGuardianDao;
+
+    @ModelAttribute("genderList")
+    public List<Gender> genderList() {
+        return Arrays.asList(Gender.values());
+    }
 
     @RequestMapping("/main")
     public String oviUserMain(Model model) {
@@ -100,7 +106,6 @@ public class OviUserController {
         OviUserUpdateDTO updateForm = new OviUserUpdateDTO(account, currentUser);
 
         model.addAttribute("updateForm", updateForm);
-        model.addAttribute("genderList", Gender.values());
 
         return "oviUser/update";
     }
@@ -118,7 +123,6 @@ public class OviUserController {
         validator.validate(form, bindingResult);
 
         if (bindingResult.hasErrors()) {
-            model.addAttribute("genderList", Gender.values());
             return "oviUser/update";
         }
 
