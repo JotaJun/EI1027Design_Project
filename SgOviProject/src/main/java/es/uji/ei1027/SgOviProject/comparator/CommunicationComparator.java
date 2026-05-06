@@ -1,6 +1,5 @@
 package es.uji.ei1027.SgOviProject.comparator;
 
-import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import es.uji.ei1027.SgOviProject.model.Communication;
 
 import java.util.Comparator;
