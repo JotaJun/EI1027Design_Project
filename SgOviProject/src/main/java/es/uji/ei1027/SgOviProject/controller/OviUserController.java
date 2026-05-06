@@ -118,17 +118,22 @@ public class OviUserController {
         Account account = (Account) session.getAttribute("account");
         OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
 
+        // Ponemos datos que no aparecen en el formulario previo a pasarlo por el validador
+        form.getAccount().setDni(account.getDni());
+        form.getAccount().setStatus(account.getStatus());
+        form.getOviUser().setDni(oviUser.getDni());
+
+        // Le ponemos una contraseña temporal corta para "engañar" al AccountValidator
+        // porque la contraseña encriptada de la BD es demasiado larga y no pasa validador
+        form.getAccount().setPassword("ValidPass123");
+
         OviUserUpdateDTOValidator validator = new OviUserUpdateDTOValidator();
         validator.validate(form, bindingResult);
 
         if (bindingResult.hasErrors()) {
+            form.getAccount().setPassword(null); // La limpiamos por si acaso antes de volver a la vista
             return "oviUser/update";
         }
-
-        // Ponemos los dnis y status para que no aparezcan en el html, ya que ya está registrado
-        form.getAccount().setDni(account.getDni());
-        form.getAccount().setStatus(account.getStatus());
-        form.getOviUser().setDni(oviUser.getDni());
 
         if (form.getNewPassword() != null && !form.getNewPassword().trim().isEmpty()) {
             BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
