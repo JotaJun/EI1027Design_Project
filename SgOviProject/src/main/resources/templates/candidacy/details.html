@@ -84,18 +84,28 @@
                         <span th:unless="${candidacyDto.papPati.drivingLicense}" class="text-danger">No en disposa</span>
                     </span>
         </div>
+
         <div class="detail-group">
           <span class="detail-label">Disponibilitat</span>
           <span class="detail-value">
+
+            <!-- CAS 1: Limitada (Té data d'inici i de fi) -->
             <span th:if="${candidacyDto.papPati.initialAvailableDate != null and candidacyDto.papPati.lastAvailableDate != null}"
                   th:text="'Del ' + ${#temporals.format(candidacyDto.papPati.initialAvailableDate, 'dd/MM/yyyy')} + ' al ' + ${#temporals.format(candidacyDto.papPati.lastAvailableDate, 'dd/MM/yyyy')}">
-                Del 01/01/2024 al 31/12/2024
             </span>
 
-            <span th:unless="${candidacyDto.papPati.initialAvailableDate != null and candidacyDto.papPati.lastAvailableDate != null}"
-                  class="text-danger">
-                No disponible
+            <!-- CAS 2: Indefinida (Té inici, però NO té fi) -->
+            <span th:if="${candidacyDto.papPati.initialAvailableDate != null and candidacyDto.papPati.lastAvailableDate == null}"
+                  class="text-success"
+                  th:text="'Disponible des del ' + ${#temporals.format(candidacyDto.papPati.initialAvailableDate, 'dd/MM/yyyy')} + ' (Indefinida)'">
             </span>
+
+            <!-- CAS 3: No disponible (Cap de les dues dates existeix) -->
+            <span th:if="${candidacyDto.papPati.initialAvailableDate == null and candidacyDto.papPati.lastAvailableDate == null}"
+                  class="text-danger">
+                No disponible actualment
+            </span>
+
           </span>
         </div>
       </div>
