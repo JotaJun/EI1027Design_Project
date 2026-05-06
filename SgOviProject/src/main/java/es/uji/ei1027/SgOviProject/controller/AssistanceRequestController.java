@@ -323,7 +323,37 @@ public class AssistanceRequestController {
         if (request == null) {
             return "redirect:/assistanceRequest/manage/list";
         }
+        return "redirect:/assistanceRequest/manage/rejectReason/"+idApRequest;
+    }
 
-        return "redirect:/assistanceRequest/manage/rejectReason";
+    @GetMapping(value="/manage/rejectReason/{idApRequest}")
+    public String showRejectReason(Model model, @PathVariable int idApRequest) {
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+        model.addAttribute("req", request);
+        return "assistanceRequest/manage/rejectReason";
+    }
+
+    @PostMapping(value="/manage/rejectReason")
+    public String doRejectReason(@ModelAttribute("req") AssistanceRequest request, BindingResult bindingResult) {
+        //creo solo un validator para esto ¿? porque es un caso excepcional donde no debe ser null
+        if (request.getDeniedReason() != null) {
+            bindingResult.rejectValue("deniedReason", "required", "El motiu del rebuig és obligatori");
+            return "assistanceRequest/manage/rejectReason";
+        }
+        else if(request.getDeniedReason().length() > 255) {
+            bindingResult.rejectValue("deniedReason", "tooLong", "El motiu del rebuig no pot superar els 255 caràcters");
+            return "assistanceRequest/manage/rejectReason";
+        }
+
+        request.setStatus(Status.REJECTED);
+
+        assistanceRequestDao.updateAssistanceRequest(request);
+
+        return "redirect:/assistanceRequest/manage/done";
+    }
+
+    @GetMapping("/manage/done")
+    public String manageApDone() {
+        return "assistanceRequest/manage/done";
     }
 }
