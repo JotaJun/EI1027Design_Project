@@ -349,6 +349,11 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.updateAssistanceRequest(request);
 
-        return "redirect:/assistanceRequest/manage/list";
+        return "redirect:/assistanceRequest/manage/done";
+    }
+
+    @GetMapping("/manage/done")
+    public String manageApDone() {
+        return "assistanceRequest/manage/done";
     }
 }
