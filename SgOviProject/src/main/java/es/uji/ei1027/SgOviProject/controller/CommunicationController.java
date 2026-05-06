@@ -49,16 +49,19 @@ public class CommunicationController {
         Account currentUser = (Account) session.getAttribute("account");
         AccountType role = AccountType.valueOf( (String) session.getAttribute("userRole"));
         String otherUserName;
+        Account otherUser = new Account();
 
         boolean isAuthorized = false;
 
         if (role == AccountType.OVIUSER){
             if (request.getDniOviUser().equals(currentUser.getDni())) {
                 isAuthorized = true;
+                otherUser = accountDao.getAccount(candidacy.getDniPapPati());
             }
         }else if (role == AccountType.PAPPATI){
             if (candidacy.getDniPapPati().equals(currentUser.getDni())) {
                 isAuthorized = true;
+                otherUser = accountDao.getAccount(request.getDniOviUser());
             }
         }
 
@@ -66,7 +69,6 @@ public class CommunicationController {
             return "redirect:/index";
         }
 
-        Account otherUser = accountDao.getAccount(candidacy.getDniPapPati());
         otherUser.setPassword(null);
         otherUserName = otherUser.getName() + " " + otherUser.getSurname();
 
