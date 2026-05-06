@@ -563,6 +563,20 @@ select:focus {
     padding: 40px 20px;
 }
 
+/* =========================================
+   MODIFICADORES: Dashboard Centrado
+   ========================================= */
+
+.dashboard-center-container {
+    display: flex;
+    justify-content: center;
+}
+
+.dash-card-constrained {
+    max-width: 550px;
+    width: 100%;
+}
+
 /* Sección de Bienvenida */
 .welcome-section {
     display: flex;
@@ -946,6 +960,19 @@ select:focus {
     color: var(--color-text-main);
 }
 
+.assistance-form .checkbox-container label {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* Soporte general para grupos de formulario fuera del grid o login */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; /* Será ignorado/compensado por el gap del grid, pero salva layouts normales */
+}
+
 .assistance-form input[type="text"],
 .assistance-form input[type="email"],
 .assistance-form input[type="date"],
@@ -1046,9 +1073,19 @@ select:focus {
     margin: 0;
 }
 
-/* AFEGEIX AQUESTA NOVA CLASSE */
 .mb-4 {
     margin-bottom: 24px; /* Pots ajustar aquest valor (ex: 20px, 1.5rem) segons l'espai que vulguis */
+}
+
+/* Utilidad de margen inferior (ya tenías mt-10, mb-15 y mb-4) */
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+/* Utilidad para alinear etiquetas con tooltips u otros iconos */
+.label-flex {
+    display: flex;
+    align-items: center;
 }
 
 
@@ -1603,4 +1640,71 @@ label-hint {
     cursor: pointer;
     flex-shrink: 0;
     border: none;
+}
+
+/* =========================================
+   MODIFICADORES: Enllaços de text
+   ========================================= */
+
+.text-link-primary {
+    color: #B45309; /* Naranja muy claro */
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.text-link-primary:hover {
+    color: var(--color-primary-hover); /* Al pasar el ratón sí podemos usar el original claro */
+}
+
+
+/* =========================================
+   MODIFICADORS: Caixes d'Informació (Info Box)
+   ========================================= */
+
+/* Afegeix una vora esquerra de color primari per destacar */
+.info-box-highlight {
+    border-left: 4px solid var(--color-primary);
+}
+
+.info-box-header {
+    margin-bottom: 15px;
+}
+
+.info-box-title {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    color: var(--color-text-main);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-box-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.info-box-text {
+    font-size: 12px;
+    color: var(--color-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* =========================================
+   NOVES CLASSES D'UTILITAT
+   ========================================= */
+
+.mb-15 {
+    margin-bottom: 15px;
+}
+
+.icon-18 {
+    width: 18px;
+    height: 18px;
 }

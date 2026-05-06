@@ -8,7 +8,7 @@
 <body>
 
 <div layout:fragment="header">
-    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+    <div th:replace="~{fragments/papPati-returnMain-header :: papPati-returnMain-header}"></div>
 </div>
 
 <main layout:fragment="content">
@@ -60,10 +60,6 @@
                     <span class="detail-label">Gènere</span>
                     <span class="detail-value" th:text="${session.account.gender.description}"></span>
                 </div>
-                <div class="detail-group" th:if="${session.specificAccount.dniLegalGuardian != null and !#strings.isEmpty(session.specificAccount.dniLegalGuardian)}">
-                    <span class="detail-label">DNI Tutor Legal</span>
-                    <span class="detail-value" th:text="${session.specificAccount.dniLegalGuardian}">87654321B</span>
-                </div>
             </div>
 
             <h3 class="detail-section-title">Contacte</h3>
@@ -94,8 +90,61 @@
                 </div>
             </div>
 
+            <h3 class="detail-section-title">Dades Professionals</h3>
+            <div class="form-grid">
+                <div class="detail-group">
+                    <span class="detail-label">Tipus de Personal</span>
+                    <span class="detail-value" th:text="${session.specificAccount.staffType.description}">PAP</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Carnet de conduir</span>
+                    <span class="detail-value" th:text="${session.specificAccount.drivingLicense ? 'Sí' : 'No'}">Sí</span>
+                </div>
+
+                <!-- LÓGICA DE DISPONIBILIDAD -->
+                <div class="detail-group" th:if="${session.specificAccount.initialAvailableDate == null and session.specificAccount.lastAvailableDate == null}">
+                    <span class="detail-label">Disponibilitat</span>
+                    <span class="detail-value text-danger">No disponible actualment</span>
+                </div>
+
+                <th:block th:unless="${session.specificAccount.initialAvailableDate == null and session.specificAccount.lastAvailableDate == null}">
+                    <div class="detail-group">
+                        <span class="detail-label">Data inicial disponibilitat</span>
+                        <span class="detail-value" th:text="${session.specificAccount.initialAvailableDate != null ? #temporals.format(session.specificAccount.initialAvailableDate, 'dd/MM/yyyy') : 'Sense especificar'}"></span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Data final disponibilitat</span>
+                        <span class="detail-value" th:text="${session.specificAccount.lastAvailableDate != null ? #temporals.format(session.specificAccount.lastAvailableDate, 'dd/MM/yyyy') : 'Sense límit'}"></span>
+                    </div>
+                </th:block>
+
+                <div class="detail-group">
+                    <span class="detail-label">Anys d'experiència</span>
+                    <span class="detail-value" th:text="${session.specificAccount.yearsOfExperience + ' anys'}">0 anys</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">URL del CV</span>
+                    <span class="detail-value">
+                        <a th:if="${session.specificAccount.urlCv != null and !session.specificAccount.urlCv.isEmpty()}"
+                           th:href="${session.specificAccount.urlCv}"
+                           target="_blank"
+                           class="text-link-primary">
+                            Veure Currículum
+                        </a>
+                        <span th:unless="${session.specificAccount.urlCv != null and !session.specificAccount.urlCv.isEmpty()}">No adjuntat</span>
+                    </span>
+                </div>
+
+                <div class="detail-group form-full-width">
+                    <span class="detail-label">Formació</span>
+                    <div class="detail-description-box mt-10" th:text="${session.specificAccount.training != null and !session.specificAccount.training.isEmpty() ? session.specificAccount.training : 'Sense dades de formació'}">
+                        Detall formació...
+                    </div>
+                </div>
+            </div>
+
             <div class="form-actions-centered actions-bordered" th:if="${session.account.status.name() != 'REJECTED'}">
-                <a th:href="@{/oviUser/update}" class="btn-outline btn-icon">
+                <a th:href="@{/papPati/update}" class="btn-outline btn-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
                         <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>

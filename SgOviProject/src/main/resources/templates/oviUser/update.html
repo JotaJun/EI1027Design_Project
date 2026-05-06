@@ -126,6 +126,7 @@
                     <div class="form-group">
                         <label for="newPassword">Nova contrasenya</label>
                         <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Mínim 8 caràcters"
+                               minlength="8"
                                th:classappend="${#fields.hasErrors('newPassword')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('newPassword')}" class="error-message" th:errors="*{newPassword}"></span>
                     </div>
@@ -133,6 +134,7 @@
                     <div class="form-group">
                         <label for="confirmPassword">Repetir nova contrasenya</label>
                         <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                               minlength="8"
                                th:classappend="${#fields.hasErrors('confirmPassword')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('confirmPassword')}" class="error-message" th:errors="*{confirmPassword}"></span>
                     </div>

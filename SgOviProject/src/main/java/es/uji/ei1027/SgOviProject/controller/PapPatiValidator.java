@@ -4,6 +4,8 @@ import es.uji.ei1027.SgOviProject.model.PapPati;
 import org.springframework.validation.Errors;
 import org.springframework.validation.Validator;
 
+import java.time.LocalDate;
+
 public class PapPatiValidator implements Validator {
 
     @Override
@@ -20,23 +22,22 @@ public class PapPatiValidator implements Validator {
             errors.rejectValue("staffType", "required", "El tipus de personal és obligatori");
         }
 
-        // Validació de la data d'inici de disponibilitat
-        if (papPati.getInitialAvailableDate() == null) {
-            errors.rejectValue("initialAvailableDate", "required", "La data d'inici de disponibilitat és obligatòria");
-        }
+        LocalDate ini = papPati.getInitialAvailableDate();
+        LocalDate fi = papPati.getLastAvailableDate();
 
-        // Validació de la data de fi de disponibilitat
-        if (papPati.getLastAvailableDate() == null) {
-            errors.rejectValue("lastAvailableDate", "required", "La data de fi de disponibilitat és obligatòria");
-        }
-
-        // Validació que la data de fi siga posterior a la data d'inici
-        if (papPati.getInitialAvailableDate() != null && papPati.getLastAvailableDate() != null) {
-            if (!papPati.getLastAvailableDate().isAfter(papPati.getInitialAvailableDate())) {
+        if (ini == null && fi != null) {
+            // ERROR: Té data de fi però no d'inici
+            errors.rejectValue("initialAvailableDate", "requiredWithEnd",
+                    "Has d'indicar una data d'inici si indiques una data de fi");
+        } else if (ini != null && fi != null) {
+            // Totes dues existeixen (disponibilitat amb límit): validem el rang
+            if (!fi.isAfter(ini)) {
                 errors.rejectValue("lastAvailableDate", "invalidRange",
                         "La data de fi ha de ser posterior a la data d'inici");
             }
         }
+        // Si ini == null && fi == null -> VÀLID (No disponible actualment)
+        // Si ini != null && fi == null -> VÀLID (Disponibilitat indefinida)
 
         // Validació de la formació/training
         if (papPati.getTraining() == null || papPati.getTraining().trim().isEmpty()) {
