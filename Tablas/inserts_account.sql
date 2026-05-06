@@ -57,4 +57,5 @@ UPDATE Account SET status = 'rejected', deniedReason = 'Documentación incomplet
 
 -- PAPati: Aceptamos a Marcos y rechazamos a Sara
 UPDATE Account SET status = 'accepted' WHERE email = 'mtorres@pap.es'; -- Marcos
+UPDATE Account SET status = 'accepted' WHERE dni = '90909090W';
 UPDATE Account SET status = 'rejected', deniedReason = 'No cumple con los requisitos de zona' WHERE email = 'screspo@pap.es'; -- Sara
