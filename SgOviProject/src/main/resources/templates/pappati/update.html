@@ -1,0 +1,225 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+  <title>Modificar Perfil - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+  <div th:replace="~{fragments/papPati-returnMain-header :: papPati-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container dashboard-main">
+
+    <div class="assistance-card">
+
+      <!-- Botó Cancel·lar -->
+      <div class="requests-header-action">
+        <a th:href="@{/papPati/details}" class="btn-back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Cancel·lar i tornar
+        </a>
+      </div>
+
+      <div class="login-header">
+        <h2 class="card-title">Modificar les meves dades</h2>
+        <p class="card-subtitle">Actualitza la informació del teu perfil d'assistent PAP/PATI.</p>
+      </div>
+
+      <form th:action="@{/papPati/update}" method="post" th:object="${updateForm}" class="assistance-form">
+
+        <!-- 1. DADES PERSONALS -->
+        <h3 class="detail-section-title mt-10">Dades Personals</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="name">Nom <span class="required-asterisk">*</span></label>
+            <input type="text" id="name" th:field="*{account.name}"
+                   th:classappend="${#fields.hasErrors('account.name')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.name')}" class="error-message" th:errors="*{account.name}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="surname">Cognoms <span class="required-asterisk">*</span></label>
+            <input type="text" id="surname" th:field="*{account.surname}"
+                   th:classappend="${#fields.hasErrors('account.surname')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.surname')}" class="error-message" th:errors="*{account.surname}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="birthday">Data de naixement <span class="required-asterisk">*</span></label>
+            <input type="date" id="birthday" th:field="*{account.birthday}"
+                   th:classappend="${#fields.hasErrors('account.birthday')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.birthday')}" class="error-message" th:errors="*{account.birthday}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="gender">Gènere <span class="required-asterisk">*</span></label>
+            <!-- Ens asseugurem de passar 'genderList' des del controlador o via @ModelAttribute global -->
+            <select id="gender" th:field="*{account.gender}" th:classappend="${#fields.hasErrors('account.gender')} ? 'input-error'">
+              <option value="">Selecciona gènere...</option>
+              <option th:each="g : ${genderList}" th:value="${g.name()}" th:text="${g.description}"></option>
+            </select>
+            <span th:if="${#fields.hasErrors('account.gender')}" class="error-message" th:errors="*{account.gender}"></span>
+          </div>
+        </div>
+
+        <!-- 2. CONTACTE -->
+        <h3 class="detail-section-title">Dades de Contacte</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="email">Correu electrònic <span class="required-asterisk">*</span></label>
+            <input type="email" id="email" th:field="*{account.email}"
+                   th:classappend="${#fields.hasErrors('account.email')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.email')}" class="error-message" th:errors="*{account.email}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="phoneNumber">Telèfon <span class="required-asterisk">*</span></label>
+            <input type="text" id="phoneNumber" th:field="*{account.phoneNumber}"
+                   th:classappend="${#fields.hasErrors('account.phoneNumber')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.phoneNumber')}" class="error-message" th:errors="*{account.phoneNumber}"></span>
+          </div>
+        </div>
+
+        <!-- 3. ADREÇA -->
+        <h3 class="detail-section-title">Adreça</h3>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="city">Població <span class="required-asterisk">*</span></label>
+            <input type="text" id="city" th:field="*{account.city}"
+                   th:classappend="${#fields.hasErrors('account.city')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.city')}" class="error-message" th:errors="*{account.city}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="street">Carrer / Via <span class="required-asterisk">*</span></label>
+            <input type="text" id="street" th:field="*{account.street}"
+                   th:classappend="${#fields.hasErrors('account.street')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.street')}" class="error-message" th:errors="*{account.street}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="zipCode">Codi Postal <span class="required-asterisk">*</span></label>
+            <input type="text" id="zipCode" th:field="*{account.zipCode}"
+                   th:classappend="${#fields.hasErrors('account.zipCode')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('account.zipCode')}" class="error-message" th:errors="*{account.zipCode}"></span>
+          </div>
+        </div>
+
+        <!-- 4. DADES PROFESSIONALS (PAPPATI) -->
+        <h3 class="detail-section-title">Dades Professionals</h3>
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="staffType">Tipus de personal <span class="required-asterisk">*</span></label>
+            <!-- Assumint que pases 'staffTypeList' al Model -->
+            <select id="staffType" th:field="*{papPati.staffType}" th:classappend="${#fields.hasErrors('papPati.staffType')} ? 'input-error'">
+              <option value="">Selecciona el perfil...</option>
+              <option th:each="type : ${staffTypeList}" th:value="${type.name()}" th:text="${type.description}"></option>
+            </select>
+            <span th:if="${#fields.hasErrors('papPati.staffType')}" class="error-message" th:errors="*{papPati.staffType}"></span>
+          </div>
+
+          <div class="form-group">
+            <!-- Format checkbox personalitzat -->
+            <div class="checkbox-container mt-15">
+              <input type="checkbox" id="drivingLicense" th:field="*{papPati.drivingLicense}">
+              <label for="drivingLicense">Tinc carnet de conduir</label>
+            </div>
+          </div>
+
+          <!-- BLOC DE DISPONIBILITAT AMB TOOLTIP -->
+          <div class="form-full-width mb-10">
+            <label class="label-flex">
+              <strong>Disponibilitat temporal</strong>
+              <span class="info-tooltip">
+                (?)
+                <span class="tooltip-text">Si actualment no estàs disponible, deixa ambdues dates en blanc. Si tens disponibilitat indefinida, omple només la data d'inici.</span>
+              </span>
+            </label>
+          </div>
+
+          <div class="form-group">
+            <label for="initialDate">Data d'inici</label>
+            <input type="date" id="initialDate" th:field="*{papPati.initialAvailableDate}"
+                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                   th:classappend="${#fields.hasErrors('papPati.initialAvailableDate')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('papPati.initialAvailableDate')}" class="error-message" th:errors="*{papPati.initialAvailableDate}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="lastDate">Data de fi</label>
+            <input type="date" id="lastDate" th:field="*{papPati.lastAvailableDate}"
+                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                   th:classappend="${#fields.hasErrors('papPati.lastAvailableDate')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('papPati.lastAvailableDate')}" class="error-message" th:errors="*{papPati.lastAvailableDate}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="yearsExp">Anys d'experiència <span class="required-asterisk">*</span></label>
+            <input type="number" id="yearsExp" min="0" th:field="*{papPati.yearsOfExperience}"
+                   th:classappend="${#fields.hasErrors('papPati.yearsOfExperience')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('papPati.yearsOfExperience')}" class="error-message" th:errors="*{papPati.yearsOfExperience}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="urlCv">URL del Currículum <span class="required-asterisk">*</span></label>
+            <input type="text" id="urlCv" th:field="*{papPati.urlCv}" placeholder="https://..."
+                   th:classappend="${#fields.hasErrors('papPati.urlCv')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('papPati.urlCv')}" class="error-message" th:errors="*{papPati.urlCv}"></span>
+          </div>
+
+          <!-- TEXTAREA DE FORMACIÓ -->
+          <div class="form-group form-full-width">
+            <label for="training">Formació acadèmica i complementària <span class="required-asterisk">*</span></label>
+            <div class="textarea-wrapper" th:classappend="${#fields.hasErrors('papPati.training')} ? 'input-error'">
+              <textarea id="training" th:field="*{papPati.training}" placeholder="Escriu ací els teus títols i formació relacionada..." rows="4"></textarea>
+            </div>
+            <span th:if="${#fields.hasErrors('papPati.training')}" class="error-message" th:errors="*{papPati.training}"></span>
+          </div>
+        </div>
+
+        <!-- CANVI DE CONTRASENYA -->
+        <h3 class="detail-section-title">Canviar Contrasenya (Opcional)</h3>
+        <p class="card-subtitle mb-4">Deixa aquests camps en blanc si no vols canviar la teva contrasenya actual.</p>
+        <div class="form-grid">
+          <div class="form-group">
+            <label for="newPassword">Nova contrasenya</label>
+            <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Mínim 8 caràcters"
+                   minlength="8"
+                   th:classappend="${#fields.hasErrors('newPassword')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('newPassword')}" class="error-message" th:errors="*{newPassword}"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="confirmPassword">Repetir nova contrasenya</label>
+            <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
+                   minlength="8"
+                   th:classappend="${#fields.hasErrors('confirmPassword')} ? 'input-error'" />
+            <span th:if="${#fields.hasErrors('confirmPassword')}" class="error-message" th:errors="*{confirmPassword}"></span>
+          </div>
+        </div>
+
+        <div class="form-actions-centered actions-bordered">
+          <button type="submit" class="btn-primary btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Guardar canvis
+          </button>
+        </div>
+      </form>
+    </div>
+  </div>
+</main>
+
+</body>
+</html>

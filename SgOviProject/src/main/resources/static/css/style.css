@@ -960,6 +960,19 @@ select:focus {
     color: var(--color-text-main);
 }
 
+.assistance-form .checkbox-container label {
+    display: inline-block;
+    margin-bottom: 0;
+    font-weight: 500;
+}
+
+/* Soporte general para grupos de formulario fuera del grid o login */
+.form-group {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; /* Será ignorado/compensado por el gap del grid, pero salva layouts normales */
+}
+
 .assistance-form input[type="text"],
 .assistance-form input[type="email"],
 .assistance-form input[type="date"],
@@ -1060,9 +1073,19 @@ select:focus {
     margin: 0;
 }
 
-/* AFEGEIX AQUESTA NOVA CLASSE */
 .mb-4 {
     margin-bottom: 24px; /* Pots ajustar aquest valor (ex: 20px, 1.5rem) segons l'espai que vulguis */
+}
+
+/* Utilidad de margen inferior (ya tenías mt-10, mb-15 y mb-4) */
+.mb-10 {
+    margin-bottom: 10px;
+}
+
+/* Utilidad para alinear etiquetas con tooltips u otros iconos */
+.label-flex {
+    display: flex;
+    align-items: center;
 }
 
 

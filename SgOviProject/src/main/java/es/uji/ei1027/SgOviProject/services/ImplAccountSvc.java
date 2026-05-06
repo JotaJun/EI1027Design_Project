@@ -39,7 +39,15 @@ public class ImplAccountSvc implements IntAccountSvc {
         papPatiDao.addPapPati(papPati);
     }
 
+    @Override
+    public void updatePapPati(Account account, PapPati papPati) {
+        accountDao.updateAccount(account);
 
+        // Si papPati no tiene el dni, se lo asignamos
+        papPati.setDni(account.getDni());
+
+        papPatiDao.updatePapPati(papPati);
+    }
 
     @Override
     public void addOviUser(Account account, OviUser oviUser) {

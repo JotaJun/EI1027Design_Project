@@ -26,19 +26,18 @@ public class PapPatiValidator implements Validator {
         LocalDate fi = papPati.getLastAvailableDate();
 
         if (ini == null && fi != null) {
+            // ERROR: Té data de fi però no d'inici
             errors.rejectValue("initialAvailableDate", "requiredWithEnd",
-                    "Si indiques una data de fi, la d'inici també és obligatòria");
-        } else if (ini != null && fi == null) {
-            errors.rejectValue("lastAvailableDate", "requiredWithStart",
-                    "Si indiques una data d'inici, la de fi també és obligatòria");
+                    "Has d'indicar una data d'inici si indiques una data de fi");
         } else if (ini != null && fi != null) {
-            // Si ambas existen, validamos el rango
+            // Totes dues existeixen (disponibilitat amb límit): validem el rang
             if (!fi.isAfter(ini)) {
                 errors.rejectValue("lastAvailableDate", "invalidRange",
                         "La data de fi ha de ser posterior a la data d'inici");
             }
         }
-        // Si ambas son null, se considera válido (no disponible)
+        // Si ini == null && fi == null -> VÀLID (No disponible actualment)
+        // Si ini != null && fi == null -> VÀLID (Disponibilitat indefinida)
 
         // Validació de la formació/training
         if (papPati.getTraining() == null || papPati.getTraining().trim().isEmpty()) {

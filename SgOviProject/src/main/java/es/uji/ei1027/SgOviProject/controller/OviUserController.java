@@ -88,7 +88,7 @@ public class OviUserController {
     }
 
     @GetMapping("/details")
-    public String watchDetails(Model model, HttpSession session){
+    public String watchDetails(){
         //El interceptor ya verifica que el usuario está loggeado
 
         return "oviUser/details";
@@ -111,8 +111,7 @@ public class OviUserController {
     }
 
     @PostMapping("/update")
-    public String processUpdateOviUser(Model model,
-                                       @ModelAttribute("updateForm") OviUserUpdateDTO form,
+    public String processUpdateOviUser(@ModelAttribute("updateForm") OviUserUpdateDTO form,
                                        BindingResult bindingResult,
                                        HttpSession session) {
 
@@ -151,7 +150,6 @@ public class OviUserController {
                 bindingResult.rejectValue("oviUser.dniLegalGuardian", "notFound",
                         "Aquest DNI no correspon a cap tutor legal registrat al sistema.");
 
-                model.addAttribute("genderList", Gender.values());
                 return "oviUser/update";
             }
         } else {
@@ -162,6 +160,8 @@ public class OviUserController {
         accountSvc.updateOviUser(form.getAccount(), form.getOviUser());
 
         form.getAccount().setPassword(null);
+
+        // Actualizamos sesion
         session.setAttribute("account", form.getAccount());
         session.setAttribute("specificAccount", form.getOviUser());
 
