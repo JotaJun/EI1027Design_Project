@@ -19,15 +19,12 @@
             <div class="header-flex">
                 <h2 class="card-title">El Meu Perfil</h2>
 
-                <div th:switch="${account.status.name()}">
-                    <span th:case="'PENDING'" class="status-badge badge-pending">Pendent</span>
-                    <span th:case="'ACCEPTED'" class="status-badge badge-accepted">Acceptat</span>
-                    <span th:case="'REJECTED'" class="status-badge badge-rejected">Rebutjat</span>
-                    <span th:case="*" class="status-badge" th:text="${account.status}">Sense estat</span>
+                <div class="status-badge" th:classappend="'badge-' + ${#strings.toLowerCase(session.account.status.name())}">
+                    <span th:text="${session.account.status.description}">Estat</span>
                 </div>
             </div>
 
-            <div th:if="${account.status == 'REJECTED' and account.deniedReason != null}" class="alert-box alert-rejected">
+            <div th:if="${session.account.status.name() == 'REJECTED' and session.account.deniedReason != null}" class="alert-box alert-rejected">
                 <div class="alert-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <circle cx="12" cy="12" r="10"></circle>
@@ -37,7 +34,7 @@
                 </div>
                 <div class="alert-content">
                     <h4 class="alert-title">Motiu del rebuig de la sol·licitud d'alta</h4>
-                    <p class="alert-message" th:text="${account.deniedReason}">Motiu...</p>
+                    <p class="alert-message" th:text="${session.account.deniedReason}">Motiu...</p>
                 </div>
             </div>
 
@@ -45,27 +42,27 @@
             <div class="form-grid">
                 <div class="detail-group">
                     <span class="detail-label">Nom</span>
-                    <span class="detail-value" th:text="${account.name}">Nom</span>
+                    <span class="detail-value" th:text="${session.account.name}">Nom</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Cognoms</span>
-                    <span class="detail-value" th:text="${account.surname}">Cognoms</span>
+                    <span class="detail-value" th:text="${session.account.surname}">Cognoms</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">DNI</span>
-                    <span class="detail-value" th:text="${account.dni}">12345678A</span>
+                    <span class="detail-value" th:text="${session.account.dni}">12345678A</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Data de naixement</span>
-                    <span class="detail-value" th:text="${#temporals.format(account.birthday, 'dd/MM/yyyy')}">01/01/2000</span>
+                    <span class="detail-value" th:text="${#temporals.format(session.account.birthday, 'dd/MM/yyyy')}">01/01/2000</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Gènere</span>
-                    <span class="detail-value" th:text="${account.gender.description}" ></span>
+                    <span class="detail-value" th:text="${session.account.gender.description}"></span>
                 </div>
-                <div class="detail-group" th:if="${oviUser.dniLegalGuardian != null and !#strings.isEmpty(oviUser.dniLegalGuardian)}">
+                <div class="detail-group" th:if="${session.specificAccount.dniLegalGuardian != null and !#strings.isEmpty(session.specificAccount.dniLegalGuardian)}">
                     <span class="detail-label">DNI Tutor Legal</span>
-                    <span class="detail-value" th:text="${oviUser.dniLegalGuardian}">87654321B</span>
+                    <span class="detail-value" th:text="${session.specificAccount.dniLegalGuardian}">87654321B</span>
                 </div>
             </div>
 
@@ -73,11 +70,11 @@
             <div class="form-grid">
                 <div class="detail-group">
                     <span class="detail-label">Correu electrònic</span>
-                    <span class="detail-value" th:text="${account.email}">correu@exemple.com</span>
+                    <span class="detail-value" th:text="${session.account.email}">correu@exemple.com</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Telèfon</span>
-                    <span class="detail-value" th:text="${account.phoneNumber}">600000000</span>
+                    <span class="detail-value" th:text="${session.account.phoneNumber}">600000000</span>
                 </div>
             </div>
 
@@ -85,19 +82,19 @@
             <div class="form-grid">
                 <div class="detail-group">
                     <span class="detail-label">Població</span>
-                    <span class="detail-value" th:text="${account.city}">Població</span>
+                    <span class="detail-value" th:text="${session.account.city}">Població</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Carrer / Adreça</span>
-                    <span class="detail-value" th:text="${account.street}">Carrer...</span>
+                    <span class="detail-value" th:text="${session.account.street}">Carrer...</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Codi Postal</span>
-                    <span class="detail-value" th:text="${account.zipCode}">12000</span>
+                    <span class="detail-value" th:text="${session.account.zipCode}">12000</span>
                 </div>
             </div>
 
-            <div class="form-actions-centered actions-bordered" th:if="${account.status.name() != 'REJECTED'}">
+            <div class="form-actions-centered actions-bordered" th:if="${session.account.status.name() != 'REJECTED'}">
                 <a th:href="@{/oviUser/update}" class="btn-outline btn-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>

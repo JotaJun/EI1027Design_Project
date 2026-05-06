@@ -85,12 +85,6 @@ public class OviUserController {
     public String watchDetails(Model model, HttpSession session){
         //El interceptor ya verifica que el usuario está loggeado
 
-        Account account = (Account) session.getAttribute("account");
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-
-        model.addAttribute("account", account);
-        model.addAttribute("oviUser", currentUser);
-
         return "oviUser/details";
     }
 
