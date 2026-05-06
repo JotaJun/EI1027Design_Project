@@ -16,29 +16,23 @@
 <div class="login-container">
     <div class="login-card login-card-wide">
 
-        <!-- Capçalera -->
         <div class="login-header">
-            <div class="logo-box">
+            <div class="logo-box logo-centered">
                 <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
-                SgOVI
+                <span class="logo">SgOVI</span>
             </div>
             <p class="system-name">SISTEMA DE GESTIÓ DE L'OFICINA PER LA VIDA INDEPENDENT</p>
             <h2>Pas 2: Detalls Professionals</h2>
             <p class="login-subtitle">Completa el teu perfil per finalitzar el registre</p>
         </div>
 
-        <!-- Formulari -->
         <form th:action="@{/pappati/register}" th:object="${papData}" method="post" class="login-form">
 
             <!-- Camp ocult: DNI (ve del pas anterior) -->
             <input type="hidden" th:field="*{dni}">
-            <!-- Mostrar error intern del DNI si existeix -->
-            <span th:if="${#fields.hasErrors('dni')}" th:errors="*{dni}" class="error-message"
-                  style="text-align: center; margin-top: -10px; margin-bottom: 15px;"></span>
 
-            <!-- Tipus de personal -->
             <div class="form-group">
-                <label for="staffType">Tipus de personal</label>
+                <label for="staffType">Tipus de personal <span class="required-asterisk">*</span></label>
                 <div class="select-wrapper">
                     <select id="staffType" th:field="*{staffType}" th:classappend="${#fields.hasErrors('staffType')} ? 'input-error' : ''" required>
                         <option value="">-- Selecciona un tipus --</option>
@@ -49,48 +43,57 @@
                 <span th:if="${#fields.hasErrors('staffType')}" th:errors="*{staffType}" class="error-message"></span>
             </div>
 
-            <!-- Permís de conduir -->
-            <div class="form-group">
-                <label style="display: flex; align-items: center; gap: 10px; cursor: pointer; font-weight: 600; font-size: 13px;">
-                    <input type="checkbox" id="drivingLicense" th:field="*{drivingLicense}"
-                           style="width: 18px; height: 18px; accent-color: var(--color-primary); cursor: pointer;">
-                    Disposo de permís de conduir
-                </label>
+            <div class="form-group checkbox-container mb-4">
+                <input type="checkbox" id="drivingLicense" th:field="*{drivingLicense}">
+                <label for="drivingLicense">Disposo de permís de conduir</label>
             </div>
 
-            <!-- Data d'inici de disponibilitat -->
-            <div class="form-group">
-                <label for="initialAvailableDate">Data d'inici de disponibilitat</label>
-                <div class="input-wrapper">
-                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    <input type="date" id="initialAvailableDate" th:field="*{initialAvailableDate}" th:classappend="${#fields.hasErrors('initialAvailableDate')} ? 'input-error' : ''" required>
+            <!-- SECCIÓ DISPONIBILITAT: EXPLICACIÓ I CAMPS SENSE 'REQUIRED' -->
+            <div class="detail-description-box info-box-highlight mb-4">
+
+                <div class="info-box-header">
+                    <h4 class="info-box-title">
+                        <svg class="info-box-icon" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M13 16h-1v-4h-1m1-4h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                        </svg>
+                        Informació de Disponibilitat
+                    </h4>
+                    <p class="info-box-text">
+                        O bé indiques l'inici i la fi de la teva disponibilitat, o bé deixes <strong>ambdós camps buits</strong> per indicar que actualment <strong>no estàs disponible</strong>.
+                    </p>
                 </div>
-                <span th:if="${#fields.hasErrors('initialAvailableDate')}" th:errors="*{initialAvailableDate}" class="error-message"></span>
-            </div>
 
-            <!-- Data de fi de disponibilitat -->
-            <div class="form-group">
-                <label for="lastAvailableDate">Data de fi de disponibilitat</label>
-                <div class="input-wrapper">
-                    <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
-                        <line x1="16" y1="2" x2="16" y2="6"></line>
-                        <line x1="8" y1="2" x2="8" y2="6"></line>
-                        <line x1="3" y1="10" x2="21" y2="10"></line>
-                    </svg>
-                    <input type="date" id="lastAvailableDate" th:field="*{lastAvailableDate}" th:classappend="${#fields.hasErrors('lastAvailableDate')} ? 'input-error' : ''" required>
+                <div class="form-group mb-15">
+                    <label for="initialAvailableDate">Data d'inici (opcional)</label>
+                    <div class="input-wrapper">
+                        <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <input type="date" id="initialAvailableDate" th:field="*{initialAvailableDate}" th:classappend="${#fields.hasErrors('initialAvailableDate')} ? 'input-error' : ''">
+                    </div>
+                    <span th:if="${#fields.hasErrors('initialAvailableDate')}" th:errors="*{initialAvailableDate}" class="error-message"></span>
                 </div>
-                <span th:if="${#fields.hasErrors('lastAvailableDate')}" th:errors="*{lastAvailableDate}" class="error-message"></span>
+
+                <div class="form-group m-0">
+                    <label for="lastAvailableDate">Data de fi (opcional)</label>
+                    <div class="input-wrapper">
+                        <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <rect x="3" y="4" width="18" height="18" rx="2" ry="2"></rect>
+                            <line x1="16" y1="2" x2="16" y2="6"></line>
+                            <line x1="8" y1="2" x2="8" y2="6"></line>
+                            <line x1="3" y1="10" x2="21" y2="10"></line>
+                        </svg>
+                        <input type="date" id="lastAvailableDate" th:field="*{lastAvailableDate}" th:classappend="${#fields.hasErrors('lastAvailableDate')} ? 'input-error' : ''">
+                    </div>
+                    <span th:if="${#fields.hasErrors('lastAvailableDate')}" th:errors="*{lastAvailableDate}" class="error-message"></span>
+                </div>
             </div>
 
-            <!-- Formació -->
             <div class="form-group">
-                <label for="training">Formació</label>
+                <label for="training">Formació <span class="required-asterisk">*</span></label>
                 <div class="input-wrapper">
                     <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M22 10v6M2 10l10-5 10 5-10 5z"></path>
@@ -101,9 +104,8 @@
                 <span th:if="${#fields.hasErrors('training')}" th:errors="*{training}" class="error-message"></span>
             </div>
 
-            <!-- Anys d'experiència -->
             <div class="form-group">
-                <label for="yearsOfExperience">Anys d'experiència</label>
+                <label for="yearsOfExperience">Anys d'experiència <span class="required-asterisk">*</span></label>
                 <div class="input-wrapper">
                     <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <rect x="2" y="7" width="20" height="14" rx="2" ry="2"></rect>
@@ -116,9 +118,8 @@
                 <span th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}" class="error-message"></span>
             </div>
 
-            <!-- URL del Currículum -->
             <div class="form-group">
-                <label for="urlCv">URL del Currículum (CV)</label>
+                <label for="urlCv">URL del Currículum (CV) <span class="required-asterisk">*</span></label>
                 <div class="input-wrapper">
                     <svg class="icon-left" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <path d="M10 13a5 5 0 0 0 7.54.54l3-3a5 5 0 0 0-7.07-7.07l-1.72 1.71"></path>
@@ -129,9 +130,8 @@
                 <span th:if="${#fields.hasErrors('urlCv')}" th:errors="*{urlCv}" class="error-message"></span>
             </div>
 
-            <!-- Botó d'enviament -->
-            <button type="submit" class="btn-primary btn-block" style="border: none; margin-top: 10px; background-color: var(--color-primary); transition: background-color 0.3s;">
-                <svg style="width: 18px; height: 18px;" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <button type="submit" class="btn-primary btn-block mt-15">
+                <svg class="icon-18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                     <polyline points="20 6 9 17 4 12"></polyline>
                 </svg>
                 Finalitzar Registre

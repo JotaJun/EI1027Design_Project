@@ -1618,3 +1618,70 @@ label-hint {
     flex-shrink: 0;
     border: none;
 }
+
+/* =========================================
+   MODIFICADORES: Enllaços de text
+   ========================================= */
+
+.text-link-primary {
+    color: #B45309; /* Naranja muy claro */
+    text-decoration: underline;
+    text-underline-offset: 2px;
+    font-weight: 600;
+    transition: color 0.2s ease;
+}
+
+.text-link-primary:hover {
+    color: var(--color-primary-hover); /* Al pasar el ratón sí podemos usar el original claro */
+}
+
+
+/* =========================================
+   MODIFICADORS: Caixes d'Informació (Info Box)
+   ========================================= */
+
+/* Afegeix una vora esquerra de color primari per destacar */
+.info-box-highlight {
+    border-left: 4px solid var(--color-primary);
+}
+
+.info-box-header {
+    margin-bottom: 15px;
+}
+
+.info-box-title {
+    font-family: var(--font-heading);
+    font-size: 14px;
+    color: var(--color-text-main);
+    margin-bottom: 4px;
+    display: flex;
+    align-items: center;
+    gap: 6px;
+}
+
+.info-box-icon {
+    width: 16px;
+    height: 16px;
+    color: var(--color-primary);
+    flex-shrink: 0;
+}
+
+.info-box-text {
+    font-size: 12px;
+    color: var(--color-secondary);
+    line-height: 1.5;
+    margin: 0;
+}
+
+/* =========================================
+   NOVES CLASSES D'UTILITAT
+   ========================================= */
+
+.mb-15 {
+    margin-bottom: 15px;
+}
+
+.icon-18 {
+    width: 18px;
+    height: 18px;
+}
