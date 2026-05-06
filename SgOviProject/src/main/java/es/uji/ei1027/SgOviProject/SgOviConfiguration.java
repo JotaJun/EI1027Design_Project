@@ -91,11 +91,11 @@ public class SgOviConfiguration implements WebMvcConfigurer {
 
         // /** significa esta ruta y cualquier sub-ruta que cuelgue de ella
 
-        // OVIUSER
+        // OVIUSER (Solo rutas exclusivas de OVIUSER)
         registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER))
                 .addPathPatterns(
                         "/oviUser/**",
-                        "/assistanceRequest/add",       // Rutas específica
+                        "/assistanceRequest/add",
                         "/assistanceRequest/list/**",
                         "/assistanceRequest/details/**",
                         "/assistanceRequest/update/**",
@@ -105,9 +105,9 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/candidacy/reject/**",
                         "/contract/add/**",
                         "/contract/list/**",
-                        "/contract/details/**",
-                        "/communication/chat/**"
+                        "/contract/details/**"
                 );
+
         // TECHNICIAN
         registry.addInterceptor(new RoleInterceptor(AccountType.TECHNICIAN))
                 .addPathPatterns(
@@ -115,18 +115,24 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                         "/assistanceRequest/manage/**"
                 );
 
-        // PAPPATI
+        // PAPPATI (Solo rutas exclusivas de PAPPATI)
         registry.addInterceptor(new RoleInterceptor(AccountType.PAPPATI))
                 .addPathPatterns(
                         "/papPati/**",
-                        "/candidacy/listRequests/**",
-                        "/communication/chat/**"
+                        "/candidacy/listRequests/**"
                 );
 
-        // LEGALGUARDIAN
+        // LEGALGUARDIAN (Solo rutas exclusivas de LEGALGUARDIAN)
         registry.addInterceptor(new RoleInterceptor(AccountType.LEGALGUARDIAN))
                 .addPathPatterns(
                         "/legalGuardian/**"
+                );
+
+        // --- REGLAS COMPARTIDAS ---
+        // Rutas a las que pueden acceder tanto OVIUSER como PAPPATI
+        registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.PAPPATI))
+                .addPathPatterns(
+                        "/communication/chat/**"
                 );
     }
 }

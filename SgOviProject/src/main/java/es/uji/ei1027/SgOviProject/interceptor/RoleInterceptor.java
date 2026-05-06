@@ -6,13 +6,15 @@ import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.web.servlet.HandlerInterceptor;
 
+import java.util.Arrays;
+import java.util.List;
+
 public class RoleInterceptor implements HandlerInterceptor {
 
-    private final AccountType requiredRole;
+    private final List<AccountType> allowedRoles;
 
-    // Pasamos el rol necesario cuando creamos el interceptor
-    public RoleInterceptor(AccountType requiredRole) {
-        this.requiredRole = requiredRole;
+    public RoleInterceptor(AccountType... allowedRoles) {
+        this.allowedRoles = Arrays.asList(allowedRoles);
     }
 
     @Override
@@ -26,17 +28,18 @@ public class RoleInterceptor implements HandlerInterceptor {
 
         String currentRole = (String) session.getAttribute("userRole");
 
-        // Si hay usuario, pero NO tiene el rol adecuado
-        if (currentRole == null || !currentRole.equals(requiredRole.name())) {
+        // Verificamos si el currentRole coincide con ALGUNO de los roles permitidos
+        boolean hasRole = allowedRoles.stream()
+                .anyMatch(role -> role.name().equals(currentRole));
 
-            // Obtenemos la URL de la página de donde viene
+        // Si hay usuario, pero NO tiene NINGUNO de los roles adecuados
+        if (currentRole == null || !hasRole) {
+
             String referer = request.getHeader("Referer");
 
             if (referer != null && !referer.isEmpty()) {
-                // Lo devolvemos a la página anterior
                 response.sendRedirect(referer);
             } else {
-                // Si el navegador ocultó el Referer, lo mandamos al inicio por defecto
                 response.sendRedirect("/index");
             }
             return false;

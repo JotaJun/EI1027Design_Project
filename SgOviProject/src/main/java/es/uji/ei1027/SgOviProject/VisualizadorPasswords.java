@@ -24,7 +24,7 @@ public class VisualizadorPasswords {
             ArrayList<String> contrasenas = new ArrayList<>(List.of(
                     "passInstructor",
                     "userOviPass",
-                    "passPAP",
+                    "passPAPPATI",
                     "passTutor"
             ));
 

@@ -3,7 +3,7 @@
 --    Las contraseñas están hasheadas, aquí las reales:
 --    "passInstructor",
 --    "userOviPass",
---    "passPAP",
+--    "passPAPPATI",
 --    "passTutor"
 
 -- ==========================================
@@ -32,12 +32,12 @@ INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber,
 -- 3. Cuentas base para PAPati
 -- ==========================================
 INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber, city, street, zipCode, gender) VALUES
-('40404040D', 'Marcos', 'Torres Vila', '1995-02-14', 'XIfKnx0a70lsv4Qc1cTgVmt4e5+av3t3', 'mtorres@pap.es', '603456789', 'Castelló', 'Carrer Escultor', '12004', 'M'),
-('50505050E', 'Sara', 'Crespo Beltrán', '1992-07-27', 'XIfKnx0a70lsv4Qc1cTgVmt4e5+av3t3', 'screspo@pap.es', '604567890', 'Castelló', 'Paseo Ribalta 4', '12001', 'F'),
-('60606060F', 'Iván', 'Castro Gil', '1981-12-25', 'XIfKnx0a70lsv4Qc1cTgVmt4e5+av3t3', 'ivan.c@pap.es', '605678901', 'Castelló', 'Ronda Sud 3', '12005', 'M'),
-('70707070G', 'Julia', 'Navarro Sanz', '1989-04-10', 'XIfKnx0a70lsv4Qc1cTgVmt4e5+av3t3', 'j.navarro@pap.es', '606789012', 'Castelló', 'Calle Nueva 7', '12001', 'F'),
-('80808080K', 'Gonzalo', 'Hernández I.', '1983-06-18', 'XIfKnx0a70lsv4Qc1cTgVmt4e5+av3t3', 'g.hernandez@pap.es', '607890123', 'Castelló', 'Gran Vía 100', '12003', 'M'),
-('90909090W', 'Fatima', 'Ruiz Costa', '1997-11-20', 'XIfKnx0a70lsv4Qc1cTgVmt4e5+av3t3', 'fatima.r@pap.es', '608901234', 'Burriana', 'Calle Real 45', '12530', 'F');
+('40404040D', 'Marcos', 'Torres Vila', '1995-02-14', 'HiRnTxhRQkY2Jz2YqvwbuL80XMVXX3wv', 'mtorres@pap.es', '603456789', 'Castelló', 'Carrer Escultor', '12004', 'M'),
+('50505050E', 'Sara', 'Crespo Beltrán', '1992-07-27', 'HiRnTxhRQkY2Jz2YqvwbuL80XMVXX3wv', 'screspo@pap.es', '604567890', 'Castelló', 'Paseo Ribalta 4', '12001', 'F'),
+('60606060F', 'Iván', 'Castro Gil', '1981-12-25', 'HiRnTxhRQkY2Jz2YqvwbuL80XMVXX3wv', 'ivan.c@pap.es', '605678901', 'Castelló', 'Ronda Sud 3', '12005', 'M'),
+('70707070G', 'Julia', 'Navarro Sanz', '1989-04-10', 'HiRnTxhRQkY2Jz2YqvwbuL80XMVXX3wv', 'j.navarro@pap.es', '606789012', 'Castelló', 'Calle Nueva 7', '12001', 'F'),
+('80808080K', 'Gonzalo', 'Hernández I.', '1983-06-18', 'HiRnTxhRQkY2Jz2YqvwbuL80XMVXX3wv', 'g.hernandez@pap.es', '607890123', 'Castelló', 'Gran Vía 100', '12003', 'M'),
+('90909090W', 'Fatima', 'Ruiz Costa', '1997-11-20', 'HiRnTxhRQkY2Jz2YqvwbuL80XMVXX3wv', 'fatima.r@pap.es', '608901234', 'Burriana', 'Calle Real 45', '12530', 'F');
 
 -- ==========================================
 -- 4. Cuentas para Tutores Legales (LegalGuardians)
