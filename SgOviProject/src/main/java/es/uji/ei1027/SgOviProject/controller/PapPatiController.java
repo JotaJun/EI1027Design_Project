@@ -15,6 +15,10 @@ import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 
+import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.Locale;
+
 @Controller
 @RequestMapping("/papPati")
 public class PapPatiController {
@@ -53,5 +57,17 @@ public class PapPatiController {
         session.removeAttribute("chosenType");
 
         return "redirect:/register/done";
+    }
+
+    @RequestMapping("/main")
+    public String papPatiMain(Model model) {
+
+        // Generar la fecha para la vista
+        DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'de' yyyy", new Locale("ca", "ES"));
+        String dateNow = LocalDate.now().format(formatter).toUpperCase();
+
+        model.addAttribute("dateNow", dateNow);
+
+        return "papPati/main";
     }
 }

@@ -563,6 +563,20 @@ select:focus {
     padding: 40px 20px;
 }
 
+/* =========================================
+   MODIFICADORES: Dashboard Centrado
+   ========================================= */
+
+.dashboard-center-container {
+    display: flex;
+    justify-content: center;
+}
+
+.dash-card-constrained {
+    max-width: 550px;
+    width: 100%;
+}
+
 /* Sección de Bienvenida */
 .welcome-section {
     display: flex;
