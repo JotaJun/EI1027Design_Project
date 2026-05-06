@@ -2,6 +2,7 @@ package es.uji.ei1027.SgOviProject.controller;
 
 
 import es.uji.ei1027.SgOviProject.model.Account;
+import es.uji.ei1027.SgOviProject.model.OviUser;
 import es.uji.ei1027.SgOviProject.model.PapPati;
 import es.uji.ei1027.SgOviProject.services.IntAccountSvc;
 import jakarta.servlet.http.HttpSession;
@@ -69,5 +70,14 @@ public class PapPatiController {
         model.addAttribute("dateNow", dateNow);
 
         return "papPati/main";
+    }
+
+    @GetMapping("/details")
+    public String watchDetails(Model model, HttpSession session){
+        //El interceptor ya verifica que el usuario está loggeado
+
+        // Usaremos la sesión para acceder a los atributos
+
+        return "papPati/details";
     }
 }
