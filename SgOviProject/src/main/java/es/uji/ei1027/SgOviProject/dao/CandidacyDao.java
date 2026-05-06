@@ -90,12 +90,8 @@ public class CandidacyDao {
 
     public List<Candidacy> getCandidaciesByIdApRequestAndStatus(int idApRequest, String status){
         try {
-            if (status.equals("Totes")) {
-                return getCandidaciesByIdApRequest(idApRequest);
-            }else{
-                return jdbcTemplate.query("SELECT * FROM Candidacy WHERE idApRequest=? AND candidacyStatus=LOWER(?)",
-                        new CandidacyRowMapper(), idApRequest, status);
-            }
+            return jdbcTemplate.query("SELECT * FROM Candidacy WHERE idApRequest=? AND candidacyStatus=LOWER(?)",
+                    new CandidacyRowMapper(), idApRequest, status);
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<Candidacy>();
         }
@@ -104,6 +100,24 @@ public class CandidacyDao {
     public List<Candidacy> getCandidacies() {
         try {
             return jdbcTemplate.query("SELECT * FROM Candidacy", new CandidacyRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Candidacy>();
+        }
+    }
+
+    public List<Candidacy> getCandidaciesByStaffDni(String dniPapPati){
+        try {
+            return jdbcTemplate.query("SELECT * FROM Candidacy WHERE dniPapPati=?",
+                    new CandidacyRowMapper(), dniPapPati);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Candidacy>();
+        }
+    }
+
+    public List<Candidacy> getCandidaciesByStaffDniAndStatus(String dniPapPati, String status){
+        try {
+            return jdbcTemplate.query("SELECT * FROM Candidacy WHERE dniPapPati=? and candidacyStatus=LOWER(?)",
+                    new CandidacyRowMapper(), dniPapPati, status);
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<Candidacy>();
         }

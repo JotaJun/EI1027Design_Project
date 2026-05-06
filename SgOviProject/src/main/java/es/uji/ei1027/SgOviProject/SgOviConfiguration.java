@@ -119,7 +119,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
         registry.addInterceptor(new RoleInterceptor(AccountType.PAPPATI))
                 .addPathPatterns(
                         "/papPati/**",
-                        "/candidacy/listRequests/**"
+                        "/candidacy/listRequests/**",
+                        "/candidacy/requestDetails/**"
                 );
 
         // LEGALGUARDIAN (Solo rutas exclusivas de LEGALGUARDIAN)

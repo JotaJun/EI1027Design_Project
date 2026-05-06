@@ -1,14 +1,18 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.CandidacyDTOComparator;
+import es.uji.ei1027.SgOviProject.comparator.PapPatiCandidacyDTOComparator;
 import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
+import es.uji.ei1027.SgOviProject.dto.PapPatiCandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
+import es.uji.ei1027.SgOviProject.enums.StaffType;
 import es.uji.ei1027.SgOviProject.filters.CandidacyStatusFilter;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import es.uji.ei1027.SgOviProject.model.Candidacy;
 import es.uji.ei1027.SgOviProject.model.OviUser;
+import es.uji.ei1027.SgOviProject.model.PapPati;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -36,6 +40,11 @@ public class CandidacyController {
 
     @Autowired
     private AssistanceRequestDao assistanceRequestDao;
+
+    @ModelAttribute("candidacyStatuses")
+    public List<CandidacyStatus> candidacyStatusList() {
+        return Arrays.asList(CandidacyStatus.values());
+    }
 
     // Número de candidatos que queremos mostrar por página
     private int pageLength = 5;
@@ -96,7 +105,6 @@ public class CandidacyController {
         // PASAR DATOS AL MODELO
 
         model.addAttribute("candidacyStatusFilter", filter);
-        model.addAttribute("candidacyStatuses", CandidacyStatus.values());
         model.addAttribute("candidaciesPaged", candidaciesPaged);
         model.addAttribute("selectedPage", currentPage);
         model.addAttribute("totalCandidacies", filteredCandidacies.size());
@@ -154,9 +162,85 @@ public class CandidacyController {
     }
 
     // Ruta para PAPPATI
-    @GetMapping(value="/listRequests/{dniPapPati}")
-    public String listRequests(Model model, @PathVariable String dniPapPati, HttpSession session) {
-        // ... lógica para PapPati
+    @GetMapping({"/listRequests", "/listRequests/{status}"})
+    public String listRequests(Model model,
+                               @PathVariable(required = false) String status,
+                               @RequestParam("page") Optional<Integer> page,
+                               HttpSession session) {
+
+        PapPati currentPap = (PapPati) session.getAttribute("specificAccount");
+        if (status == null) status = "Totes";
+
+        List<PapPatiCandidacyDTO> filteredCandidacies = candidacyService.getPapPatiCandidaciesWithDetails(currentPap.getDni(), status);
+
+        filteredCandidacies.sort(new PapPatiCandidacyDTOComparator());
+
+        // 3. Crear la lista paginada
+        ArrayList<ArrayList<PapPatiCandidacyDTO>> candidaciesPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= filteredCandidacies.size()) {
+            candidaciesPaged.add(new ArrayList<>(filteredCandidacies.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < filteredCandidacies.size()) {
+            candidaciesPaged.add(new ArrayList<>(filteredCandidacies.subList(ini, filteredCandidacies.size())));
+        }
+
+        // Crear la barra de navegación de páginas
+        int totalPages = candidaciesPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+
+        // Preparar el filtro para la vista
+        CandidacyStatusFilter filter = new CandidacyStatusFilter();
+        filter.setStatusSel(status);
+
+        // Pasar todos los atributos al modelo
+        model.addAttribute("candidacyStatusFilter", filter);
+        model.addAttribute("candidaciesPaged", candidaciesPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalCandidacies", filteredCandidacies.size());
+        model.addAttribute("pageLength", pageLength);
+
+        // Guardar URL exacta para el botón de volver en los detalles
+        String exactUrl = "/candidacy/listRequests/" + status + "?page=" + currentPage;
+        session.setAttribute("lastCandidacyListUrl", exactUrl);
+
         return "candidacy/listRequests";
+    }
+
+    // PostMapping para procesar el formulario del filtro del PapPati
+    @PostMapping("/listRequests")
+    public String processPapPatiFilter(@ModelAttribute("candidacyStatusFilter") CandidacyStatusFilter filter) {
+        return "redirect:/candidacy/listRequests/" + filter.getStatusSel();
+    }
+
+    // Ruta para que el PapPati vea los detalles de la petición a la que aplicó
+    @GetMapping(value="/requestDetails/{idCandidacy}")
+    public String detailsPapPatiRequest(Model model, @PathVariable int idCandidacy, HttpSession session) {
+
+        PapPati currentPap = (PapPati) session.getAttribute("specificAccount");
+
+        // Obtener el DTO completo con Candidacy, AssistanceRequest y OviUser
+        PapPatiCandidacyDTO dto = candidacyService.getPapPatiCandidacyDetail(idCandidacy);
+
+        // Verificar que existe y que pertenece al PapPati logueado
+        if (dto == null || !dto.getCandidacy().getDniPapPati().equals(currentPap.getDni())) {
+            return "redirect:/candidacy/listRequests";
+        }
+
+        // Pasamos el DTO a la vista
+        model.addAttribute("candidacyDto", dto);
+
+        return "candidacy/requestDetails";
     }
 }

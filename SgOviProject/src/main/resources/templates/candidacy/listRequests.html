@@ -1,0 +1,146 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Les meves ofertes - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/papPati-returnMain-header :: papPati-returnMain-header}"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="requests-header-action">
+            <div>
+                <h2 class="welcome-title">Les meves ofertes</h2>
+                <p class="date-text">Llistat de peticions d'assistència a les que has sigut seleccionat</p>
+            </div>
+
+            <div class="header-actions-group">
+                <form action="#" th:action="@{/candidacy/listRequests}" th:object="${candidacyStatusFilter}" method="post" class="filter-form">
+                    <div class="select-wrapper">
+                        <label for="statusSelect" class="filter-label">Filtra per estat:</label>
+
+                        <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
+                            <option value="Totes">Totes</option>
+
+                            <option th:each="status : ${candidacyStatuses}"
+                                    th:value="${status.name()}"
+                                    th:text="${status.description}">
+                            </option>
+                        </select>
+                    </div>
+                </form>
+
+                <a th:href="@{/}" class="btn-outline">Tornar a l'inici</a>
+            </div>
+        </div>
+
+        <!-- Mensaje si no hay resultados -->
+        <div th:if="${#lists.isEmpty(candidaciesPaged)}" class="empty-state">
+            <p>No s'han trobat candidatures amb aquests criteris.</p>
+        </div>
+
+        <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="table-card" th:with="candidaciesPage=${candidaciesPaged[__${selectedPage}__]}">
+            <table class="styled-table">
+                <thead>
+                <tr>
+                    <th>USUARI / SOL·LICITANT</th>
+                    <th>POBLACIÓ</th>
+                    <th>DURADA</th>
+                    <th class="text-center">ESTAT</th>
+                    <th class="text-center">ACCIONS</th>
+                </tr>
+                </thead>
+                <tbody>
+                <tr th:each="cand : ${candidaciesPage}">
+
+                    <!-- Nombre y apellidos desde Account -->
+                    <td><strong th:text="${cand.oviUserAccount.name + ' ' + cand.oviUserAccount.surname}">Joan Pérez</strong></td>
+
+                    <!-- Ciudad de la petición -->
+                    <td th:text="${cand.assistanceRequest.city}">Castelló</td>
+
+                    <!-- Duración requerida -->
+                    <td th:text="${cand.assistanceRequest.monthsRequired} + ' mesos'">3 mesos</td>
+
+                    <!-- Estado de la Candidatura -->
+                    <td class="text-center">
+            <span class="table-badge"
+                  th:classappend="${'badge-' + #strings.toLowerCase(cand.candidacy.candidacyStatus.name())}"
+                  th:text="${cand.candidacy.candidacyStatus.description}">
+                Estat
+            </span>
+                    </td>
+
+                    <td class="text-center">
+                        <div class="actions-cell">
+
+                            <a th:href="@{/candidacy/requestDetails/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn" title="Veure detalls de la petició">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                    <circle cx="12" cy="12" r="3"></circle>
+                                </svg>
+                            </a>
+
+                            <a th:href="@{/communication/chat/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn" title="Obrir Xat">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                                </svg>
+                            </a>
+
+                            <!-- Botón Veure Contractes (Solo si está contratado) -->
+                            <a th:if="${cand.candidacy.candidacyStatus.name() == 'CONTRACTED'}"
+                               th:href="@{/contract/list/{id}(id=${cand.candidacy.idCandidacy})}"
+                               class="action-btn text-success" title="Veure Contractes">
+                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                                    <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                                    <polyline points="14 2 14 8 20 8"></polyline>
+                                    <line x1="16" y1="13" x2="8" y2="13"></line>
+                                    <line x1="16" y1="17" x2="8" y2="17"></line>
+                                    <polyline points="10 9 9 9 8 9"></polyline>
+                                </svg>
+                            </a>
+
+                        </div>
+                    </td>
+                </tr>
+                </tbody>
+            </table>
+        </div>
+
+        <!-- Contador de resultados -->
+        <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="results-count">
+            Mostrant del
+            <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+            al
+            <strong th:text="${(selectedPage * pageLength) + #lists.size(candidaciesPaged[selectedPage])}">5</strong>
+            de
+            <strong th:text="${totalCandidacies}">12</strong> candidatures
+        </div>
+
+        <!-- Paginación -->
+        <nav aria-label="Selecció de pàgina en llistat de candidatures"
+             th:unless="${#lists.isEmpty(candidaciesPaged)}"
+             class="pagination-container">
+            <ul class="pagination">
+                <li class="page-item"
+                    th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+                    th:each="pageNumber : ${pageNumbers}">
+
+                    <a th:href="@{/candidacy/listRequests/{status}(status=${candidacyStatusFilter.statusSel}, page=${pageNumber - 1})}"
+                       th:text="${pageNumber}"
+                       class="page-link">1</a>
+                </li>
+            </ul>
+        </nav>
+
+    </div>
+</main>
+
+</body>
+</html>

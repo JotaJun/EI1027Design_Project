@@ -2,6 +2,7 @@ package es.uji.ei1027.SgOviProject.services;
 
 import es.uji.ei1027.SgOviProject.dao.*;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
+import es.uji.ei1027.SgOviProject.dto.PapPatiCandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -18,6 +19,9 @@ public class CandidacyService {
 
     @Autowired
     private PapPatiDao papPatiDao;
+
+    @Autowired
+    private OviUserDao oviUserDao;
 
     @Autowired
     private AccountDao accountDao;
@@ -42,10 +46,17 @@ public class CandidacyService {
     }
 
     public List<CandidacyDTO> getCandidaciesWithDetailsByIdApRequestAndStatus(int idApRequest, String status) {
-        List<Candidacy> basicCandidacies = candidacyDao.getCandidaciesByIdApRequestAndStatus(idApRequest, status);
+        List<Candidacy> candidacies;
+
+        if (status == null || status.equals("Totes")) {
+            candidacies = candidacyDao.getCandidaciesByIdApRequest(idApRequest);
+        } else {
+            candidacies = candidacyDao.getCandidaciesByIdApRequestAndStatus(idApRequest, status);
+        }
+
         List<CandidacyDTO> candidaciesInfo = new ArrayList<>();
 
-        for (Candidacy candidacy : basicCandidacies) {
+        for (Candidacy candidacy : candidacies) {
             String dni = candidacy.getDniPapPati();
 
             PapPati papPati = papPatiDao.getPapPati(dni);
@@ -86,5 +97,48 @@ public class CandidacyService {
         candidacy.setCandidacyStatus(CandidacyStatus.CONTRACTED);
 
         candidacyDao.updateCandidacy(candidacy);
+    }
+
+    public List<PapPatiCandidacyDTO> getPapPatiCandidaciesWithDetails(String dniPapPati, String status) {
+        List<Candidacy> candidacies;
+
+        // Si el estado es nulo o "Totes", traemos todas las de ese PapPati
+        if (status == null || status.equals("Totes")) {
+            candidacies = candidacyDao.getCandidaciesByStaffDni(dniPapPati);
+        } else {
+            candidacies = candidacyDao.getCandidaciesByStaffDniAndStatus(dniPapPati, status);
+        }
+
+        List<PapPatiCandidacyDTO> candidaciesInfo = new ArrayList<>();
+
+        for (Candidacy candidacy : candidacies) {
+            // A partir de la candidatura, sacamos la petición original
+            AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
+
+            String dniSolicitante = request.getDniOviUser();
+
+            // 3. Recuperamos ambas partes de la identidad del usuario
+            OviUser oviUser = oviUserDao.getOviUser(dniSolicitante);
+            Account account = accountDao.getAccount(dniSolicitante);
+
+            // Montamos el DTO y lo añadimos a la lista
+            candidaciesInfo.add(new PapPatiCandidacyDTO(candidacy, request, oviUser, account));
+        }
+
+        return candidaciesInfo;
+    }
+
+    public PapPatiCandidacyDTO getPapPatiCandidacyDetail(int idCandidacy) {
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+
+        if (candidacy == null) return null;
+
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
+        String dniSolicitante = request.getDniOviUser();
+
+        OviUser oviUser = oviUserDao.getOviUser(dniSolicitante);
+        Account account = accountDao.getAccount(dniSolicitante);
+
+        return new PapPatiCandidacyDTO(candidacy, request, oviUser, account);
     }
 }

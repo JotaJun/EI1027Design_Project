@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+  <title>Detalls de la Sol·licitud - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+  <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header}"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container dashboard-main">
+
+    <div class="assistance-card">
+
+      <div class="header-flex">
+        <h2 class="card-title">Detalls de la Sol·licitud</h2>
+
+        <div class="status-badge" th:classappend="'badge-' + ${#strings.toLowerCase(candidacyDto.candidacy.candidacyStatus.name())}">
+          <span th:text="${candidacyDto.candidacy.candidacyStatus.description}">Estat</span>
+        </div>
+      </div>
+
+      <h3 class="detail-section-title mt-10">Dades de l'Assistència Requerida</h3>
+      <div class="form-grid">
+        <div class="detail-group">
+          <span class="detail-label">Tipus de Personal Requerit</span>
+          <span class="detail-value" th:text="${candidacyDto.assistanceRequest.assistantType.description}">PAP</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Població de l'assistència</span>
+          <span class="detail-value" th:text="${candidacyDto.assistanceRequest.city}">Població</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Data d'inici sol·licitada</span>
+          <span class="detail-value" th:text="${#temporals.format(candidacyDto.assistanceRequest.initialDateRequired, 'dd/MM/yyyy')}">01/01/2024</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Durada estimada</span>
+          <span class="detail-value" th:text="${candidacyDto.assistanceRequest.monthsRequired + ' mesos'}">3 mesos</span>
+        </div>
+
+        <div class="detail-group">
+          <span class="detail-label">Preferència de gènere</span>
+          <span class="detail-value"
+                th:text="${candidacyDto.assistanceRequest.gender != null ? candidacyDto.assistanceRequest.gender.description : 'Indiferent'}">
+            Indiferent
+        </span>
+        </div>
+
+        <div class="detail-group">
+          <span class="detail-label">Requereix carnet de conduir</span>
+          <span class="detail-value"
+                th:text="${candidacyDto.assistanceRequest.drivingLicense == null ? 'Indiferent' : (candidacyDto.assistanceRequest.drivingLicense ? 'Sí' : 'No')}">
+            Indiferent
+        </span>
+        </div>
+
+        <div class="detail-group">
+          <span class="detail-label">Experiència mínima requerida</span>
+          <span class="detail-value"
+                th:text="${candidacyDto.assistanceRequest.yearsOfExperience != null ? candidacyDto.assistanceRequest.yearsOfExperience + ' anys' : 'Indiferent'}">
+            Indiferent
+        </span>
+        </div>
+
+        <div class="detail-group form-full-width">
+          <span class="detail-label">Descripció / Necessitats Específiques</span>
+          <div class="detail-description-box mt-10" th:text="${candidacyDto.assistanceRequest.description}">
+            Detall de les necessitats de l'usuari...
+          </div>
+        </div>
+      </div>
+
+      <h3 class="detail-section-title">Dades del Sol·licitant</h3>
+
+      <div th:if="${candidacyDto.oviUser.dniLegalGuardian != null}" class="info-box-highlight mb-15" style="padding: 15px; background-color: var(--color-background); border-radius: 8px;">
+        <div class="info-box-header" style="margin-bottom:0;">
+          <h4 class="info-box-title">
+            <svg class="info-box-icon" xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Aquest usuari compta amb un tutor legal
+          </h4>
+          <p class="info-box-text">Les gestions contractuals d'aquesta sol·licitud poden estar subjectes a la validació del seu representant.</p>
+        </div>
+      </div>
+
+      <div class="form-grid">
+        <div class="detail-group">
+          <span class="detail-label">Nom</span>
+          <span class="detail-value" th:text="${candidacyDto.oviUserAccount.name}">Nom</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Cognoms</span>
+          <span class="detail-value" th:text="${candidacyDto.oviUserAccount.surname}">Cognoms</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Correu electrònic</span>
+          <span class="detail-value" th:text="${candidacyDto.oviUserAccount.email}">correu@exemple.com</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Telèfon</span>
+          <span class="detail-value" th:text="${candidacyDto.oviUserAccount.phoneNumber}">600000000</span>
+        </div>
+      </div>
+
+      <div class="form-actions-centered actions-bordered">
+
+        <a th:href="${session.lastCandidacyListUrl != null ? session.lastCandidacyListUrl : '/candidacy/listRequests'}" class="btn-outline btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Tornar al llistat
+        </a>
+
+        <a th:href="@{/communication/chat/{id}(id=${candidacyDto.candidacy.idCandidacy})}" class="btn-primary btn-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+          </svg>
+          Obrir Xat amb el sol·licitant
+        </a>
+
+      </div>
+
+    </div>
+  </div>
+</main>
+
+</body>
+</html>
