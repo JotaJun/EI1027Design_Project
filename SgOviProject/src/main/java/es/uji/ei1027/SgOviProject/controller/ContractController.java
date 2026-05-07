@@ -192,10 +192,16 @@ public class ContractController {
         Contract contract = contractDao.getContract(idContract);
 
         if (contract == null) {
-            return "redirect:/oviUser/main";
+            String userRole = (String)session.getAttribute("userRole");
+            if (userRole.equals(AccountType.OVIUSER.name())) {
+                return "redirect:/oviUser/main";
+            }else{
+                return "redirect:/papPati/main";
+            }
         }
 
         String unauthorizedRedirect = getRedirectUrlIfUnauthorized(session, contract.getIdCandidacy());
+
         if (unauthorizedRedirect != null) {
             return unauthorizedRedirect;
         }
