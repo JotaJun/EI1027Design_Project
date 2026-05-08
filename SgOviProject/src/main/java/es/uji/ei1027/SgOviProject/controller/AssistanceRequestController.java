@@ -6,16 +6,9 @@ import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
-import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
-import es.uji.ei1027.SgOviProject.enums.Gender;
-import es.uji.ei1027.SgOviProject.enums.StaffType;
-import es.uji.ei1027.SgOviProject.enums.Status;
+import es.uji.ei1027.SgOviProject.enums.*;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
-import es.uji.ei1027.SgOviProject.model.Account;
-import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
-import es.uji.ei1027.SgOviProject.model.Candidacy;
-import es.uji.ei1027.SgOviProject.model.OviUser;
-import es.uji.ei1027.SgOviProject.model.PapPati;
+import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyGeneratorService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -78,11 +71,25 @@ public class AssistanceRequestController {
             return "assistanceRequest/add";
         }
 
+        // !! IMPORTANTE !! Cambiar la configuración general
+
         // No hace falta comprobar si es null, ya se encarga interceptor
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        //OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        String dniOviUser = null;
+
+        String userRole = (String) session.getAttribute("userRole");
+
+        if (userRole.equals(AccountType.LEGALGUARDIAN.name())){
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            assistanceRequest.setDniLegalGuardian(currentUser.getDni());
+            // dniOviUser cogerlo de un parámetro que se pasa
+        }else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            dniOviUser = currentUser.getDni();
+        }
 
         // Asignar los datos que faltan
-        assistanceRequest.setDniOviUser(currentUser.getDni());
+        assistanceRequest.setDniOviUser(dniOviUser);
 
         assistanceRequestDao.addAssistanceRequest(assistanceRequest);
 
