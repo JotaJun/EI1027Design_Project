@@ -230,6 +230,87 @@ public class ContractController {
         return "contract/done";
     }
 
+    @GetMapping("/update/{idContract}")
+    public String showUpdateContractForm(Model model,
+                                         HttpSession session,
+                                         @PathVariable int idContract) {
+
+        Contract contract = contractDao.getContract(idContract);
+        if (contract == null) {
+            return "redirect:/oviUser/main";
+        }
+
+        OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
+        if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), oviUser)) {
+            return "redirect:/oviUser/main";
+        }
+
+        model.addAttribute("contract", contract);
+        return "contract/update";
+    }
+
+    @PostMapping("/update")
+    public String processUpdateContractForm(Model model,
+                                            @ModelAttribute("contract") Contract contractModificado,
+                                            BindingResult bindingResult,
+                                            HttpSession session,
+                                            @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
+
+        // Recuperar el contrato original de la BD para no perder los datos que no queremos cambiar
+        Contract contractOriginal = contractDao.getContract(contractModificado.getIdContract());
+        if (contractOriginal == null) {
+            return "redirect:/oviUser/main";
+        }
+
+        OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
+        if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), oviUser)) {
+            return "redirect:/oviUser/main";
+        }
+
+        ContractValidator contractValidator = new ContractValidator();
+        contractValidator.validate(contractModificado, bindingResult);
+
+        // Obligamos a que suba un nuevo documento sí o sí
+        if (ficheroPdf == null || ficheroPdf.isEmpty()) {
+            bindingResult.rejectValue("urlDocument", "required", "És obligatori adjuntar un nou document PDF actualitzat");
+        } else if (!ficheroPdf.getContentType().equals("application/pdf")) {
+            bindingResult.rejectValue("urlDocument", "format", "El document ha de ser un PDF");
+        }
+
+        if (bindingResult.hasErrors()) {
+            model.addAttribute("avisoPdf", "S'han trobat errors. Si us plau, recorda tornar a adjuntar el nou document PDF.");
+            return "contract/update";
+        }
+
+        try {
+            String originalFilename = ficheroPdf.getOriginalFilename();
+            String cleanFilename = StringUtils.cleanPath(originalFilename);
+            String nombreArchivo = System.currentTimeMillis() + "_update_" + cleanFilename;
+            Path rutaDestino = Paths.get(uploadDirectory, nombreArchivo);
+
+            if (!Files.exists(rutaDestino.getParent())) {
+                Files.createDirectories(rutaDestino.getParent());
+            }
+
+            Files.copy(ficheroPdf.getInputStream(), rutaDestino, StandardCopyOption.REPLACE_EXISTING);
+
+            // SOBRESCRIBIR SOLO LOS CAMPOS PERMITIDOS en el contrato original
+            contractOriginal.setEndDate(contractModificado.getEndDate());
+            contractOriginal.setHourlySalary(contractModificado.getHourlySalary());
+            contractOriginal.setSchedule(contractModificado.getSchedule());
+            contractOriginal.setUrlDocument("contracts/" + nombreArchivo);
+
+        } catch (IOException e) {
+            e.printStackTrace();
+            bindingResult.rejectValue("urlDocument", "error", "S'ha produït un error al guardar el fitxer");
+            return "contract/update";
+        }
+
+        contractDao.updateContract(contractOriginal);
+
+        return "redirect:/contract/details/" + contractOriginal.getIdContract();
+    }
+
     private String getRedirectUrlIfUnauthorized(HttpSession session, int idCandidacy) {
         AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
         // Seguridad

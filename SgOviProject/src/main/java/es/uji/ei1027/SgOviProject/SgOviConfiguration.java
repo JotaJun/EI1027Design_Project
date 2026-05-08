@@ -104,7 +104,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/candidacy/listCandidates/**",
                                                 "/candidacy/details/**",
                                                 "/candidacy/reject/**",
-                                                "/contract/add/**")
+                                                "/contract/add/**",
+                                                "/contract/update/**")
                                 .excludePathPatterns("/oviUser/register");
 
                 // TECHNICIAN

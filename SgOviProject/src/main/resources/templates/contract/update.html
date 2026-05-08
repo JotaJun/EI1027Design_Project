@@ -1,0 +1,140 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+  <title>Modificar Contracte - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+  <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container dashboard-main">
+
+    <div class="card-header-section card-header-icon-layout">
+      <div class="icon-square icon-orange">
+        <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+          <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+        </svg>
+      </div>
+      <div>
+        <h2 class="card-title">Modificar Contracte</h2>
+        <p class="card-subtitle">Actualitza les dades del contracte. La data d'inici no es pot modificar. És obligatori adjuntar el document actualitzat. (<span class="required-asterisk">*</span>) Camps obligatoris.</p>
+      </div>
+    </div>
+
+    <br>
+
+    <div class="card assistance-card">
+
+      <div class="requests-header-action">
+        <a th:href="@{/contract/details/{id}(id=${contract.idContract})}" class="btn-back">
+          <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <line x1="19" y1="12" x2="5" y2="12"></line>
+            <polyline points="12 19 5 12 12 5"></polyline>
+          </svg>
+          Tornar als detalls del contracte
+        </a>
+      </div>
+
+      <div th:if="${avisoPdf != null}" class="alert-box alert-rejected mb-4">
+        <div class="alert-icon">
+          <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+            <path d="M10.29 3.86L1.82 18a2 2 0 0 0 1.71 3h16.94a2 2 0 0 0 1.71-3L13.71 3.86a2 2 0 0 0-3.42 0z"></path>
+            <line x1="12" y1="9" x2="12" y2="13"></line>
+            <line x1="12" y1="17" x2="12.01" y2="17"></line>
+          </svg>
+        </div>
+        <div class="alert-content">
+          <h4 class="alert-title">Atenció</h4>
+          <p class="alert-message" th:text="${avisoPdf}"></p>
+        </div>
+      </div>
+
+      <form th:action="@{/contract/update}" th:object="${contract}" method="post" enctype="multipart/form-data" class="assistance-form">
+
+        <input type="hidden" th:field="*{idContract}" />
+        <input type="hidden" th:field="*{idCandidacy}" />
+
+        <div class="form-grid">
+
+          <div class="form-group">
+            <label for="startDate">Data d'inici <span style="color: var(--color-secondary); font-weight: normal; font-size: 11px;">(No modificable)</span></label>
+            <div class="input-wrapper">
+              <input type="date"
+                     id="startDate"
+                     th:field="*{startDate}"
+                     readonly
+                     style="background-color: var(--color-border-light); cursor: not-allowed;"
+                     title="La data d'inici no es pot modificar un cop creat el contracte.">
+            </div>
+          </div>
+
+          <div class="form-group">
+            <label for="endDate">Nova data de fi <span class="required-asterisk">*</span></label>
+            <div class="input-wrapper">
+              <input type="date"
+                     id="endDate"
+                     th:field="*{endDate}"
+                     th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                     required>
+            </div>
+            <span th:if="${#fields.hasErrors('endDate')}" th:errors="*{endDate}" class="error-text"></span>
+          </div>
+
+          <div class="form-group">
+            <label for="hourlySalary">Salari per hora (€) <span class="required-asterisk">*</span></label>
+            <div class="input-wrapper">
+              <input type="number" id="hourlySalary" th:field="*{hourlySalary}" min="0.01" step="0.01" placeholder="Ex: 12.50" required>
+            </div>
+            <span th:if="${#fields.hasErrors('hourlySalary')}" th:errors="*{hourlySalary}" class="error-text"></span>
+          </div>
+
+          <div class="form-group form-full-width">
+            <label for="schedule">Horari de treball <span class="required-asterisk">*</span></label>
+            <div class="input-wrapper">
+              <input type="text" id="schedule" th:field="*{schedule}" placeholder="Ex: Dilluns a Divendres de 09:00 a 14:00" required>
+            </div>
+            <span th:if="${#fields.hasErrors('schedule')}" th:errors="*{schedule}" class="error-text"></span>
+          </div>
+
+          <div class="form-group form-full-width">
+            <label for="ficheroPdf">Nou document del contracte (només PDF) <span class="required-asterisk">*</span></label>
+            <div class="input-wrapper">
+              <input type="file" id="ficheroPdf" name="ficheroPdf" accept=".pdf" required>
+            </div>
+            <span th:if="${#fields.hasErrors('urlDocument')}" th:errors="*{urlDocument}" class="error-text"></span>
+          </div>
+
+        </div>
+
+        <div class="form-actions form-actions-centered">
+          <button type="reset" class="dash-btn dash-btn-outline btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+              <path d="M3 3v5h5"></path>
+            </svg>
+            Restaurar valors
+          </button>
+          <button type="submit" class="dash-btn dash-btn-primary btn-icon">
+            <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <path d="M19 21H5a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h11l5 5v11a2 2 0 0 1-2 2z"></path>
+              <polyline points="17 21 17 13 7 13 7 21"></polyline>
+              <polyline points="7 3 7 8 15 8"></polyline>
+            </svg>
+            Guardar Canvis
+          </button>
+        </div>
+
+      </form>
+    </div>
+
+  </div>
+</main>
+
+</body>
+</html>
