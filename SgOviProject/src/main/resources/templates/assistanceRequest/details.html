@@ -106,18 +106,17 @@
           <span class="detail-value" th:text="${req.dniOviUser}">12345678A</span>
         </div>
 
-        <div th:if="${req.dniLegalGuardian != null and !#strings.isEmpty(req.dniLegalGuardian)}" class="detail-group">
-          <span class="detail-label">DNI Tutor Legal</span>
-          <span class="detail-value" th:text="${req.dniLegalGuardian}">87654321B</span>
-        </div>
+        <th:block th:if="${guardianAccount != null}">
+          <div class="detail-group">
+            <span class="detail-label">DNI Tutor Legal</span>
+            <span class="detail-value" th:text="${guardianAccount.dni}">87654321B</span>
+          </div>
 
-        <div th:if="${req.dniLegalGuardian != null and !#strings.isEmpty(req.dniLegalGuardian)}" class="detail-group">
-          <span class="detail-label">Aprovació del tutor</span>
-          <span class="detail-value">
-              <span th:if="${req.approvedByGuardian}" class="text-success">Aprovat</span>
-              <span th:unless="${req.approvedByGuardian}" class="text-danger">Pendent d'aprovació</span>
-          </span>
-        </div>
+          <div class="detail-group">
+            <span class="detail-label">Creada pel tutor</span>
+            <span class="detail-value" th:text="${guardianAccount.name + ' ' + guardianAccount.surname}">Nom del tutor</span>
+          </div>
+        </th:block>
       </div>
 
       <div th:if="${req.status.name() == 'PENDING'}" class="form-actions-centered actions-bordered">

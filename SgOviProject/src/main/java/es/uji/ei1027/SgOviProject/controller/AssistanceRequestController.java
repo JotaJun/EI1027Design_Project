@@ -179,6 +179,12 @@ public class AssistanceRequestController {
             return "redirect:/assistanceRequest/list";
         }
 
+        // Si la solicitud fue creada por un tutor, recuperamos sus datos
+        if (request.getDniLegalGuardian() != null && !request.getDniLegalGuardian().trim().isEmpty()) {
+            Account guardianAccount = accountDao.getAccount(request.getDniLegalGuardian());
+            model.addAttribute("guardianAccount", guardianAccount);
+        }
+
         model.addAttribute("req", request);
 
         return "assistanceRequest/details";
@@ -344,6 +350,12 @@ public class AssistanceRequestController {
             model.addAttribute("requesterFullName", requester.getName() + " " + requester.getSurname());
         } else {
             model.addAttribute("requesterFullName", "");
+        }
+
+        // Si la solicitud fue creada por un tutor, recuperamos sus datos
+        if (request.getDniLegalGuardian() != null && !request.getDniLegalGuardian().trim().isEmpty()) {
+            Account guardianAccount = accountDao.getAccount(request.getDniLegalGuardian());
+            model.addAttribute("guardianAccount", guardianAccount);
         }
 
         return "assistanceRequest/manage/details";
