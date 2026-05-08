@@ -30,8 +30,8 @@ public class AssistanceRequestDao {
 
         jdbcTemplate.update(connection -> {
             PreparedStatement ps = connection.prepareStatement(
-                    "INSERT INTO AssistanceRequest(creationDate, description, assistantType, gender, city, drivingLicense, yearsOfExperience, initialDateRequired, monthsRequired, status, deniedReason, dniOviUser, approvedByGuardian, dniLegalGuardian) " +
-                            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
+                    "INSERT INTO AssistanceRequest(creationDate, description, assistantType, gender, city, drivingLicense, yearsOfExperience, initialDateRequired, monthsRequired, status, deniedReason, dniOviUser, dniLegalGuardian) " +
+                            "VALUES(?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)",
                     new String[] {"idaprequest"});
 
             ps.setObject(1, request.getCreationDate());
@@ -46,9 +46,7 @@ public class AssistanceRequestDao {
             ps.setString(10, request.getStatus() != null ? request.getStatus().name().toLowerCase() : "pending");
             ps.setString(11, request.getDeniedReason());
             ps.setString(12, request.getDniOviUser());
-            ps.setObject(13, request.getApprovedByGuardian());
-
-            ps.setString(14, request.getDniLegalGuardian());
+            ps.setString(13, request.getDniLegalGuardian());
             return ps;
         }, keyHolder);
 
@@ -67,7 +65,7 @@ public class AssistanceRequestDao {
     }
 
     public void updateAssistanceRequest(AssistanceRequest request) {
-        jdbcTemplate.update("UPDATE AssistanceRequest SET creationDate=?, description=?, assistantType=?, gender=?, city=?, drivingLicense=?, yearsOfExperience=?, initialDateRequired=?, monthsRequired=?, status=?, deniedReason=?, dniOviUser=?, approvedByGuardian=?, dniLegalGuardian=? WHERE idApRequest=?",
+        jdbcTemplate.update("UPDATE AssistanceRequest SET creationDate=?, description=?, assistantType=?, gender=?, city=?, drivingLicense=?, yearsOfExperience=?, initialDateRequired=?, monthsRequired=?, status=?, deniedReason=?, dniOviUser=?, dniLegalGuardian=? WHERE idApRequest=?",
                 request.getCreationDate(),
                 request.getDescription(),
                 request.getAssistantType().name(),
@@ -80,7 +78,6 @@ public class AssistanceRequestDao {
                 request.getStatus().name().toLowerCase(),
                 request.getDeniedReason(),
                 request.getDniOviUser(),
-                request.getApprovedByGuardian(),
                 request.getDniLegalGuardian(),
                 request.getIdApRequest());
     }

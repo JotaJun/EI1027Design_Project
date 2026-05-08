@@ -41,7 +41,6 @@ public final class AssistanceRequestRowMapper implements RowMapper<AssistanceReq
 
         request.setDeniedReason(rs.getString("deniedReason"));
         request.setDniOviUser(rs.getString("dniOviUser"));
-        request.setApprovedByGuardian(rs.getBoolean("approvedByGuardian"));
         request.setDniLegalGuardian(rs.getString("dniLegalGuardian"));
 
         return request;

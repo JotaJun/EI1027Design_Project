@@ -122,7 +122,6 @@ classDiagram
         -int monthsRequired
         -Status status
         -String deniedReason
-        -boolean guardianApproved
     }
 
     class Communication {
