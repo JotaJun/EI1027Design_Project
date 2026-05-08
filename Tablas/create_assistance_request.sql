@@ -17,7 +17,6 @@ CREATE TABLE AssistanceRequest(
     status                  VARCHAR(10) DEFAULT 'pending' NOT NULL,
     deniedReason            VARCHAR(255),
     dniOviUser				VARCHAR(9)		NOT NULL,
-	approvedByGuardian		BOOLEAN,
 	dniLegalGuardian		VARCHAR(9),
 
 

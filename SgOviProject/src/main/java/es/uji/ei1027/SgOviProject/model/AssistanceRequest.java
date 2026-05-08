@@ -23,7 +23,6 @@ public class AssistanceRequest {
     private Status status = Status.PENDING;
     private String deniedReason;
     private String dniOviUser;
-    private Boolean approvedByGuardian;
     private String dniLegalGuardian;
 
     public int getIdApRequest() {
@@ -130,14 +129,6 @@ public class AssistanceRequest {
         this.dniOviUser = dniOviUser;
     }
 
-    public Boolean getApprovedByGuardian() {
-        return approvedByGuardian;
-    }
-
-    public void setApprovedByGuardian(Boolean approvedByGuardian) {
-        this.approvedByGuardian = approvedByGuardian;
-    }
-
     public String getDniLegalGuardian() {
         return dniLegalGuardian;
     }
@@ -162,7 +153,6 @@ public class AssistanceRequest {
                 ", status=" + status +
                 ", deniedReason='" + deniedReason + '\'' +
                 ", dniOviUser='" + dniOviUser + '\'' +
-                ", approvedByGuardian=" + approvedByGuardian +
                 ", dniLegalGuardian='" + dniLegalGuardian + '\'' +
                 '}';
     }
