@@ -44,12 +44,12 @@ public class RoleInterceptor implements HandlerInterceptor {
 
         if (AccountType.TECHNICIAN.name().equals(currentRole)) {
             if (session.getAttribute("technician") == null) {
-                response.sendRedirect("/login");
+                response.sendRedirect("/index");
                 return false;
             }
         } else {
             if (session.getAttribute("account") == null) {
-                response.sendRedirect("/login");
+                response.sendRedirect("/index");
                 return false;
             }
         }

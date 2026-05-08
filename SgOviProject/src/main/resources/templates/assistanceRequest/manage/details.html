@@ -124,18 +124,19 @@
             </div>
 
             <div th:if="${req.status.name() == 'PENDING'}" class="form-actions-centered actions-bordered">
-                <!-- display:contents (CSS): el botó passa a ser flex item germà de l'enllaç, com a details d'OVI -->
-                <form th:action="@{/assistanceRequest/manage/approve/{id}(id=${req.idApRequest})}"
-                      method="post"
-                      class="form-actions-inline-post">
-                    <button type="submit" class="btn-primary btn-icon">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="20 6 9 17 4 12"></polyline>
-                        </svg>
-                        Aprovar sol·licitud
-                    </button>
-                </form>
 
+                <!-- Botó per anar a la pàgina de revisió de candidats possibles -->
+                <a th:href="@{/assistanceRequest/manage/reviewCandidates/{id}(id=${req.idApRequest})}" class="btn-primary btn-icon">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                        <circle cx="9" cy="7" r="4"></circle>
+                        <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                        <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                    </svg>
+                    Revisar candidats possibles
+                </a>
+
+                <!-- Botó per rebutjar la sol·licitud -->
                 <a th:href="@{/assistanceRequest/manage/rejectReason/{id}(id=${req.idApRequest})}" class="btn-outline-danger btn-icon">
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="18" y1="6" x2="6" y2="18"></line>

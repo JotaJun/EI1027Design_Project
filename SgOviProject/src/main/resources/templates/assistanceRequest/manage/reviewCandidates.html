@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Revisió de candidats - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <!-- Capçalera -->
+        <div class="requests-header-action">
+            <div>
+                <h2 class="welcome-title">Revisió de candidats possibles</h2>
+                <p class="date-text"
+                   th:text="'Sol·licitud #' + ${idApRequest} + ' — ' + ${req.assistantType} + ' · ' + ${req.city}">
+                    Sol·licitud #123
+                </p>
+            </div>
+            <a th:href="@{/assistanceRequest/manage/details/{id}(id=${idApRequest})}" class="btn-outline">
+                Tornar al detall
+            </a>
+        </div>
+
+        <!-- Missatge si no hi ha candidats -->
+        <div th:if="${#lists.isEmpty(candidatePreviews)}" class="empty-state">
+            <p>No s'han trobat candidats compatibles amb els criteris d'aquesta sol·licitud.</p>
+            <a th:href="@{/assistanceRequest/manage/rejectReason/{id}(id=${idApRequest})}"
+               class="btn-outline-danger btn-icon mt-15">
+                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
+                     stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="18" y1="6" x2="6" y2="18"></line>
+                    <line x1="6" y1="6" x2="18" y2="18"></line>
+                </svg>
+                Rebutjar sol·licitud
+            </a>
+        </div>
+
+        <!-- Taula de candidats amb selecció (formulari POST) -->
+        <div th:unless="${#lists.isEmpty(candidatePreviews)}">
+
+            <form th:action="@{/assistanceRequest/manage/confirmCandidates/{id}(id=${idApRequest})}" method="post">
+
+                <div class="table-card">
+                    <table class="styled-table">
+                        <thead>
+                        <tr>
+                            <th class="text-center">SELECCIÓ</th>
+                            <th>CANDIDAT</th>
+                            <th>TIPUS</th>
+                            <th>POBLACIÓ</th>
+                            <th>EXPERIÈNCIA</th>
+                            <th class="text-center">CARNET</th>
+                            <th>FORMACIÓ</th>
+                            <th class="text-center">ACCIONS</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr th:each="preview : ${candidatePreviews}">
+
+                            <!-- Checkbox de selecció -->
+                            <td class="text-center">
+                                <input type="checkbox"
+                                       name="selectedDnis"
+                                       th:value="${preview.papPati.dni}"
+                                       class="candidate-checkbox"
+                                       checked>
+                            </td>
+
+                            <!-- Nom del candidat -->
+                            <td>
+                                <strong th:text="${preview.account.name + ' ' + preview.account.surname}">Joan Pérez</strong>
+                                <br>
+                                <small class="text-muted" th:text="${preview.papPati.dni}">12345678A</small>
+                            </td>
+
+                            <!-- Tipus de personal -->
+                            <td th:text="${preview.papPati.staffType}">PAP</td>
+
+                            <!-- Població (de l'Account) -->
+                            <td th:text="${preview.account.city}">Castelló</td>
+
+                            <!-- Anys d'experiència -->
+                            <td th:text="${preview.papPati.yearsOfExperience} + ' anys'">3 anys</td>
+
+                            <!-- Carnet de conduir -->
+                            <td class="text-center">
+                                <span th:if="${preview.papPati.drivingLicense}" class="tag text-success">Sí</span>
+                                <span th:unless="${preview.papPati.drivingLicense}" class="tag">No</span>
+                            </td>
+
+                            <!-- Formació -->
+                            <td th:text="${preview.papPati.training}">Grau en Psicologia</td>
+
+                            <!-- Botó per veure dades del candidat -->
+                            <td class="text-center">
+                                <div class="actions-cell">
+                                    <a th:href="@{/assistanceRequest/manage/candidateDetails/{dni}(dni=${preview.papPati.dni})}"
+                                       class="action-btn" title="Veure dades del candidat">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                             viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                             stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+
+                <!-- Botons d'acció principals -->
+                <div class="form-actions-centered actions-bordered mt-15">
+
+                    <!-- Confirmar la selecció de candidats (accepta la sol·licitud) -->
+                    <button type="submit" class="btn-primary btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <polyline points="20 6 9 17 4 12"></polyline>
+                        </svg>
+                        Confirmar Selecció
+                    </button>
+
+                    <!-- Rebutjar la sol·licitud (fora del formulari per no interferir) -->
+                    <a th:href="@{/assistanceRequest/manage/rejectReason/{id}(id=${idApRequest})}"
+                       class="btn-outline-danger btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                             fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                             stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Rebutjar sol·licitud
+                    </a>
+
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>
