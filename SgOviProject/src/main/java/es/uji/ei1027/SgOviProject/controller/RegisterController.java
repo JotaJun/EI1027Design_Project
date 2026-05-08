@@ -68,10 +68,10 @@ public class RegisterController {
                         return "redirect:/register/done";
                     }
                 }
-                return "redirect:/oviuser/register";
+                return "redirect:/oviUser/register";
 
             case PAPPATI:
-                return "redirect:/pappati/register";
+                return "redirect:/papPati/register";
 
             case LEGALGUARDIAN:
                 return "redirect:/legalGuardian/register";
