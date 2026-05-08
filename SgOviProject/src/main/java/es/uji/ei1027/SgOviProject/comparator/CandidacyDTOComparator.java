@@ -9,6 +9,13 @@ public class CandidacyDTOComparator implements Comparator<CandidacyDTO> {
     @Override
     public int compare(CandidacyDTO a, CandidacyDTO b) {
         // Ordena de más reciente a más antigua
-        return b.getCandidacy().getDateLastModified().compareTo(a.getCandidacy().getDateLastModified());
+
+        int dateComparison = b.getCandidacy().getDateLastModified().compareTo(a.getCandidacy().getDateLastModified());
+
+        if (dateComparison != 0) {
+            return dateComparison;
+        }
+
+        return Integer.compare(b.getCandidacy().getIdCandidacy(), a.getCandidacy().getIdCandidacy());
     }
 }

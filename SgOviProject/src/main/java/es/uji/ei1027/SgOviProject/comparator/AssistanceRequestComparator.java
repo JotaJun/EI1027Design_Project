@@ -9,6 +9,12 @@ public class AssistanceRequestComparator implements Comparator<AssistanceRequest
     @Override
     public int compare(AssistanceRequest a, AssistanceRequest b) {
         // Ordena de más reciente a más antigua
-        return b.getCreationDate().compareTo(a.getCreationDate());
+        int dateComparison = b.getCreationDate().compareTo(a.getCreationDate());
+
+        if (dateComparison != 0) {
+            return dateComparison;
+        }
+
+        return Integer.compare(b.getIdApRequest(), a.getIdApRequest());
     }
 }
