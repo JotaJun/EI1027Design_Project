@@ -8,8 +8,11 @@ import es.uji.ei1027.SgOviProject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.time.LocalDate;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 @Service
 public class CandidacyService {
@@ -146,5 +149,37 @@ public class CandidacyService {
         Account account = accountDao.getAccount(dniSolicitante);
 
         return new PapPatiCandidacyDTO(candidacy, request, oviUser, account);
+    }
+
+    /**
+     * Genera les candidatures per a una AssistanceRequest recentment aprovada.
+     *
+     * @param request La sol·licitud d'assistència acceptada.
+     * @return El nombre de noves candidatures creades.
+     */
+    public int generateCandidacies(AssistanceRequest request) {
+        // 1. Obtenir PapPatis que compleixen els criteris de cerca
+        List<PapPati> candidates = papPatiDao.getCandidatePapPatis(request);
+
+        // 2. Obtenir els DNIs que ja tenen candidatura per a aquesta AR (evitar duplicats)
+        Set<String> existingDnis = candidacyDao.getCandidaciesByIdApRequest(request.getIdApRequest())
+                .stream()
+                .map(Candidacy::getDniPapPati)
+                .collect(Collectors.toSet());
+
+        // 3. Crear una candidatura per cada PapPati compatible que no en tinga ja una
+        int count = 0;
+        for (PapPati papPati : candidates) {
+            if (!existingDnis.contains(papPati.getDni())) {
+                Candidacy candidacy = new Candidacy();
+                candidacy.setIdApRequest(request.getIdApRequest());
+                candidacy.setDniPapPati(papPati.getDni());
+                candidacy.setCandidacyStatus(CandidacyStatus.TALKSNOTSTARTED);
+                candidacy.setDateLastModified(LocalDate.now());
+                candidacyDao.addCandidacy(candidacy);
+                count++;
+            }
+        }
+        return count;
     }
 }

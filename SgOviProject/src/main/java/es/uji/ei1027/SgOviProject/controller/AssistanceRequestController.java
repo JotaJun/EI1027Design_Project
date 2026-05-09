@@ -9,7 +9,7 @@ import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.*;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
-import es.uji.ei1027.SgOviProject.services.CandidacyGeneratorService;
+import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -37,7 +37,7 @@ public class AssistanceRequestController {
     private AccountDao accountDao;
 
     @Autowired
-    private CandidacyGeneratorService candidacyGeneratorService;
+    private CandidacyService candidacyService;
 
     @Autowired
     private PapPatiDao papPatiDao;
@@ -380,7 +380,7 @@ public class AssistanceRequestController {
         assistanceRequestDao.updateAssistanceRequest(request);
 
         // Generar candidaturas automáticamente con los PapPati compatibles
-        candidacyGeneratorService.generateCandidacies(request);
+        candidacyService.generateCandidacies(request);
 
         return "redirect:/candidacy/listCandidates/" + idApRequest;
     }
