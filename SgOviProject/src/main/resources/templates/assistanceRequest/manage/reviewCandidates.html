@@ -66,11 +66,15 @@
 
                             <!-- Checkbox de selecció -->
                             <td class="text-center">
-                                <input type="checkbox"
-                                       name="selectedDnis"
-                                       th:value="${preview.papPati.dni}"
-                                       class="candidate-checkbox"
-                                       checked>
+                                <label>
+                                    <input type="checkbox"
+                                           name="selectedDnis"
+                                           th:value="${preview.papPati.dni}"
+                                           class="candidate-checkbox"
+                                           checked>
+                                    <span class="sr-only"
+                                          th:text="'Seleccionar ' + ${preview.account.name + ' ' + preview.account.surname}">Seleccionar candidat</span>
+                                </label>
                             </td>
 
                             <!-- Nom del candidat -->
