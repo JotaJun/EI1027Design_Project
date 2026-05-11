@@ -36,7 +36,7 @@ public class RoleInterceptor implements HandlerInterceptor {
             if (referer != null && !referer.isEmpty()) {
                 response.sendRedirect(referer);
             } else {
-                response.sendRedirect("/index");
+                response.sendRedirect("/");
             }
             return false;
         }
