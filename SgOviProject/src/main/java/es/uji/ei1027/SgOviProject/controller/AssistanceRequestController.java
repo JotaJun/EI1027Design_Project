@@ -7,6 +7,7 @@ import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.*;
+import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
@@ -79,7 +80,7 @@ public class AssistanceRequestController {
 
         String userRole = (String) session.getAttribute("userRole");
 
-        if (userRole.equals(AccountType.LEGALGUARDIAN.name())){
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)){
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
             assistanceRequest.setDniLegalGuardian(currentUser.getDni());
             // dniOviUser cogerlo de un parámetro que se pasa
@@ -145,6 +146,12 @@ public class AssistanceRequestController {
 
         // Determinar la página seleccionada (por defecto la 0 si no se indica)
         int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
         int novaReqId = nova.orElse(-1);
 
         model.addAttribute("selectedPage", currentPage);
@@ -182,8 +189,12 @@ public class AssistanceRequestController {
         // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
-        if (request == null || !request.getDniOviUser().equals(currentUser.getDni())) {
-            return "redirect:/assistanceRequest/list";
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        if (!request.getDniOviUser().equals(currentUser.getDni())) {
+            throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
         }
 
         // Si la solicitud fue creada por un tutor, recuperamos sus datos
@@ -205,8 +216,12 @@ public class AssistanceRequestController {
         // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
-        if (request == null || !request.getDniOviUser().equals(currentUser.getDni())) {
-            return "redirect:/assistanceRequest/list";
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        if (!request.getDniOviUser().equals(currentUser.getDni())) {
+            throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
         }
 
         model.addAttribute("assistanceRequest", request);
@@ -229,8 +244,12 @@ public class AssistanceRequestController {
         AssistanceRequest originalRequest = assistanceRequestDao
                 .getAssistanceRequest(assistanceRequest.getIdApRequest());
 
-        if (originalRequest == null || !originalRequest.getDniOviUser().equals(currentUser.getDni())) {
-            return "redirect:/assistanceRequest/list";
+        if (originalRequest == null) {
+            throw new SgOviException("No s'ha trobat la petició original", "Error 404 - No trobat");
+        }
+        
+        if (!originalRequest.getDniOviUser().equals(currentUser.getDni())) {
+            throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
         }
 
         // Copiamos SOLO los campos que el usuario tiene permitido editar
@@ -256,9 +275,16 @@ public class AssistanceRequestController {
 
         // Comprobar que la solicitud existe, pertenece al usuario actual y está en
         // estado PENDING
-        if (request == null || !request.getDniOviUser().equals(currentUser.getDni())
-                || request.getStatus() != Status.PENDING) {
-            return "redirect:/assistanceRequest/list";
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        if (!request.getDniOviUser().equals(currentUser.getDni())) {
+            throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
+        }
+
+        if (request.getStatus() != Status.PENDING) {
+            throw new SgOviException("Només es poden esborrar les peticions en estat PENDING", "Error de Validació");
         }
 
         assistanceRequestDao.deleteAssistanceRequest(idApRequest);
@@ -327,6 +353,12 @@ public class AssistanceRequestController {
 
         // Determinar la página seleccionada (por defecto la 0 si no se indica)
         int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
 
         model.addAttribute("selectedPage", currentPage);
         // PASAMOS LOS DATOS TOTALES PARA EL CONTADOR
@@ -348,7 +380,7 @@ public class AssistanceRequestController {
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
         if (request == null) {
-            return "redirect:/assistanceRequest/manage/list";
+            throw new SgOviException("No s'ha trobat la petició per gestionar", "Error 404 - No trobat");
         }
 
         model.addAttribute("req", request);
@@ -373,7 +405,7 @@ public class AssistanceRequestController {
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
         if (request == null) {
-            return "redirect:/assistanceRequest/manage/list";
+            throw new SgOviException("No s'ha trobat la petició per aprovar", "Error 404 - No trobat");
         }
 
         request.setStatus(Status.ACCEPTED);
@@ -388,6 +420,11 @@ public class AssistanceRequestController {
     @GetMapping(value = "/manage/rejectReason/{idApRequest}")
     public String showRejectReason(Model model, @PathVariable int idApRequest) {
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició per rebutjar", "Error 404 - No trobat");
+        }
+
         model.addAttribute("req", request);
         return "assistanceRequest/manage/rejectReason";
     }
@@ -406,7 +443,7 @@ public class AssistanceRequestController {
 
         AssistanceRequest original = assistanceRequestDao.getAssistanceRequest(request.getIdApRequest());
         if (original == null) {
-            return "redirect:/assistanceRequest/manage/list";
+            throw new SgOviException("No s'ha trobat la petició per rebutjar", "Error 404 - No trobat");
         }
         original.setDeniedReason(request.getDeniedReason());
         original.setStatus(Status.REJECTED);
@@ -433,8 +470,12 @@ public class AssistanceRequestController {
     public String showReviewCandidates(Model model, @PathVariable int idApRequest, HttpSession session) {
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
-        if (request == null || request.getStatus() != Status.PENDING) {
-            return "redirect:/assistanceRequest/manage/list";
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició a revisar", "Error 404 - No trobat");
+        }
+        
+        if (request.getStatus() != Status.PENDING) {
+            throw new SgOviException("Només es poden revisar peticions en estat PENDING", "Error d'Estat");
         }
 
         // Obtenir candidats potencials sense crear Candidacy (consulta filtrada a la
@@ -468,7 +509,7 @@ public class AssistanceRequestController {
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
         if (request == null) {
-            return "redirect:/assistanceRequest/manage/list";
+            throw new SgOviException("No s'ha trobat la petició per confirmar candidats", "Error 404 - No trobat");
         }
 
         // Marcar la sol·licitud com a acceptada
@@ -499,7 +540,7 @@ public class AssistanceRequestController {
         Account account = accountDao.getAccount(dni);
 
         if (papPati == null || account == null) {
-            return "redirect:/assistanceRequest/manage/list";
+            throw new SgOviException("No s'ha trobat el candidat sol·licitat", "Error 404 - No trobat");
         }
 
         // Guardar la URL de revisió a la sessió per al botó de tornar

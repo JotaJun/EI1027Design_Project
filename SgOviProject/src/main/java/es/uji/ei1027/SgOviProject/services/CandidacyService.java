@@ -74,6 +74,8 @@ public class CandidacyService {
     public CandidacyDTO getCandidacyDetailByIdCandidacy(int idCandidacy) {
         Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
 
+        if (candidacy == null) return null;
+
         String dni = candidacy.getDniPapPati();
 
         PapPati papPati = papPatiDao.getPapPati(dni);
@@ -96,6 +98,8 @@ public class CandidacyService {
 
     public boolean isCandidacyFromPapPati(int idCandidacy, PapPati papPati){
         Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+
+        if (candidacy == null) return false;
 
         return candidacy.getDniPapPati().equals(papPati.getDni());
     }

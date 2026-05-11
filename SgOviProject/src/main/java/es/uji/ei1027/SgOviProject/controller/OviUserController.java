@@ -79,6 +79,9 @@ public class OviUserController {
 
         Account account = (Account) session.getAttribute("pendingAccount");
 
+        if (account == null) {
+            return "redirect:/register";
+        }
 
         accountSvc.addOviUser(account, oviUser);
         session.removeAttribute("pendingAccount");
@@ -154,7 +157,7 @@ public class OviUserController {
             if (!tutorExists) {
                 bindingResult.rejectValue("oviUser.dniLegalGuardian", "notFound",
                         "Aquest DNI no correspon a cap tutor legal registrat al sistema.");
-
+                form.getAccount().setPassword(null);
                 return "oviUser/update";
             }
         } else {

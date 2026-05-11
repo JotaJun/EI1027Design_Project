@@ -72,6 +72,9 @@ public class PapPatiController {
 
         Account account = (Account) session.getAttribute("pendingAccount");
 
+        if (account == null) {
+            return "redirect:/register";
+        }
 
         accountSvc.addPapPati(account, papPati);
         session.removeAttribute("pendingAccount");

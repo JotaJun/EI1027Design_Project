@@ -79,6 +79,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/index", // La página de inicio pública
                                                 "/login", // Si no, el redireccionamiento hace un bucle
                                                 "/logout",
+                                                "/error",
                                                 "/register",
                                                 "/register/**", // Para rutas como /register/done
                                                 "/oviUser/register",

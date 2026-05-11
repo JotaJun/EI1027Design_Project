@@ -8,6 +8,7 @@ import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.dto.PapPatiCandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.enums.StaffType;
+import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.filters.CandidacyStatusFilter;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import es.uji.ei1027.SgOviProject.model.Candidacy;
@@ -64,9 +65,12 @@ public class CandidacyController {
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
         AssistanceRequest assistanceRequest = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
-        // Comprobar que la petición de la aprequest es del usuario loggeado
-        if (! assistanceRequest.getDniOviUser().equals(currentUser.getDni())){
-            return "redirect:/assistanceRequest/list";
+        if (assistanceRequest == null) {
+            throw new SgOviException("No s'ha trobat la petició d'assistència", "Error 404 - No trobat");
+        }
+
+        if (!assistanceRequest.getDniOviUser().equals(currentUser.getDni())){
+            throw new SgOviException("No tens permisos per veure els candidats d'aquesta petició", "Error 403 - Sense permisos");
         }
 
         List<CandidacyDTO> filteredCandidacies = candidacyService.getCandidaciesWithDetailsByIdApRequestAndStatus(idApRequest, status);
@@ -97,6 +101,12 @@ public class CandidacyController {
         }
 
         int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
 
         // PREPARAR EL FILTRO PARA LA VISTA
         CandidacyStatusFilter filter = new CandidacyStatusFilter();
@@ -127,8 +137,19 @@ public class CandidacyController {
     }
 
     @GetMapping(value="/details/{idCandidacy}")
-    public String detailsCandidacy(Model model, @PathVariable int idCandidacy) {
+    public String detailsCandidacy(Model model, @PathVariable int idCandidacy, HttpSession session) {
+
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
         CandidacyDTO candidacyDto = candidacyService.getCandidacyDetailByIdCandidacy(idCandidacy);
+
+        if (candidacyDto == null) {
+            throw new SgOviException("No s'ha trobat la candidatura", "Error 404 - No trobat");
+        }
+
+        if (!candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) {
+            throw new SgOviException("No tens permisos per veure els detalls d'aquesta candidatura", "Error 403 - Sense permisos");
+        }
 
         model.addAttribute("candidacyDto", candidacyDto);
 
@@ -141,14 +162,14 @@ public class CandidacyController {
 
         // Si la candidacy no existe devolver al listado de aprequest
         if (candidacy == null){
-            return "redirect:/assistanceRequest/list";
+            throw new SgOviException("No s'ha trobat la candidatura", "Error 404 - No trobat");
         }
 
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
         // Si la candidatura no es del usuario actual, devolver a la lista de aprequest
         if (! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)){
-            return "redirect:/assistanceRequest/list";
+            throw new SgOviException("No tens permisos per rebutjar aquesta candidatura", "Error 403 - Sense permisos");
         }
 
         candidacy.setCandidacyStatus(CandidacyStatus.TALKSENDED);
@@ -175,7 +196,7 @@ public class CandidacyController {
 
         filteredCandidacies.sort(new PapPatiCandidacyDTOComparator());
 
-        // 3. Crear la lista paginada
+        // Crear la lista paginada
         ArrayList<ArrayList<PapPatiCandidacyDTO>> candidaciesPaged = new ArrayList<>();
         int ini = 0;
         int fin = pageLength;
@@ -199,6 +220,12 @@ public class CandidacyController {
         }
 
         int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
 
         // Preparar el filtro para la vista
         CandidacyStatusFilter filter = new CandidacyStatusFilter();
@@ -234,8 +261,12 @@ public class CandidacyController {
         PapPatiCandidacyDTO dto = candidacyService.getPapPatiCandidacyDetail(idCandidacy);
 
         // Verificar que existe y que pertenece al PapPati logueado
-        if (dto == null || !dto.getCandidacy().getDniPapPati().equals(currentPap.getDni())) {
-            return "redirect:/candidacy/listRequests";
+        if (dto == null) {
+            throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        if (!dto.getCandidacy().getDniPapPati().equals(currentPap.getDni())) {
+            throw new SgOviException("No tens permisos per veure els detalls d'aquesta petició", "Error 403 - Sense permisos");
         }
 
         // Pasamos el DTO a la vista

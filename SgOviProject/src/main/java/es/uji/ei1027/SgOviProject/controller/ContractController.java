@@ -3,6 +3,7 @@ package es.uji.ei1027.SgOviProject.controller;
 import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
+import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.model.Contract;
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import es.uji.ei1027.SgOviProject.model.PapPati;
@@ -72,7 +73,7 @@ public class ContractController {
 
         if (ficheroPdf == null || ficheroPdf.isEmpty()) {
             bindingResult.rejectValue("urlDocument", "required", "Has d'adjuntar el contracte en format PDF");
-        } else if (!ficheroPdf.getContentType().equals("application/pdf")) {
+        } else if (!"application/pdf".equals(ficheroPdf.getContentType())) {
             bindingResult.rejectValue("urlDocument", "format", "El document ha de ser un PDF");
         }
 
@@ -134,10 +135,7 @@ public class ContractController {
                                 @RequestParam("nou") Optional<Integer> nou,
                                 HttpSession session) {
 
-        String unauthorizedRedirect = getRedirectUrlIfUnauthorized(session, idCandidacy);
-        if (unauthorizedRedirect != null) {
-            return unauthorizedRedirect;
-        }
+        checkAuthorizationOrThrow(session, idCandidacy);
 
         List<Contract> contracts = contractDao.getContractsByIdCandidacy(idCandidacy);
 
@@ -167,6 +165,12 @@ public class ContractController {
         }
 
         int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
         Integer nouContracte = nou.orElse(-1);
 
         // PASAR DATOS AL MODELO
@@ -192,19 +196,10 @@ public class ContractController {
         Contract contract = contractDao.getContract(idContract);
 
         if (contract == null) {
-            String userRole = (String)session.getAttribute("userRole");
-            if (userRole.equals(AccountType.OVIUSER.name())) {
-                return "redirect:/oviUser/main";
-            }else{
-                return "redirect:/papPati/main";
-            }
+            throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
-        String unauthorizedRedirect = getRedirectUrlIfUnauthorized(session, contract.getIdCandidacy());
-
-        if (unauthorizedRedirect != null) {
-            return unauthorizedRedirect;
-        }
+        checkAuthorizationOrThrow(session, contract.getIdCandidacy());
 
         // Recuperar la URL exacta de la lista (con su paginación) para el botón de volver
         String backUrl = (String) session.getAttribute("lastContractListUrl");
@@ -237,12 +232,12 @@ public class ContractController {
 
         Contract contract = contractDao.getContract(idContract);
         if (contract == null) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
         OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
         if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), oviUser)) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
         }
 
         model.addAttribute("contract", contract);
@@ -273,7 +268,7 @@ public class ContractController {
         // Obligamos a que suba un nuevo documento sí o sí
         if (ficheroPdf == null || ficheroPdf.isEmpty()) {
             bindingResult.rejectValue("urlDocument", "required", "És obligatori adjuntar un nou document PDF actualitzat");
-        } else if (!ficheroPdf.getContentType().equals("application/pdf")) {
+        } else if (!"application/pdf".equals(ficheroPdf.getContentType())) {
             bindingResult.rejectValue("urlDocument", "format", "El document ha de ser un PDF");
         }
 
@@ -301,7 +296,6 @@ public class ContractController {
             contractOriginal.setUrlDocument("contracts/" + nombreArchivo);
 
         } catch (IOException e) {
-            e.printStackTrace();
             bindingResult.rejectValue("urlDocument", "error", "S'ha produït un error al guardar el fitxer");
             return "contract/update";
         }
@@ -311,22 +305,20 @@ public class ContractController {
         return "redirect:/contract/details/" + contractOriginal.getIdContract();
     }
 
-    private String getRedirectUrlIfUnauthorized(HttpSession session, int idCandidacy) {
+    private void checkAuthorizationOrThrow(HttpSession session, int idCandidacy) {
         AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
-        // Seguridad
+
         if (userRole == AccountType.OVIUSER) {
             OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
             if (!candidacyService.isCandidacyFromOviUser(idCandidacy, oviUser)) {
-                return "redirect:/oviUser/main";
+                throw new SgOviException("No tens permisos per accedir a aquest recurs", "Error 403 - Sense permisos");
             }
         } else if (userRole == AccountType.PAPPATI) {
             PapPati papPati = (PapPati) session.getAttribute("specificAccount");
             if (!candidacyService.isCandidacyFromPapPati(idCandidacy, papPati)) {
-                return "redirect:/papPati/main";
+                throw new SgOviException("No tens permisos per accedir a aquest recurs", "Error 403 - Sense permisos");
             }
-        } // no hace falta mirar else, ya que eso es mirado por el interceptor
-
-        return null;
+        }
     }
 
 }

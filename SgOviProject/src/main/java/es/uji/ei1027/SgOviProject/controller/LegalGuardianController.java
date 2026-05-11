@@ -45,6 +45,11 @@ public class LegalGuardianController {
         }
 
         Account account = (Account) session.getAttribute("pendingAccount");
+
+        if (account == null) {
+            return "redirect:/register";
+        }
+
         BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
         String encryptedSignature = passwordEncryptor.encryptPassword(guardian.getSignatureCode());
         guardian.setSignatureCode(encryptedSignature);

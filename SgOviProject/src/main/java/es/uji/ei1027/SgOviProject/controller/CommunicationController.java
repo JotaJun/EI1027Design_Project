@@ -7,6 +7,7 @@ import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.CommunicationDao;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
+import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.AssistanceRequest;
 import es.uji.ei1027.SgOviProject.model.Candidacy;
@@ -39,38 +40,26 @@ public class CommunicationController {
     public String showChat(@PathVariable int idCandidacy,
                            Model model,
                            HttpSession session) {
-        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
-        if (candidacy == null) {
-            return "redirect:/index"; // Si no existe, devolver al inicio
-        }
-
-        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
-
         Account currentUser = (Account) session.getAttribute("account");
-        AccountType role = AccountType.valueOf( (String) session.getAttribute("userRole"));
-        String otherUserName;
-        Account otherUser = new Account();
+        AccountType role = AccountType.valueOf((String) session.getAttribute("userRole"));
 
-        boolean isAuthorized = false;
+        // Validamos y obtenemos la request
+        AssistanceRequest request = validateChatAccessAndGetRequest(idCandidacy, currentUser, role);
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
 
-        if (role == AccountType.OVIUSER){
-            if (request.getDniOviUser().equals(currentUser.getDni())) {
-                isAuthorized = true;
-                otherUser = accountDao.getAccount(candidacy.getDniPapPati());
-            }
-        }else if (role == AccountType.PAPPATI){
-            if (candidacy.getDniPapPati().equals(currentUser.getDni())) {
-                isAuthorized = true;
-                otherUser = accountDao.getAccount(request.getDniOviUser());
-            }
+        Account otherUser = null;
+        if (role == AccountType.OVIUSER) {
+            otherUser = accountDao.getAccount(candidacy.getDniPapPati());
+        } else if (role == AccountType.PAPPATI) {
+            otherUser = accountDao.getAccount(request.getDniOviUser());
         }
 
-        if (!isAuthorized){
-            return "redirect:/index";
+        String otherUserName = "Usuari Desconegut";
+        if (otherUser != null) {
+            otherUser.setPassword(null);
+            otherUserName = otherUser.getName() + " " + otherUser.getSurname();
         }
 
-        otherUser.setPassword(null);
-        otherUserName = otherUser.getName() + " " + otherUser.getSurname();
 
         // Recuperar el historial de mensajes de esta candidatura
         List<Communication> chatHistory = communicationDao.getCommunicationsByCandidacy(idCandidacy);
@@ -94,10 +83,18 @@ public class CommunicationController {
                               @ModelAttribute("newCommunication") Communication newCommunication,
                               HttpSession session) {
 
+        Account currentUser = (Account) session.getAttribute("account");
+        AccountType role = AccountType.valueOf((String) session.getAttribute("userRole"));
+
+        validateChatAccessAndGetRequest(idCandidacy, currentUser, role);
+
+        // Evitar mensajes vacíos (opcional pero recomendado)
+        if (newCommunication.getInformation() == null || newCommunication.getInformation().trim().isEmpty()) {
+            return "redirect:/communication/chat/" + idCandidacy;
+        }
+
         // Rellenamos los datos faltantes de la comunicación
         newCommunication.setIdCandidacy(idCandidacy);
-
-        Account currentUser = (Account) session.getAttribute("account");
 
         // Guardamos quién es el emisor
         newCommunication.setTransmitterDni(currentUser.getDni());
@@ -114,5 +111,30 @@ public class CommunicationController {
 
         // Redirigimos de vuelta a la vista del chat para que recargue los mensajes
         return "redirect:/communication/chat/" + idCandidacy;
+    }
+
+    private AssistanceRequest validateChatAccessAndGetRequest(int idCandidacy, Account currentUser, AccountType role) {
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+        if (candidacy == null) {
+            throw new SgOviException("No s'ha trobat la candidatura", "Error 404 - No trobat");
+        }
+
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició associada", "Error 404 - No trobat");
+        }
+
+        boolean isAuthorized = false;
+        if (role == AccountType.OVIUSER && request.getDniOviUser().equals(currentUser.getDni())) {
+            isAuthorized = true;
+        } else if (role == AccountType.PAPPATI && candidacy.getDniPapPati().equals(currentUser.getDni())) {
+            isAuthorized = true;
+        }
+
+        if (!isAuthorized) {
+            throw new SgOviException("No tens permisos per accedir a aquest xat", "Error 403 - Sense permisos");
+        }
+
+        return request;
     }
 }
