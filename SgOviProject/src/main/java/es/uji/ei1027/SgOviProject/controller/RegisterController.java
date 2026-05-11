@@ -35,17 +35,20 @@ public class RegisterController {
         RegisterValidator registerValidator = new RegisterValidator();
         registerValidator.validate(account, bindingResult);
 
+        if (!bindingResult.hasFieldErrors("dni")) {
+            if (accountDao.getAccount(account.getDni()) != null) {
+                bindingResult.rejectValue("dni", "cloned", "Aquest DNI ja està registrat en el sistema");
+            }
+        }
+
+        if (!bindingResult.hasFieldErrors("email")) {
+            if (accountDao.getAccountByEmail(account.getEmail()) != null) {
+                bindingResult.rejectValue("email", "cloned", "Aquest email ja està registrat en el sistema");
+            }
+        }
+
+        // una única llamada al bindingResult
         if (bindingResult.hasErrors()) {
-            return "register";
-        }
-
-        if (accountDao.getAccount(account.getDni()) != null) {
-            bindingResult.rejectValue("dni", "cloned", "Aquest DNI ja està registrat en el sistema");
-            return "register";
-        }
-
-        if (accountDao.getAccountByEmail(account.getEmail()) != null) {
-            bindingResult.rejectValue("email", "cloned", "Aquest email ja està registrat en el sistema");
             return "register";
         }
 
@@ -63,7 +66,6 @@ public class RegisterController {
                     LocalDate now = LocalDate.now();
                     Period period = Period.between(account.getBirthday(), now);
                     if (period.getYears() >= 18) {
-
                         registerService.addOviUser(account, new OviUser());
                         return "redirect:/register/done";
                     }
