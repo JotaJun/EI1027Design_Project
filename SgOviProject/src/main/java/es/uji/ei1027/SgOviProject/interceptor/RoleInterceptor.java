@@ -1,6 +1,7 @@
 package es.uji.ei1027.SgOviProject.interceptor;
 
 import es.uji.ei1027.SgOviProject.enums.AccountType;
+import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpServletResponse;
 import jakarta.servlet.http.HttpSession;
@@ -23,34 +24,38 @@ public class RoleInterceptor implements HandlerInterceptor {
 
         String currentRole = (String) session.getAttribute("userRole");
 
+        if (currentRole == null){
+            throw new SgOviException(
+                    "No s'ha trobat un rol a la teua sessió.",
+                    "Error de Sessió"
+            );
+        }
+
         // Verificamos si el currentRole coincide con ALGUNO de los roles permitidos
-        boolean hasRole = allowedRoles.stream()
+        boolean hasAllowedRole = allowedRoles.stream()
                 .anyMatch(role -> role.name().equals(currentRole));
 
-        // Si no hay rol, o no coincide con ninguno permitido, fuera
-        // Si hay usuario, pero NO tiene NINGUNO de los roles adecuados
-        if (currentRole == null || !hasRole) {
-
-            String referer = request.getHeader("Referer");
-
-            if (referer != null && !referer.isEmpty()) {
-                response.sendRedirect(referer);
-            } else {
-                response.sendRedirect("/");
-            }
-            return false;
+        if (!hasAllowedRole) {
+            throw new SgOviException(
+                    "No tens permisos per a accedir a aquesta funcionalitat.",
+                    "Accés Denegat"
+            );
         }
 
 
         if (AccountType.TECHNICIAN.name().equals(currentRole)) {
             if (session.getAttribute("technician") == null) {
-                response.sendRedirect("/index");
-                return false;
+                throw new SgOviException(
+                        "Sessió de tècnic no trobada o caducada.",
+                        "Error de Sessió"
+                );
             }
         } else {
             if (session.getAttribute("account") == null) {
-                response.sendRedirect("/index");
-                return false;
+                throw new SgOviException(
+                        "Sessió d'usuari no trobada o caducada.",
+                        "Error de Sessió"
+                );
             }
         }
 
