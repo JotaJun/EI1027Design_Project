@@ -44,7 +44,7 @@ public class RegisterController {
             return "register";
         }
 
-        if (accountDao.getAccount(account.getEmail()) != null) {
+        if (accountDao.getAccountByEmail(account.getEmail()) != null) {
             bindingResult.rejectValue("email", "cloned", "Aquest email ja està registrat en el sistema");
             return "register";
         }
