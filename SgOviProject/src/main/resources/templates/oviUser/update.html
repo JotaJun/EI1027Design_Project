@@ -36,28 +36,29 @@
                 <div class="form-grid">
                     <div class="form-group">
                         <label for="name">Nom <span class="required-asterisk">*</span></label>
-                        <input type="text" id="name" th:field="*{account.name}"
+                        <input type="text" id="name" th:field="*{account.name}" required maxlength="30"
                                th:classappend="${#fields.hasErrors('account.name')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.name')}" class="error-message" th:errors="*{account.name}"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="surname">Cognoms <span class="required-asterisk">*</span></label>
-                        <input type="text" id="surname" th:field="*{account.surname}"
+                        <input type="text" id="surname" th:field="*{account.surname}" required maxlength="50"
                                th:classappend="${#fields.hasErrors('account.surname')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.surname')}" class="error-message" th:errors="*{account.surname}"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="birthday">Data de naixement <span class="required-asterisk">*</span></label>
-                        <input type="date" id="birthday" th:field="*{account.birthday}"
+                        <input type="date" id="birthday" th:field="*{account.birthday}" required
+                               th:max="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
                                th:classappend="${#fields.hasErrors('account.birthday')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.birthday')}" class="error-message" th:errors="*{account.birthday}"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="gender">Gènere <span class="required-asterisk">*</span></label>
-                        <select id="gender" th:field="*{account.gender}" th:classappend="${#fields.hasErrors('account.gender')} ? 'input-error'">
+                        <select id="gender" th:field="*{account.gender}" required th:classappend="${#fields.hasErrors('account.gender')} ? 'input-error'">
                             <option value="">Selecciona gènere...</option>
                             <option th:each="g : ${genderList}" th:value="${g.name()}" th:text="${g.description}"></option>
                         </select>
@@ -65,68 +66,59 @@
                     </div>
 
                     <div class="form-group">
-                        <label for="dniLegalGuardian">
-                            DNI Tutor Legal
+                        <label for="dniLegalGuardian">DNI Tutor Legal
                             <span class="info-tooltip">
                                 (?)
-                                <span class="tooltip-text">Aquest camp no és obligatori. Pots indicar un tutor si vols que estigui vinculat al teu perfil, però ha d'estar registrat prèviament.</span>
+                                    <span class="tooltip-text">
+                                        Aquest camp no és obligatori. Pots indicar un tutor si vols que estigui vinculat al teu perfil, però ha d'estar registrat prèviament.
+                                    </span>
                             </span>
                         </label>
                         <input type="text" id="dniLegalGuardian" th:field="*{oviUser.dniLegalGuardian}"
-                               placeholder="Ex: 12345678A"
+                               placeholder="Ex: 12345678A" maxlength="9" title="El DNI ha de tindre 8 números i una lletra majúscula (Ex: 12345678A)"
                                th:classappend="${#fields.hasErrors('oviUser.dniLegalGuardian')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('oviUser.dniLegalGuardian')}" class="error-message" th:errors="*{oviUser.dniLegalGuardian}"></span>
                     </div>
-                </div>
 
-                <h3 class="detail-section-title">Dades de Contacte</h3>
-                <div class="form-grid">
                     <div class="form-group">
                         <label for="email">Correu electrònic <span class="required-asterisk">*</span></label>
-                        <input type="email" id="email" th:field="*{account.email}"
+                        <input type="email" id="email" th:field="*{account.email}" required maxlength="30"
                                th:classappend="${#fields.hasErrors('account.email')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.email')}" class="error-message" th:errors="*{account.email}"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="phoneNumber">Telèfon <span class="required-asterisk">*</span></label>
-                        <input type="text" id="phoneNumber" th:field="*{account.phoneNumber}"
+                        <input type="text" id="phoneNumber" th:field="*{account.phoneNumber}" required maxlength="9" title="El telèfon ha de tindre exactament 9 números"
                                th:classappend="${#fields.hasErrors('account.phoneNumber')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.phoneNumber')}" class="error-message" th:errors="*{account.phoneNumber}"></span>
                     </div>
-                </div>
 
-                <h3 class="detail-section-title">Adreça</h3>
-                <div class="form-grid">
                     <div class="form-group">
                         <label for="city">Població <span class="required-asterisk">*</span></label>
-                        <input type="text" id="city" th:field="*{account.city}"
+                        <input type="text" id="city" th:field="*{account.city}" required maxlength="30"
                                th:classappend="${#fields.hasErrors('account.city')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.city')}" class="error-message" th:errors="*{account.city}"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="street">Carrer / Via <span class="required-asterisk">*</span></label>
-                        <input type="text" id="street" th:field="*{account.street}"
+                        <input type="text" id="street" th:field="*{account.street}" required maxlength="30"
                                th:classappend="${#fields.hasErrors('account.street')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.street')}" class="error-message" th:errors="*{account.street}"></span>
                     </div>
 
                     <div class="form-group">
                         <label for="zipCode">Codi Postal <span class="required-asterisk">*</span></label>
-                        <input type="text" id="zipCode" th:field="*{account.zipCode}"
+                        <input type="text" id="zipCode" th:field="*{account.zipCode}" required maxlength="5" title="El codi postal ha de tindre exactament 5 números"
                                th:classappend="${#fields.hasErrors('account.zipCode')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('account.zipCode')}" class="error-message" th:errors="*{account.zipCode}"></span>
                     </div>
-                </div>
 
-                <h3 class="detail-section-title">Canviar Contrasenya (Opcional)</h3>
-                <p class="card-subtitle mb-4">Deixa aquests camps en blanc si no vols canviar la teva contrasenya actual.</p>
-                <div class="form-grid">
                     <div class="form-group">
                         <label for="newPassword">Nova contrasenya</label>
                         <input type="password" id="newPassword" th:field="*{newPassword}" placeholder="Mínim 8 caràcters"
-                               minlength="8"
+                               minlength="8" maxlength="20"
                                th:classappend="${#fields.hasErrors('newPassword')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('newPassword')}" class="error-message" th:errors="*{newPassword}"></span>
                     </div>
@@ -134,7 +126,7 @@
                     <div class="form-group">
                         <label for="confirmPassword">Repetir nova contrasenya</label>
                         <input type="password" id="confirmPassword" th:field="*{confirmPassword}"
-                               minlength="8"
+                               minlength="8" maxlength="20"
                                th:classappend="${#fields.hasErrors('confirmPassword')} ? 'input-error'" />
                         <span th:if="${#fields.hasErrors('confirmPassword')}" class="error-message" th:errors="*{confirmPassword}"></span>
                     </div>

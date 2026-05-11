@@ -978,6 +978,7 @@ select:focus {
 .assistance-form input[type="date"],
 .assistance-form input[type="number"],
 .assistance-form input[type="password"],
+.assistance-form input[type="url"],
 .assistance-form select,
 .assistance-form textarea {
     width: 100%;
