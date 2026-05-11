@@ -31,7 +31,7 @@ public class OviUserUpdateDTOValidator implements Validator{
         // Delegamos la validación de la cuenta
         try {
             errors.pushNestedPath("account");
-            ValidationUtils.invokeValidator(accountValidator, dto.getAccount(), errors);
+            ValidationUtils.invokeValidator(accountValidator, account, errors);
         } finally {
             errors.popNestedPath(); // Siempre hay que quitar el prefijo al terminar
         }
