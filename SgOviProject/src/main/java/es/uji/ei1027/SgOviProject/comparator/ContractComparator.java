@@ -10,6 +10,12 @@ public class ContractComparator implements Comparator<Contract> {
     @Override
     public int compare(Contract a, Contract b) {
         // Ordena de más reciente a más antigua
-        return b.getCreationDate().compareTo(a.getCreationDate());
+        int dateComparison = b.getCreationDate().compareTo(a.getCreationDate());
+
+        if (dateComparison != 0) {
+            return dateComparison;
+        }
+
+        return Integer.compare(b.getIdContract(), a.getIdContract());
     }
 }
