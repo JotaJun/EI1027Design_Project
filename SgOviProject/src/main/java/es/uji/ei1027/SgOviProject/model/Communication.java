@@ -7,7 +7,7 @@ public class Communication {
     private int idCandidacy;
     private LocalDate dateCommunication = LocalDate.now();
     private String information;
-    private String transmitterName;
+    private String transmitterDni;
 
     public int getIdCommunication() {
         return idCommunication;
@@ -41,12 +41,12 @@ public class Communication {
         this.information = information;
     }
 
-    public String getTransmitterName() {
-        return transmitterName;
+    public String getTransmitterDni() {
+        return transmitterDni;
     }
 
-    public void setTransmitterName(String transmitterName) {
-        this.transmitterName = transmitterName;
+    public void setTransmitterDni(String transmitterDni) {
+        this.transmitterDni = transmitterDni;
     }
 
     @Override
@@ -56,7 +56,7 @@ public class Communication {
                 ", idCandidacy=" + idCandidacy +
                 ", dateCommunication=" + dateCommunication +
                 ", information='" + information + '\'' +
-                ", transmitterName='" + transmitterName + '\'' +
+                ", transmitterDni='" + transmitterDni + '\'' +
                 '}';
     }
 }

@@ -65,10 +65,10 @@
         </div>
 
         <div th:each="msg : ${chatHistory}"
-             th:class="${msg.transmitterName == (currentUser.name + ' ' + currentUser.surname)} ? 'chat-message sent' : 'chat-message received'">
+             th:class="${msg.transmitterDni == currentUser.dni} ? 'chat-message sent' : 'chat-message received'">
 
           <div class="message-bubble">
-            <div class="message-author" th:text="${msg.transmitterName}">Nom</div>
+            <div class="message-author" th:text="${msg.transmitterDni == currentUser.dni ? (currentUser.name + ' ' + currentUser.surname) : otherUserName}">Nom</div>
             <div class="message-text" th:text="${msg.information}">Contingut del missatge</div>
             <div class="message-time" th:text="${#temporals.format(msg.dateCommunication, 'dd/MM/yyyy')}">01/01/2024</div>
           </div>

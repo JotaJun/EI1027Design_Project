@@ -128,7 +128,6 @@ classDiagram
         -String idCommunication
         -date date
         -String information
-        -String transmitterName
     }
 
     class Contract {
@@ -144,7 +143,7 @@ classDiagram
 
     %% Relaciones de la mejora (Tutoría)
     LegalGuardian "0..1" -- "0..*" OVIUser : represents
-    LegalGuardian "0..1" -- "0..*" AssistanceRequest : validates
+    LegalGuardian "0..1" -- "0..*" AssistanceRequest : makes
     LegalGuardian "0..1" -- "0..*" ActivityAssistance : consents
 
     %% Relaciones Originales
@@ -157,3 +156,4 @@ classDiagram
     PAP_PATI "1" -- "0..*" Candidacy : presents
     Candidacy "1" -- "0..*" Communication : makes
     Candidacy "1" -- "0..*" Contract : generates
+    Communication "0..*" -- "1" Account : sends

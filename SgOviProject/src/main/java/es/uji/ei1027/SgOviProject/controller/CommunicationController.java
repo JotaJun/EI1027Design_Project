@@ -100,8 +100,7 @@ public class CommunicationController {
         Account currentUser = (Account) session.getAttribute("account");
 
         // Guardamos quién es el emisor
-        // Concateno nombre y apellidos para que quede visual en el chat.
-        newCommunication.setTransmitterName(currentUser.getName() + " " + currentUser.getSurname());
+        newCommunication.setTransmitterDni(currentUser.getDni());
 
         communicationDao.addCommunication(newCommunication);
 
