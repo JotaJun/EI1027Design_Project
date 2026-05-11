@@ -16,17 +16,17 @@
 <main class="login-container">
     <div class="login-card login-card-wide">
 
-        <header class="login-header">
-            <div class="logo-box">
+        <div class="login-header">
+            <div class="logo logo-centered">
                 <img th:src="@{/images/logo_SgOvi.png}" alt="Logo SgOVI" class="logo-img">
                 SgOVI
             </div>
             <p class="system-name">SISTEMA DE GESTIÓ DE L'OFICINA PER LA VIDA INDEPENDENT</p>
             <h2>Detalls de Tutor Legal</h2>
             <p class="login-subtitle">Crea la teva signatura digital per a operacions segures</p>
-        </header>
+        </div>
 
-        <form th:action="@{/guardian/register}" th:object="${guardianAccount}" method="post" class="login-form" novalidate>
+        <form th:action="@{/legalGuardian/register}" th:object="${guardianAccount}" method="post" class="login-form" novalidate>
             
             <input type="hidden" th:field="*{dni}">
             
