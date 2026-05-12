@@ -97,4 +97,12 @@ public class AccountDao {
             return new ArrayList<Account>();
         }
     }
+
+    public List<Account> getPendingAccounts() {
+        try {
+            return jdbcTemplate.query("SELECT * FROM Account WHERE status='pending'", new AccountRowMapper());
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Account>();
+        }
+    }
 }
