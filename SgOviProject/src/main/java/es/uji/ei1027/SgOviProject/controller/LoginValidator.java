@@ -25,9 +25,9 @@ public class LoginValidator implements Validator {
             errors.rejectValue("password", "required", "La contrasenya no pot estar buida");
         }
 
-        // Comprobar que la contraseña tenga como mínimo 8 carácteres (requisito de la tabla)
-        else if (user.getPassword().length() < 8) {
-            errors.rejectValue("password", "tooShort", "La contrasenya ha de tindre almenys 8 caràcters");
+        // Comprobar que la contraseña tenga entre 8 y 20 caracteres
+        else if (user.getPassword().length() < 8 && user.getPassword().length() > 20) {
+            errors.rejectValue("password", "tooShort", "La contrasenya ha de tindre de 8 a 20 caràcteres");
         }
     }
 }
