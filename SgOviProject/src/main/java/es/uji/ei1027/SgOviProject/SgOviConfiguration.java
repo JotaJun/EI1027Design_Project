@@ -102,8 +102,6 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/assistanceRequest/details/**",
                                                 "/assistanceRequest/update/**",
                                                 "/assistanceRequest/delete/**",
-                                                "/candidacy/listCandidates/**",
-                                                "/candidacy/details/**",
                                                 "/candidacy/reject/**",
                                                 "/contract/add/**",
                                                 "/contract/update/**")
@@ -113,7 +111,11 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                 registry.addInterceptor(new RoleInterceptor(AccountType.TECHNICIAN))
                                 .addPathPatterns(
                                                 "/technician/**",
-                                                "/assistanceRequest/manage/**");
+                                                "/assistanceRequest/manage/**",
+                                                "/assistanceRequest/technician/**",
+                                                "/account/deleteReason/**",
+                                                "/account/apHistory/**",
+                                                "/account/candidacyHistory/**");
 
                 // PAPPATI (Solo rutas exclusivas de PAPPATI)
                 registry.addInterceptor(new RoleInterceptor(AccountType.PAPPATI))
@@ -130,11 +132,17 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                 .excludePathPatterns("/legalGuardian/register");
 
                 // --- REGLAS COMPARTIDAS ---
-                // Rutas a las que pueden acceder tanto OVIUSER como PAPPATI
-                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.PAPPATI))
+                // Candidatures: OVIUSER i TECHNICIAN (tècnic en mode lectura)
+                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.TECHNICIAN))
+                                .addPathPatterns(
+                                                "/candidacy/listCandidates/**",
+                                                "/candidacy/details/**");
+
+                // Contractes: OVIUSER, PAPPATI i TECHNICIAN (tècnic en mode lectura)
+                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.PAPPATI, AccountType.TECHNICIAN))
                                 .addPathPatterns(
                                                 "/communication/chat/**",
                                                 "/contract/list/**",
                                                 "/contract/details/**");
         }
-}
+}

@@ -554,4 +554,28 @@ public class AssistanceRequestController {
 
         return "assistanceRequest/manage/candidateDetails";
     }
+
+    // ===== DETALL D'AR EN MODE LECTURA PER AL TÈCNIC =====
+
+    @GetMapping(value = "/technician/details/{idApRequest}")
+    public String showTechnicianDetails(Model model, @PathVariable int idApRequest, HttpSession session) {
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        // Si la solicitud fue creada por un tutor, recuperamos sus datos
+        if (request.getDniLegalGuardian() != null && !request.getDniLegalGuardian().trim().isEmpty()) {
+            Account guardianAccount = accountDao.getAccount(request.getDniLegalGuardian());
+            model.addAttribute("guardianAccount", guardianAccount);
+        }
+
+        model.addAttribute("req", request);
+
+        // Guardar URL per a la tornada des de la llista de candidatures
+        session.setAttribute("lastRequestListUrl", "/assistanceRequest/technician/details/" + idApRequest);
+
+        return "assistanceRequest/technicianDetails";
+    }
 }

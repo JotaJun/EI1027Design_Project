@@ -308,6 +308,11 @@ public class ContractController {
     private void checkAuthorizationOrThrow(HttpSession session, int idCandidacy) {
         AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
 
+        if (userRole == AccountType.TECHNICIAN) {
+            // El tècnic pot veure qualsevol contracte en mode lectura
+            return;
+        }
+
         if (userRole == AccountType.OVIUSER) {
             OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
             if (!candidacyService.isCandidacyFromOviUser(idCandidacy, oviUser)) {

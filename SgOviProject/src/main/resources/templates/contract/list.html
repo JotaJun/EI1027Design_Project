@@ -15,6 +15,10 @@
     <th:block th:if="${session.userRole == 'PAPPATI'}">
         <div th:replace="~{fragments/papPati-returnMain-header :: papPati-returnMain-header}"></div>
     </th:block>
+
+    <th:block th:if="${session.userRole == 'TECHNICIAN'}">
+        <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
+    </th:block>
 </header>
 
 <main layout:fragment="content">
@@ -37,6 +41,15 @@
                     <polyline points="12 19 5 12 12 5"></polyline>
                 </svg>
                 Tornar a la petició
+            </a>
+
+            <a th:if="${session.userRole != null and session.userRole == 'TECHNICIAN'}"
+               th:href="@{/candidacy/details/{id}(id=${idCandidacy})}" class="btn-back">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <line x1="19" y1="12" x2="5" y2="12"></line>
+                    <polyline points="12 19 5 12 12 5"></polyline>
+                </svg>
+                Tornar a la candidatura
             </a>
         </div>
 

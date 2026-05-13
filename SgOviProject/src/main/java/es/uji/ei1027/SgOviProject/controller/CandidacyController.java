@@ -62,15 +62,19 @@ public class CandidacyController {
         // Si no viene estado en la URL, por defecto mostramos "Totes"
         if (status == null) status = "Totes";
 
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        String userRole = (String) session.getAttribute("userRole");
         AssistanceRequest assistanceRequest = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
         if (assistanceRequest == null) {
             throw new SgOviException("No s'ha trobat la petició d'assistència", "Error 404 - No trobat");
         }
 
-        if (!assistanceRequest.getDniOviUser().equals(currentUser.getDni())){
-            throw new SgOviException("No tens permisos per veure els candidats d'aquesta petició", "Error 403 - Sense permisos");
+        // El tècnic pot veure candidatures de qualsevol sol·licitud
+        if (!"TECHNICIAN".equals(userRole)) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!assistanceRequest.getDniOviUser().equals(currentUser.getDni())){
+                throw new SgOviException("No tens permisos per veure els candidats d'aquesta petició", "Error 403 - Sense permisos");
+            }
         }
 
         List<CandidacyDTO> filteredCandidacies = candidacyService.getCandidaciesWithDetailsByIdApRequestAndStatus(idApRequest, status);
@@ -139,7 +143,7 @@ public class CandidacyController {
     @GetMapping(value="/details/{idCandidacy}")
     public String detailsCandidacy(Model model, @PathVariable int idCandidacy, HttpSession session) {
 
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        String userRole = (String) session.getAttribute("userRole");
 
         CandidacyDTO candidacyDto = candidacyService.getCandidacyDetailByIdCandidacy(idCandidacy);
 
@@ -147,8 +151,12 @@ public class CandidacyController {
             throw new SgOviException("No s'ha trobat la candidatura", "Error 404 - No trobat");
         }
 
-        if (!candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) {
-            throw new SgOviException("No tens permisos per veure els detalls d'aquesta candidatura", "Error 403 - Sense permisos");
+        // El tècnic pot veure qualsevol candidatura
+        if (!"TECHNICIAN".equals(userRole)) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) {
+                throw new SgOviException("No tens permisos per veure els detalls d'aquesta candidatura", "Error 403 - Sense permisos");
+            }
         }
 
         model.addAttribute("candidacyDto", candidacyDto);

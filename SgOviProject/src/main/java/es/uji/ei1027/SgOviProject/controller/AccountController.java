@@ -1,15 +1,19 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
+import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
+import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.LegalGuardianDao;
 import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
 import es.uji.ei1027.SgOviProject.dto.AccountWithTypeDTO;
+import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.filters.AccountTypeFilter;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
+import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -38,6 +42,15 @@ public class AccountController {
 
     @Autowired
     private LegalGuardianDao legalGuardianDao;
+
+    @Autowired
+    private AssistanceRequestDao assistanceRequestDao;
+
+    @Autowired
+    private CandidacyService candidacyService;
+
+    @Autowired
+    private CandidacyDao candidacyDao;
 
     @Autowired
     public void setAccountDao(AccountDao accountDao) {
@@ -331,5 +344,54 @@ public class AccountController {
         accountDao.updateAccount(existing);
         model.addAttribute("result", "rejected");
         return "account/done";
+    }
+
+    // ===== ELIMINACIÓ FÍSICA D'UN COMPTE (tècnic) =====
+
+    @GetMapping(value = "/deleteReason/{dni}")
+    public String deleteReasonForm(@PathVariable String dni, Model model) {
+        Account account = accountDao.getAccount(dni);
+        model.addAttribute("account", account);
+        return "account/deleteReason";
+    }
+
+    @PostMapping(value = "/deleteReason")
+    public String processDeleteReason(@ModelAttribute("account") Account account) {
+        accountDao.deleteAccount(account.getDni());
+        return "redirect:/account/allAccounts";
+    }
+
+    // ===== HISTORIAL D'AR PER OVIUSER (tècnic) =====
+
+    @GetMapping(value = "/apHistory/{dni}")
+    public String apHistory(@PathVariable String dni, Model model,
+                            jakarta.servlet.http.HttpSession session) {
+        Account account = accountDao.getAccount(dni);
+        model.addAttribute("account", account);
+
+        List<AssistanceRequest> requests = assistanceRequestDao.getAssistanceRequestsByDni(dni);
+        model.addAttribute("requests", requests);
+
+        session.setAttribute("lastApHistoryDni", dni);
+        return "account/apHistory";
+    }
+
+    // ===== HISTORIAL DE CANDIDATURES PER PAPPATI (tècnic) =====
+
+    @GetMapping(value = "/candidacyHistory/{dni}")
+    public String candidacyHistory(@PathVariable String dni, Model model,
+                                   jakarta.servlet.http.HttpSession session) {
+        Account account = accountDao.getAccount(dni);
+        model.addAttribute("account", account);
+
+        List<Candidacy> rawCandidacies = candidacyDao.getCandidaciesByDniPapPati(dni);
+        List<CandidacyDTO> candidacyDTOs = new ArrayList<>();
+        for (Candidacy c : rawCandidacies) {
+            candidacyDTOs.add(candidacyService.getCandidacyDetailByIdCandidacy(c.getIdCandidacy()));
+        }
+        model.addAttribute("candidacies", candidacyDTOs);
+
+        session.setAttribute("lastCandidacyHistoryDni", dni);
+        return "account/candidacyHistory";
     }
 }
