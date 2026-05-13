@@ -9,6 +9,11 @@ public class OviUserUpdateDTO {
     private String newPassword;
     private String confirmPassword;
 
+    public OviUserUpdateDTO() {
+        this.account = new Account();
+        this.oviUser = new OviUser();
+    }
+
     public OviUserUpdateDTO(Account account, OviUser oviUser){
         this.account = account;
         this.oviUser = oviUser;

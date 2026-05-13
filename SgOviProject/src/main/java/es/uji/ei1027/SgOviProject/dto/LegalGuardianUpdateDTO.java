@@ -11,7 +11,10 @@ public class LegalGuardianUpdateDTO {
     private String newSignatureCode;
     private String confirmSignatureCode;
 
-    public LegalGuardianUpdateDTO() {}
+    public LegalGuardianUpdateDTO() {
+        this.account = new Account();
+        this.legalGuardian = new LegalGuardian();
+    }
 
     public LegalGuardianUpdateDTO(Account account, LegalGuardian legalGuardian){
         this.account = account;

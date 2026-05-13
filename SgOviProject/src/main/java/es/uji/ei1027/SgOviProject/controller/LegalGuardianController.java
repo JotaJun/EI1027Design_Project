@@ -19,7 +19,10 @@ import org.springframework.web.bind.annotation.RequestMapping;
 
 import java.time.LocalDate;
 import java.time.format.DateTimeFormatter;
+import java.util.Arrays;
+import java.util.List;
 import java.util.Locale;
+import es.uji.ei1027.SgOviProject.enums.Gender;
 
 @Controller
 @RequestMapping("/legalGuardian")
@@ -32,6 +35,11 @@ public class LegalGuardianController {
 
     @Autowired
     private LegalGuardianDao legalGuardianDao;
+
+    @ModelAttribute("genderList")
+    public List<Gender> genderList() {
+        return Arrays.asList(Gender.values());
+    }
 
 
     @GetMapping("/register")

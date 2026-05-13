@@ -9,6 +9,11 @@ public class PapPatiUpdateDTO {
     private String newPassword;
     private String confirmPassword;
 
+    public PapPatiUpdateDTO() {
+        this.account = new Account();
+        this.papPati = new PapPati();
+    }
+
     public PapPatiUpdateDTO(Account account, PapPati papPati){
         this.account = account;
         this.papPati = papPati;
