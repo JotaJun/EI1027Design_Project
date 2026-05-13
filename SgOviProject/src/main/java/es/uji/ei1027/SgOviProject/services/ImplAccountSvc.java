@@ -72,13 +72,20 @@ public class ImplAccountSvc implements IntAccountSvc {
     @Override
     public void addLegalGuardian(Account account, LegalGuardian legalGuardian){
         accountDao.addAccount(account);
+ 
+        // Si no tiene el dni se lo asignamos
+        legalGuardian.setDni(account.getDni());
+ 
+        legalGuardianDao.addLegalGuardian(legalGuardian);
+    }
+
+    @Override
+    public void updateLegalGuardian(Account account, LegalGuardian legalGuardian) {
+        accountDao.updateAccount(account);
 
         // Si no tiene el dni se lo asignamos
         legalGuardian.setDni(account.getDni());
 
-        legalGuardianDao.addLegalGuardian(legalGuardian);
+        legalGuardianDao.updateLegalGuardian(legalGuardian);
     }
-
-
-
 }

@@ -12,4 +12,5 @@ public interface IntAccountSvc {
     void addOviUser(Account account, OviUser oviUser);
     void updateOviUser(Account account, OviUser oviUser);
     void addLegalGuardian(Account account, LegalGuardian legalGuardian);
+    void updateLegalGuardian(Account account, LegalGuardian legalGuardian);
 }
