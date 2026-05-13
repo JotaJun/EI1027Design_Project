@@ -59,11 +59,12 @@
           <td class="text-center">
             <div class="actions-cell">
 
-              <!-- Botón Acceptar -->
-              <a th:href="@{/account/approve/{dni}(dni=${account.dni})}"
-                 class="action-btn text-success" title="Acceptar compte">
+              <!-- Botón Veure informació -->
+              <a th:href="@{/account/details/{dni}(dni=${account.dni})}"
+                 class="action-btn" title="Veure informació del sol·licitant">
                 <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <polyline points="20 6 9 17 4 12"></polyline>
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
                 </svg>
               </a>
 
