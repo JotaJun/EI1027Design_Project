@@ -4,7 +4,10 @@ import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.LegalGuardianDao;
 import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
+import es.uji.ei1027.SgOviProject.dto.AccountWithTypeDTO;
+import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.enums.Status;
+import es.uji.ei1027.SgOviProject.filters.AccountTypeFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -13,6 +16,7 @@ import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -84,27 +88,55 @@ public class AccountController {
         return "redirect:/account/list";
     }
 
-    @GetMapping(value = "/pendingAccounts")
+    @GetMapping(value = {"/pendingAccounts", "/pendingAccounts/{type}"})
     public String listPendingAccounts(Model model,
+                                      @PathVariable(required = false) String type,
                                       @RequestParam("page") Optional<Integer> page) {
 
-        List<Account> allPending = accountDao.getPendingAccounts();
+        if (type == null) type = "Tots";
 
-        // Crear la lista paginada
-        ArrayList<ArrayList<Account>> accountsPaged = new ArrayList<>();
+        // 1. Obtener todas las cuentas pendientes y enriquecerlas con su tipo
+        List<Account> allPending = accountDao.getPendingAccounts();
+        List<AccountWithTypeDTO> allWithType = new ArrayList<>();
+
+        for (Account account : allPending) {
+            AccountType accountType;
+            if (papPatiDao.getPapPati(account.getDni()) != null) {
+                accountType = AccountType.PAPPATI;
+            } else if (oviUserDao.getOviUser(account.getDni()) != null) {
+                accountType = AccountType.OVIUSER;
+            } else {
+                accountType = AccountType.LEGALGUARDIAN;
+            }
+            allWithType.add(new AccountWithTypeDTO(account, accountType));
+        }
+
+        // 2. Aplicar filtro por tipo
+        List<AccountWithTypeDTO> filtered;
+        if (type.equals("Tots")) {
+            filtered = allWithType;
+        } else {
+            final String typeFinal = type;
+            filtered = allWithType.stream()
+                    .filter(dto -> dto.getAccountType().name().equals(typeFinal))
+                    .collect(Collectors.toList());
+        }
+
+        // 3. Paginar
+        ArrayList<ArrayList<AccountWithTypeDTO>> accountsPaged = new ArrayList<>();
         int ini = 0;
         int fin = pageLength;
 
-        while (fin <= allPending.size()) {
-            accountsPaged.add(new ArrayList<>(allPending.subList(ini, fin)));
+        while (fin <= filtered.size()) {
+            accountsPaged.add(new ArrayList<>(filtered.subList(ini, fin)));
             ini += pageLength;
             fin += pageLength;
         }
-        if (ini < allPending.size()) {
-            accountsPaged.add(new ArrayList<>(allPending.subList(ini, allPending.size())));
+        if (ini < filtered.size()) {
+            accountsPaged.add(new ArrayList<>(filtered.subList(ini, filtered.size())));
         }
 
-        // Crear la barra de navegación de páginas
+        // 4. Números de página
         int totalPages = accountsPaged.size();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
@@ -121,12 +153,26 @@ public class AccountController {
             currentPage = 0;
         }
 
+        // 5. Preparar filtro para la vista
+        AccountTypeFilter filter = new AccountTypeFilter();
+        filter.setTypeSel(type);
+
+        model.addAttribute("accountTypeFilter", filter);
+        model.addAttribute("accountTypes", Arrays.stream(AccountType.values())
+                .filter(t -> t != AccountType.TECHNICIAN)
+                .collect(Collectors.toList()));
         model.addAttribute("accountsPaged", accountsPaged);
         model.addAttribute("selectedPage", currentPage);
-        model.addAttribute("totalAccounts", allPending.size());
+        model.addAttribute("totalAccounts", filtered.size());
         model.addAttribute("pageLength", pageLength);
+        model.addAttribute("selectedType", type);
 
         return "account/pendingAccounts";
+    }
+
+    @PostMapping(value = "/pendingAccounts")
+    public String processTypeFilter(@ModelAttribute("accountTypeFilter") AccountTypeFilter filter) {
+        return "redirect:/account/pendingAccounts/" + filter.getTypeSel();
     }
 
     @GetMapping(value = "/details/{dni}")
