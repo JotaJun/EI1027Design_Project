@@ -17,7 +17,7 @@
         <div class="assistance-card">
 
             <div class="requests-header-action">
-                <a th:href="@{/account/pendingAccounts}" class="btn-back">
+                <a th:href="${session.lastAccountListUrl != null ? session.lastAccountListUrl : '/account/pendingAccounts'}" class="btn-back">
                     <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                         <line x1="19" y1="12" x2="5" y2="12"></line>
                         <polyline points="12 19 5 12 12 5"></polyline>
@@ -32,7 +32,9 @@
                 <h2 class="card-title">
                     Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span>
                 </h2>
-                <span class="status-badge badge-pending" th:text="${account.status.name()}">PENDING</span>
+                <span class="status-badge"
+                      th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
+                      th:text="${account.status.description}">PENDING</span>
             </div>
 
             <!-- ===== DADES PERSONALS (comuns a tots els rols) ===== -->
@@ -154,7 +156,7 @@
             </th:block>
 
             <!-- ===== BOTONS D'ACCIÓ ===== -->
-            <div class="form-actions-centered actions-bordered">
+            <div th:if="${!readOnly}" class="form-actions-centered actions-bordered">
 
                 <!-- Botó Acceptar -->
                 <a th:href="@{/account/approve/{dni}(dni=${account.dni})}" class="btn-primary btn-icon">

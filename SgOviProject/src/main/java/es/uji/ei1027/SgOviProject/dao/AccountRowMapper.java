@@ -36,9 +36,14 @@ public final class AccountRowMapper implements RowMapper<Account> {
 
         String genderStr = rs.getString("gender");
         if (genderStr != null && !genderStr.trim().isEmpty()) {
-            account.setGender(Gender.valueOf(genderStr));
+            try {
+                account.setGender(Gender.valueOf(genderStr.toUpperCase()));
+            } catch (IllegalArgumentException e) {
+                // Valor desconegut a la BD, deixem gender a null per no avortar tota la consulta
+                account.setGender(null);
+            }
         } else {
-            throw new SQLException("Gender cannot be null or empty");
+            account.setGender(null);
         }
 
         return account;
