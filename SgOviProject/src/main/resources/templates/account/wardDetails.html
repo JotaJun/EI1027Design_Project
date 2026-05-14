@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Detall del compte - SgOVI</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="assistance-card">
+
+            <div class="requests-header-action">
+                <a th:href="@{/account/wardList}" class="btn-back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Tornar al llistat
+                </a>
+            </div>
+
+            <br>
+
+            <div class="header-flex">
+                <h2 class="card-title">
+                    Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span>
+                </h2>
+                <span class="status-badge"
+                      th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
+                      th:text="${account.status.description}">PENDING</span>
+            </div>
+
+            <!-- ===== DADES PERSONALS (comuns a tots els rols) ===== -->
+            <h3 class="detail-section-title mt-10">Dades Personals</h3>
+            <div class="form-grid">
+                <div class="detail-group">
+                    <span class="detail-label">DNI</span>
+                    <span class="detail-value" th:text="${account.dni}">12345678A</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Correu electrònic</span>
+                    <span class="detail-value" th:text="${account.email}">exemple@mail.com</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Telèfon</span>
+                    <span class="detail-value" th:text="${account.phoneNumber}">612345678</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Data de naixement</span>
+                    <span class="detail-value" th:text="${account.birthday != null ? #temporals.format(account.birthday, 'dd/MM/yyyy') : 'No especificada'}">01/01/1990</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Gènere</span>
+                    <span class="detail-value" th:text="${account.gender != null ? account.gender.name() : 'No especificat'}">Masculí</span>
+                </div>
+            </div>
+
+            <h3 class="detail-section-title">Adreça</h3>
+            <div class="form-grid">
+                <div class="detail-group">
+                    <span class="detail-label">Carrer</span>
+                    <span class="detail-value" th:text="${account.street}">Carrer Major, 1</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Població</span>
+                    <span class="detail-value" th:text="${account.city}">Castelló</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Codi postal</span>
+                    <span class="detail-value" th:text="${account.zipCode}">12001</span>
+                </div>
+            </div>
+
+            <!-- ===== DADES ESPECÍFIQUES: PAPPATI ===== -->
+            <th:block th:if="${role == 'PAPPATI'}">
+                <h3 class="detail-section-title">Perfil de Personal d'Assistència</h3>
+                <div class="form-grid">
+                    <div class="detail-group">
+                        <span class="detail-label">Tipus de personal</span>
+                        <span class="detail-value"><strong th:text="${papPati.staffType}">PAP</strong></span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Anys d'experiència</span>
+                        <span class="detail-value" th:text="${papPati.yearsOfExperience} + ' anys'">3 anys</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Carnet de conduir</span>
+                        <span class="detail-value" th:text="${papPati.drivingLicense ? 'Sí' : 'No'}">Sí</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Disponibilitat des de</span>
+                        <span class="detail-value" th:text="${papPati.initialAvailableDate != null ? #temporals.format(papPati.initialAvailableDate, 'dd/MM/yyyy') : 'No especificada'}">01/06/2026</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Disponibilitat fins a</span>
+                        <span class="detail-value" th:text="${papPati.lastAvailableDate != null ? #temporals.format(papPati.lastAvailableDate, 'dd/MM/yyyy') : 'No especificada'}">31/12/2026</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Formació</span>
+                        <span class="detail-value" th:text="${!#strings.isEmpty(papPati.training) ? papPati.training : 'No especificada'}">Grau en...</span>
+                    </div>
+                </div>
+                <th:block th:if="${!#strings.isEmpty(papPati.urlCv)}">
+                    <h3 class="detail-section-title">Currículum</h3>
+                    <div class="detail-description-box">
+                        <a th:href="${papPati.urlCv}" target="_blank" class="btn-outline" rel="noopener noreferrer">
+                            Veure CV
+                        </a>
+                    </div>
+                </th:block>
+            </th:block>
+
+            <!-- ===== DADES ESPECÍFIQUES: OVIUSER ===== -->
+            <th:block th:if="${role == 'OVIUSER'}">
+                <h3 class="detail-section-title">Rol: Usuari OVI</h3>
+                <div class="form-grid">
+                    <th:block th:if="${guardianAccount != null}">
+                        <div class="detail-group">
+                            <span class="detail-label">Tutor legal (DNI)</span>
+                            <span class="detail-value" th:text="${guardianAccount.dni}">87654321B</span>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Tutor legal (nom)</span>
+                            <span class="detail-value" th:text="${guardianAccount.name + ' ' + guardianAccount.surname}">Nom del tutor</span>
+                        </div>
+                        <div class="detail-group">
+                            <span class="detail-label">Contacte tutor</span>
+                            <span class="detail-value" th:text="${guardianAccount.email}">tutor@mail.com</span>
+                        </div>
+                    </th:block>
+                    <th:block th:unless="${guardianAccount != null}">
+                        <div class="detail-group">
+                            <span class="detail-label">Tutor legal</span>
+                            <span class="detail-value">No té tutor legal assignat</span>
+                        </div>
+                    </th:block>
+                </div>
+            </th:block>
+
+            <!-- ===== DADES ESPECÍFIQUES: TUTOR LEGAL ===== -->
+            <th:block th:if="${role == 'LEGALGUARDIAN'}">
+                <h3 class="detail-section-title">Rol: Tutor Legal</h3>
+                <div class="form-grid">
+                    <div class="detail-group">
+                        <span class="detail-label">Tipus de compte</span>
+                        <span class="detail-value">Tutor o tutora legal d'un usuari OVI</span>
+                    </div>
+                </div>
+            </th:block>
+
+        </div>
+    </div>
+</main>
+
+</body>
+</html>

@@ -86,8 +86,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/papPati/register",
                                                 "/legalGuardian/register",
                                                 "/css/**", // Archivos de estilos
-                                                "/images/**", // Imágenes
-                                                "/account/**");
+                                                "/images/**"); // Imágenes
 
                 // Interceptor para roles
 
@@ -128,7 +127,9 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                 // LEGALGUARDIAN (Solo rutas exclusivas de LEGALGUARDIAN)
                 registry.addInterceptor(new RoleInterceptor(AccountType.LEGALGUARDIAN))
                                 .addPathPatterns(
-                                                "/legalGuardian/**")
+                                                "/legalGuardian/**",
+                                                "/account/wardList/**",
+                                                "/account/wardDetails/")
                                 .excludePathPatterns("/legalGuardian/register");
 
                 // --- REGLAS COMPARTIDAS ---
@@ -145,4 +146,4 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/contract/list/**",
                                                 "/contract/details/**");
         }
-}
+}

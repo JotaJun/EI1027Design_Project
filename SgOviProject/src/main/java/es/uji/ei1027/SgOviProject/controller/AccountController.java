@@ -82,6 +82,20 @@ public class AccountController {
         return "redirect:/account/list";
     }
 
+    @GetMapping(value = "/approve/{dni}")
+    public String approveAccount(@PathVariable String dni, Model model, HttpSession session) {
+        String userRole = (String) session.getAttribute("userRole");
+        if (!"TECHNICIAN".equals(userRole)) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot aprovar comptes", "Error 403 - Sense permisos");
+        }
+        
+        Account account = accountDao.getAccount(dni);
+        account.setStatus(Status.ACCEPTED);
+        accountDao.updateAccount(account);
+        model.addAttribute("result", "approved");
+        return "account/done";
+    }
+
     @RequestMapping(value = "/update/{dni}")
     public String editAccount(@PathVariable String dni, Model model) {
         model.addAttribute("account", accountDao.getAccount(dni));
@@ -370,10 +384,27 @@ public class AccountController {
         return "redirect:/account/allAccounts/" + typeFilter.getTypeSel() + "/" + statusFilter.getStatusSel();
     }
 
-    @GetMapping(value = "/details/{dni}")
+    @GetMapping(value = {"/details/{dni}", "/wardDetails/{dni}"})
     public String detailsAccount(@PathVariable String dni,
-                                 @RequestParam(required = false, defaultValue = "false") boolean readOnly,
-                                 Model model) {
+            @RequestParam(required = false, defaultValue = "false") boolean readOnly,
+            Model model,
+            HttpSession session) {
+
+        String userRole = (String) session.getAttribute("userRole");
+        Account currentUser = (Account) session.getAttribute("account");
+        
+        String viewName = "account/details";
+
+        // Seguridad: Si es un tutor legal, validar que el DNI pertenece a su tutelado
+        if ("LEGALGUARDIAN".equals(userRole)) {
+            viewName = "account/wardDetails";
+            OviUser oviUser = oviUserDao.getOviUser(dni);
+            if (oviUser == null || !currentUser.getDni().equals(oviUser.getDniLegalGuardian())) {
+                throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                        "No tens permisos per veure els detalls d'aquest compte", "Error 403 - Sense permisos");
+            }
+        }
+
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
         model.addAttribute("readOnly", readOnly);
@@ -383,7 +414,7 @@ public class AccountController {
         if (papPati != null) {
             model.addAttribute("papPati", papPati);
             model.addAttribute("role", "PAPPATI");
-            return "account/details";
+            return viewName;
         }
 
         OviUser oviUser = oviUserDao.getOviUser(dni);
@@ -395,32 +426,33 @@ public class AccountController {
                 Account guardianAccount = accountDao.getAccount(oviUser.getDniLegalGuardian());
                 model.addAttribute("guardianAccount", guardianAccount);
             }
-            return "account/details";
+            return viewName;
         }
 
         // Si no es PapPati ni OviUser, es tutor legal
         model.addAttribute("role", "LEGALGUARDIAN");
-        return "account/details";
-    }
-
-    @GetMapping(value = "/approve/{dni}")
-    public String approveAccount(@PathVariable String dni, Model model) {
-        Account account = accountDao.getAccount(dni);
-        account.setStatus(Status.ACCEPTED);
-        accountDao.updateAccount(account);
-        model.addAttribute("result", "approved");
-        return "account/done";
+        return viewName;
     }
 
     @GetMapping(value = "/denyReason/{dni}")
-    public String denyReasonForm(@PathVariable String dni, Model model) {
+    public String denyReasonForm(@PathVariable String dni, Model model, HttpSession session) {
+        String userRole = (String) session.getAttribute("userRole");
+        if (!"TECHNICIAN".equals(userRole)) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot denegar comptes", "Error 403 - Sense permisos");
+        }
+        
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
         return "account/denyReason";
     }
 
     @PostMapping(value = "/denyReason")
-    public String processDenyReason(@ModelAttribute("account") Account account, Model model) {
+    public String processDenyReason(@ModelAttribute("account") Account account, Model model, HttpSession session) {
+        String userRole = (String) session.getAttribute("userRole");
+        if (!"TECHNICIAN".equals(userRole)) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot denegar comptes", "Error 403 - Sense permisos");
+        }
+        
         Account existing = accountDao.getAccount(account.getDni());
         existing.setStatus(Status.REJECTED);
         existing.setDeniedReason(account.getDeniedReason());
@@ -432,14 +464,24 @@ public class AccountController {
     // ===== ELIMINACIÓ FÍSICA D'UN COMPTE (tècnic) =====
 
     @GetMapping(value = "/deleteReason/{dni}")
-    public String deleteReasonForm(@PathVariable String dni, Model model) {
+    public String deleteReasonForm(@PathVariable String dni, Model model, HttpSession session) {
+        String userRole = (String) session.getAttribute("userRole");
+        if (!"TECHNICIAN".equals(userRole)) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot eliminar comptes", "Error 403 - Sense permisos");
+        }
+        
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
         return "account/deleteReason";
     }
 
     @PostMapping(value = "/deleteReason")
-    public String processDeleteReason(@ModelAttribute("account") Account account) {
+    public String processDeleteReason(@ModelAttribute("account") Account account, HttpSession session) {
+        String userRole = (String) session.getAttribute("userRole");
+        if (!"TECHNICIAN".equals(userRole)) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot eliminar comptes", "Error 403 - Sense permisos");
+        }
+        
         accountDao.deleteAccount(account.getDni());
         return "redirect:/account/allAccounts";
     }
