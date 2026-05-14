@@ -1,163 +1,137 @@
 <!DOCTYPE html>
-<html lang="ca" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/base}">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/base}">
+
 <head>
     <title>Detall del compte - SgOVI</title>
 </head>
+
 <body>
 
-<div layout:fragment="header">
-    <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
-</div>
-
-<main layout:fragment="content">
-    <div class="container dashboard-main">
-
-        <div class="assistance-card">
-
-            <div class="requests-header-action">
-                <a th:href="@{/account/wardList}" class="btn-back">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <line x1="19" y1="12" x2="5" y2="12"></line>
-                        <polyline points="12 19 5 12 12 5"></polyline>
-                    </svg>
-                    Tornar al llistat
-                </a>
-            </div>
-
-            <br>
-
-            <div class="header-flex">
-                <h2 class="card-title">
-                    Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span>
-                </h2>
-                <span class="status-badge"
-                      th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
-                      th:text="${account.status.description}">PENDING</span>
-            </div>
-
-            <!-- ===== DADES PERSONALS (comuns a tots els rols) ===== -->
-            <h3 class="detail-section-title mt-10">Dades Personals</h3>
-            <div class="form-grid">
-                <div class="detail-group">
-                    <span class="detail-label">DNI</span>
-                    <span class="detail-value" th:text="${account.dni}">12345678A</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Correu electrònic</span>
-                    <span class="detail-value" th:text="${account.email}">exemple@mail.com</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Telèfon</span>
-                    <span class="detail-value" th:text="${account.phoneNumber}">612345678</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Data de naixement</span>
-                    <span class="detail-value" th:text="${account.birthday != null ? #temporals.format(account.birthday, 'dd/MM/yyyy') : 'No especificada'}">01/01/1990</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Gènere</span>
-                    <span class="detail-value" th:text="${account.gender != null ? account.gender.name() : 'No especificat'}">Masculí</span>
-                </div>
-            </div>
-
-            <h3 class="detail-section-title">Adreça</h3>
-            <div class="form-grid">
-                <div class="detail-group">
-                    <span class="detail-label">Carrer</span>
-                    <span class="detail-value" th:text="${account.street}">Carrer Major, 1</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Població</span>
-                    <span class="detail-value" th:text="${account.city}">Castelló</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Codi postal</span>
-                    <span class="detail-value" th:text="${account.zipCode}">12001</span>
-                </div>
-            </div>
-
-            <!-- ===== DADES ESPECÍFIQUES: PAPPATI ===== -->
-            <th:block th:if="${role == 'PAPPATI'}">
-                <h3 class="detail-section-title">Perfil de Personal d'Assistència</h3>
-                <div class="form-grid">
-                    <div class="detail-group">
-                        <span class="detail-label">Tipus de personal</span>
-                        <span class="detail-value"><strong th:text="${papPati.staffType}">PAP</strong></span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label">Anys d'experiència</span>
-                        <span class="detail-value" th:text="${papPati.yearsOfExperience} + ' anys'">3 anys</span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label">Carnet de conduir</span>
-                        <span class="detail-value" th:text="${papPati.drivingLicense ? 'Sí' : 'No'}">Sí</span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label">Disponibilitat des de</span>
-                        <span class="detail-value" th:text="${papPati.initialAvailableDate != null ? #temporals.format(papPati.initialAvailableDate, 'dd/MM/yyyy') : 'No especificada'}">01/06/2026</span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label">Disponibilitat fins a</span>
-                        <span class="detail-value" th:text="${papPati.lastAvailableDate != null ? #temporals.format(papPati.lastAvailableDate, 'dd/MM/yyyy') : 'No especificada'}">31/12/2026</span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label">Formació</span>
-                        <span class="detail-value" th:text="${!#strings.isEmpty(papPati.training) ? papPati.training : 'No especificada'}">Grau en...</span>
-                    </div>
-                </div>
-                <th:block th:if="${!#strings.isEmpty(papPati.urlCv)}">
-                    <h3 class="detail-section-title">Currículum</h3>
-                    <div class="detail-description-box">
-                        <a th:href="${papPati.urlCv}" target="_blank" class="btn-outline" rel="noopener noreferrer">
-                            Veure CV
-                        </a>
-                    </div>
-                </th:block>
-            </th:block>
-
-            <!-- ===== DADES ESPECÍFIQUES: OVIUSER ===== -->
-            <th:block th:if="${role == 'OVIUSER'}">
-                <h3 class="detail-section-title">Rol: Usuari OVI</h3>
-                <div class="form-grid">
-                    <th:block th:if="${guardianAccount != null}">
-                        <div class="detail-group">
-                            <span class="detail-label">Tutor legal (DNI)</span>
-                            <span class="detail-value" th:text="${guardianAccount.dni}">87654321B</span>
-                        </div>
-                        <div class="detail-group">
-                            <span class="detail-label">Tutor legal (nom)</span>
-                            <span class="detail-value" th:text="${guardianAccount.name + ' ' + guardianAccount.surname}">Nom del tutor</span>
-                        </div>
-                        <div class="detail-group">
-                            <span class="detail-label">Contacte tutor</span>
-                            <span class="detail-value" th:text="${guardianAccount.email}">tutor@mail.com</span>
-                        </div>
-                    </th:block>
-                    <th:block th:unless="${guardianAccount != null}">
-                        <div class="detail-group">
-                            <span class="detail-label">Tutor legal</span>
-                            <span class="detail-value">No té tutor legal assignat</span>
-                        </div>
-                    </th:block>
-                </div>
-            </th:block>
-
-            <!-- ===== DADES ESPECÍFIQUES: TUTOR LEGAL ===== -->
-            <th:block th:if="${role == 'LEGALGUARDIAN'}">
-                <h3 class="detail-section-title">Rol: Tutor Legal</h3>
-                <div class="form-grid">
-                    <div class="detail-group">
-                        <span class="detail-label">Tipus de compte</span>
-                        <span class="detail-value">Tutor o tutora legal d'un usuari OVI</span>
-                    </div>
-                </div>
-            </th:block>
-
-        </div>
+    <div layout:fragment="header">
+        <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
     </div>
-</main>
+
+    <main layout:fragment="content">
+        <div class="container dashboard-main">
+
+            <div class="assistance-card">
+
+                <div class="requests-header-action">
+                    <a th:href="@{/account/wardList}" class="btn-back">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="19" y1="12" x2="5" y2="12"></line>
+                            <polyline points="12 19 5 12 12 5"></polyline>
+                        </svg>
+                        Tornar al llistat
+                    </a>
+                </div>
+
+                <br>
+
+                <div class="header-flex">
+                    <h2 class="card-title">
+                        Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span>
+                    </h2>
+                    <span class="status-badge"
+                        th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
+                        th:text="${account.status.description}">PENDING</span>
+                </div>
+
+                <!-- ===== DADES PERSONALS ===== -->
+                <h3 class="detail-section-title mt-10">Dades Personals</h3>
+                <div class="form-grid">
+                    <div class="detail-group">
+                        <span class="detail-label">DNI</span>
+                        <span class="detail-value" th:text="${account.dni}">12345678A</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Correu electrònic</span>
+                        <span class="detail-value" th:text="${account.email}">exemple@mail.com</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Telèfon</span>
+                        <span class="detail-value" th:text="${account.phoneNumber}">612345678</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Data de naixement</span>
+                        <span class="detail-value"
+                            th:text="${account.birthday != null ? #temporals.format(account.birthday, 'dd/MM/yyyy') : 'No especificada'}">01/01/1990</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Gènere</span>
+                        <span class="detail-value"
+                            th:text="${account.gender != null ? account.gender.name() : 'No especificat'}">Masculí</span>
+                    </div>
+                </div>
+
+                <h3 class="detail-section-title">Adreça</h3>
+                <div class="form-grid">
+                    <div class="detail-group">
+                        <span class="detail-label">Carrer</span>
+                        <span class="detail-value" th:text="${account.street}">Carrer Major, 1</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Població</span>
+                        <span class="detail-value" th:text="${account.city}">Castelló</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Codi postal</span>
+                        <span class="detail-value" th:text="${account.zipCode}">12001</span>
+                    </div>
+                </div>
+
+                <!-- ===== BOTONS D'ACCIÓ PER AL TUTOR ===== -->
+                <div class="form-actions-centered actions-bordered">
+
+                    <!-- Botó Editar Perfil -->
+                    <a th:if="${account.status.name() != 'REJECTED'}" th:href="@{/account/update/{dni}(dni=${account.dni})}" class="btn-outline btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                        </svg>
+                        Editar perfil
+                    </a>
+
+                    <!-- Botó Sol·licitar Assistència (Acció principal) -->
+                    <a th:if="${account.status.name() != 'REJECTED'}" th:href="@{/assistanceRequest/add/{dni}(dni=${account.dni})}" class="btn-primary btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="12" y1="18" x2="12" y2="12"></line>
+                            <line x1="9" y1="15" x2="15" y2="15"></line>
+                        </svg>
+                        Sol·licitar assistència
+                    </a>
+
+                    <!-- Botó Veure Historial -->
+                    <a th:href="@{/assistanceRequest/history/{dni}(dni=${account.dni})}" class="btn-outline btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                            <polyline points="14 2 14 8 20 8"></polyline>
+                            <line x1="16" y1="13" x2="8" y2="13"></line>
+                            <line x1="16" y1="17" x2="8" y2="17"></line>
+                            <polyline points="10 9 9 9 8 9"></polyline>
+                        </svg>
+                        Historial
+                    </a>
+
+                    <!-- Botó Donar de Baixa -->
+                    <a th:if="${account.status.name() != 'REJECTED'}" th:href="@{/account/deactivateWard/{dni}(dni=${account.dni})}" class="btn-outline-danger btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M18.36 6.64a9 9 0 1 1-12.73 0"></path>
+                            <line x1="12" y1="2" x2="12" y2="12"></line>
+                        </svg>
+                        Donar de baixa
+                    </a>
+
+                </div>
+
+            </div>
+        </div>
+    </main>
 
 </body>
+
 </html>

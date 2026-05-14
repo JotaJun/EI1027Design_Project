@@ -430,7 +430,6 @@ public class AccountController {
         }
 
         // Si no es PapPati ni OviUser, es tutor legal
-        model.addAttribute("role", "LEGALGUARDIAN");
         return viewName;
     }
 
@@ -458,6 +457,60 @@ public class AccountController {
         existing.setDeniedReason(account.getDeniedReason());
         accountDao.updateAccount(existing);
         model.addAttribute("result", "rejected");
+        return "account/done";
+    }
+
+    // ===== BAIXA DE COMPTE (tutor legal) =====
+
+    @GetMapping(value = "/deactivateWard/{dni}")
+    public String deactivateWardForm(@PathVariable String dni, Model model, HttpSession session) {
+        String userRole = (String) session.getAttribute("userRole");
+        Account currentUser = (Account) session.getAttribute("account");
+
+        if (!"LEGALGUARDIAN".equals(userRole)) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només els tutors legals poden donar de baixa un compte d'usuari OVI", "Error 403 - Sense permisos");
+        }
+
+        // Verificar que el usuario OVI le pertenece
+        OviUser oviUser = oviUserDao.getOviUser(dni);
+        if (oviUser == null || !currentUser.getDni().equals(oviUser.getDniLegalGuardian())) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("No tens permisos per donar de baixa aquest compte", "Error 403 - Sense permisos");
+        }
+
+        Account account = accountDao.getAccount(dni);
+        model.addAttribute("account", account);
+        return "account/deactivateWard";
+    }
+
+    @PostMapping(value = "/deactivateWard")
+    public String processDeactivateWard(@ModelAttribute("account") Account account, Model model, HttpSession session) {
+        String userRole = (String) session.getAttribute("userRole");
+        Account currentUser = (Account) session.getAttribute("account");
+
+        if (!"LEGALGUARDIAN".equals(userRole)) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només els tutors legals poden donar de baixa un compte", "Error 403 - Sense permisos");
+        }
+
+        // Verificar pertenencia
+        OviUser oviUser = oviUserDao.getOviUser(account.getDni());
+        if (oviUser == null || !currentUser.getDni().equals(oviUser.getDniLegalGuardian())) {
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("No tens permisos per donar de baixa aquest compte", "Error 403 - Sense permisos");
+        }
+
+        Account existing = accountDao.getAccount(account.getDni());
+
+        // Validación backend del motivo
+        if (account.getDeniedReason() == null || account.getDeniedReason().trim().isEmpty()) {
+            model.addAttribute("account", existing);
+            model.addAttribute("error", "Has d'indicar un motiu per a la baixa");
+            return "account/deactivateWard";
+        }
+
+        existing.setStatus(Status.REJECTED);
+        existing.setDeniedReason(account.getDeniedReason());
+        accountDao.updateAccount(existing);
+        
+        model.addAttribute("result", "rejected"); // Podríamos crear un 'deactivated' si hubiera un done específico, pero reutilizamos el done de rejected
         return "account/done";
     }
 
