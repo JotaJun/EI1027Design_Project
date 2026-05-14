@@ -100,9 +100,11 @@ public class AccountDao {
 
     public List<Account> getPendingAccounts() {
         try {
-            return jdbcTemplate.query("SELECT * FROM Account WHERE status='pending'", new AccountRowMapper());
+            return jdbcTemplate.query("SELECT * FROM Account WHERE status=?", new AccountRowMapper(), "pending");
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<Account>();
         }
     }
+
+
 }

@@ -74,4 +74,13 @@ public class OviUserDao {
             return new ArrayList<OviUser>();
         }
     }
+
+    //Listar oviusers por dni de LegalGuardian
+    public List<OviUser> getWardedOviUsers(String dniLegalGuardian) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM OviUser WHERE dniLegalGuardian=?", new OviUserRowMapper(), dniLegalGuardian);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<OviUser>();
+        }
+    }
 }

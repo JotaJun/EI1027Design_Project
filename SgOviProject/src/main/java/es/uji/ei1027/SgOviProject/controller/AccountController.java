@@ -102,6 +102,12 @@ public class AccountController {
         return "redirect:/account/list";
     }
 
+    @RequestMapping(value = "/ward/list/{dni}")
+    public String listWardedAccounts(@PathVariable String dni, Model model) {
+        model.addAttribute("accounts", oviUserDao.getWardedOviUsers(dni));
+        return "account/ward/list";
+    }
+
     @GetMapping(value = {"/pendingAccounts", "/pendingAccounts/{type}"})
     public String listPendingAccounts(Model model,
                                       @PathVariable(required = false) String type,
@@ -393,5 +399,10 @@ public class AccountController {
 
         session.setAttribute("lastCandidacyHistoryDni", dni);
         return "account/candidacyHistory";
+    }
+
+    @GetMapping("/ward/list")
+    public String listWards(Model model) {
+        return null;
     }
 }
