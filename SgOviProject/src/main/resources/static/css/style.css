@@ -1740,6 +1740,18 @@ label-hint {
     margin: 0;
 }
 
+/* Contenidor base per a les caixes d'informació */
+.info-box-container {
+    padding: 15px;
+    background-color: var(--color-background);
+    border-radius: 8px;
+}
+
+/* Afegeix una vora esquerra de color primari per destacar */
+.info-box-highlight {
+    border-left: 4px solid var(--color-primary);
+}
+
 /* =========================================
    NOVES CLASSES D'UTILITAT
    ========================================= */

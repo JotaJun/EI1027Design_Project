@@ -203,6 +203,10 @@ public class AssistanceRequestController {
             model.addAttribute("guardianAccount", guardianAccount);
         }
 
+        // guardar datos usuario ovi
+        Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+        model.addAttribute("oviUserAccount", oviUserAccount);
+
         model.addAttribute("req", request);
 
         return "assistanceRequest/details";
@@ -264,7 +268,7 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.updateAssistanceRequest(originalRequest);
 
-        return "redirect:/assistanceRequest/done";
+        return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest();
     }
 
     @GetMapping(value = "/delete/{idApRequest}")

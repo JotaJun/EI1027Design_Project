@@ -99,25 +99,72 @@
         </p>
       </div>
 
-      <h3 class="detail-section-title">Sol·licitant</h3>
+      <h3 class="detail-section-title">Dades de l'Usuari OVI</h3>
       <div class="form-grid">
         <div class="detail-group">
-          <span class="detail-label">DNI Usuari (OVI)</span>
-          <span class="detail-value" th:text="${req.dniOviUser}">12345678A</span>
+          <span class="detail-label">DNI</span>
+          <span class="detail-value" th:text="${oviUserAccount.dni}">12345678A</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Nom complet</span>
+          <span class="detail-value" th:text="${oviUserAccount.name + ' ' + oviUserAccount.surname}">Nom Cognom</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Data de naixement</span>
+          <span class="detail-value" th:text="${#temporals.format(oviUserAccount.birthday, 'dd/MM/yyyy')}">01/01/1990</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Correu electrònic</span>
+          <span class="detail-value" th:text="${oviUserAccount.email}">usuari@correu.cat</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Telèfon de contacte</span>
+          <span class="detail-value" th:text="${oviUserAccount.phoneNumber}">600000000</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Població</span>
+          <span class="detail-value" th:text="${oviUserAccount.city + ' (' + oviUserAccount.zipCode + ')'}">Població</span>
+        </div>
+      </div>
+
+      <th:block th:if="${guardianAccount != null}">
+        <h3 class="detail-section-title">Dades del Tutor Legal</h3>
+
+        <div class="info-box-container info-box-highlight mb-4">
+          <h4 class="info-box-title">
+            <svg class="info-box-icon" xmlns="http://www.w3.org/2000/svg" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="12" cy="12" r="10"></circle>
+              <line x1="12" y1="16" x2="12" y2="12"></line>
+              <line x1="12" y1="8" x2="12.01" y2="8"></line>
+            </svg>
+            Informació sobre l'autoria
+          </h4>
+          <p class="info-box-text">El tutor legal apareix en aquesta secció perquè és el creador d'aquesta petició d'assistència, actuant en nom de l'usuari OVI.</p>
         </div>
 
-        <th:block th:if="${guardianAccount != null}">
+        <div class="form-grid">
           <div class="detail-group">
             <span class="detail-label">DNI Tutor Legal</span>
             <span class="detail-value" th:text="${guardianAccount.dni}">87654321B</span>
           </div>
-
           <div class="detail-group">
-            <span class="detail-label">Creada pel tutor</span>
+            <span class="detail-label">Nom complet</span>
             <span class="detail-value" th:text="${guardianAccount.name + ' ' + guardianAccount.surname}">Nom del tutor</span>
           </div>
-        </th:block>
-      </div>
+          <div class="detail-group">
+            <span class="detail-label">Data de naixement</span>
+            <span class="detail-value" th:text="${#temporals.format(guardianAccount.birthday, 'dd/MM/yyyy')}">01/01/1970</span>
+          </div>
+          <div class="detail-group">
+            <span class="detail-label">Correu electrònic</span>
+            <span class="detail-value" th:text="${guardianAccount.email}">tutor@correu.cat</span>
+          </div>
+          <div class="detail-group">
+            <span class="detail-label">Telèfon de contacte</span>
+            <span class="detail-value" th:text="${guardianAccount.phoneNumber}">666555444</span>
+          </div>
+        </div>
+      </th:block>
 
       <div th:if="${req.status.name() == 'PENDING'}" class="form-actions-centered actions-bordered">
         <a th:href="@{/assistanceRequest/update/{id}(id=${req.idApRequest})}" class="btn-outline btn-icon">
