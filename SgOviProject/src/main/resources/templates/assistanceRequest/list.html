@@ -1,151 +1,168 @@
 <!DOCTYPE html>
-<html lang="ca" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/base}">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/base}">
+
 <head>
     <title>Les meues sol·licituds - SgOVI</title>
 </head>
+
 <body>
 
-<div layout:fragment="header">
-    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
-</div>
-
-<main layout:fragment="content">
-    <div class="container dashboard-main">
-
-        <div class="requests-header-action">
-            <h2 class="welcome-title">Les meues sol·licituds</h2>
-
-            <div class="header-actions-group">
-
-                <form action="#" th:action="@{/assistanceRequest/list}" th:object="${statusFilter}" method="post" class="filter-form">
-                    <div class="select-wrapper">
-                        <label for="statusSelect" class="filter-label">Filtra per estat:</label>
-
-                        <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
-                            <option value="Totes">Totes</option>
-
-                            <option th:each="status : ${statuses}"
-                                    th:value="${status.name()}"
-                                    th:text="${status.description}">
-                            </option>
-                        </select>
-                    </div>
-                </form>
-
-                <a th:href="@{/assistanceRequest/add}" class="btn-primary">+ Nova sol·licitud</a>
-            </div>
-        </div>
-
-        <div th:if="${#lists.isEmpty(requestsPaged)}" class="empty-state">
-            <p>No s'han trobat sol·licituds amb aquests criteris.</p>
-        </div>
-
-        <div th:unless="${#lists.isEmpty(requestsPaged)}" class="table-card" th:with="requestsPage=${requestsPaged[__${selectedPage}__]}">
-            <table class="styled-table">
-                <thead>
-                <tr>
-                    <th>DATA DE CREACIÓ</th>
-                    <th>TIPUS</th>
-                    <th>POBLACIÓ</th>
-                    <th>DURACIÓ</th>
-                    <th class="text-center">ESTAT</th>
-                    <th class="text-center">ACCIONS</th>
-                </tr>
-                </thead>
-                <tbody>
-                <tr th:each="req : ${requestsPage}"
-                    th:classappend="${req.idApRequest == nova} ? 'row-newly-added' : ''">
-
-                    <td th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
-
-                    <td><strong th:text="${req.assistantType}">PAP</strong></td>
-
-                    <td th:text="${req.city}">Castelló</td>
-
-                    <td th:text="${req.monthsRequired} + ' mesos'">6 mesos</td>
-
-                    <td class="text-center">
-                        <span class="table-badge"
-                              th:classappend="${'badge-' + #strings.toLowerCase(req.status.name())}"
-                              th:text="${req.status.description}">
-                            Estado
-                        </span>
-                    </td>
-
-                    <td class="text-center">
-                        <div class="actions-cell">
-                            <!-- Botón Veure Detall (Sempre visible) -->
-                            <a th:href="@{/assistanceRequest/details/{id}(id=${req.idApRequest})}" class="action-btn" title="Veure detall">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                                    <circle cx="12" cy="12" r="3"></circle>
-                                </svg>
-                            </a>
-
-                            <!-- Botón Modificar (Només PENDING) -->
-                            <a th:if="${req.status.name() == 'PENDING'}" th:href="@{/assistanceRequest/update/{id}(id=${req.idApRequest})}" class="action-btn" title="Modificar sol·licitud">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                                </svg>
-                            </a>
-
-                            <!-- Botón Eliminar (Només PENDING) -->
-                            <a th:if="${req.status.name() == 'PENDING'}" th:href="@{/assistanceRequest/delete/{id}(id=${req.idApRequest})}"
-                               th:onclick="return confirm('Estàs segur d\'esborrar la sol·licitud amb ID \'' + [[${req.idApRequest}]] + '\'?');"
-                               class="action-btn text-danger" title="Eliminar sol·licitud">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <polyline points="3 6 5 6 21 6"></polyline>
-                                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                                </svg>
-                            </a>
-
-                            <!-- Botón Veure Candidats (Només ACCEPTED) -->
-                            <a th:if="${req.status.name() == 'ACCEPTED'}" th:href="@{/candidacy/listCandidates/{id}(id=${req.idApRequest})}" class="action-btn text-success" title="Veure candidats">
-                                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                                    <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
-                                    <circle cx="9" cy="7" r="4"></circle>
-                                    <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
-                                    <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
-                                </svg>
-                            </a>
-                        </div>
-                    </td>
-                </tr>
-                </tbody>
-            </table>
-        </div>
-
-        <div th:unless="${#lists.isEmpty(requestsPaged)}" class="results-count">
-            Mostrant del
-            <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
-            al
-            <strong th:text="${(selectedPage * pageLength) + #lists.size(requestsPaged[selectedPage])}">5</strong>
-            de
-            <strong th:text="${totalRequests}">12</strong> sol·licituds
-        </div>
-
-        <nav aria-label="Selecció de pàgina en llistat de sol·licituds"
-             th:unless="${#lists.isEmpty(requestsPaged)}"
-             class="pagination-container">
-            <ul class="pagination">
-                <li class="page-item"
-                    th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
-                    th:each="pageNumber : ${pageNumbers}">
-
-                    <a th:href="@{/assistanceRequest/list/{status}(status=${statusFilter.statusSel}, page=${pageNumber - 1})}"
-                       th:text="${pageNumber}"
-                       class="page-link">1</a>
-                </li>
-            </ul>
-        </nav>
-
+    <div layout:fragment="header">
+        <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
     </div>
-</main>
+
+    <main layout:fragment="content">
+        <div class="container dashboard-main">
+
+            <div class="requests-header-action">
+                <h2 class="welcome-title">Les meues sol·licituds</h2>
+
+                <div class="header-actions-group">
+
+                    <form action="#" th:action="@{/assistanceRequest/list}" th:object="${statusFilter}" method="post"
+                        class="filter-form">
+                        <div class="select-wrapper">
+                            <label for="statusSelect" class="filter-label">Filtra per estat:</label>
+
+                            <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()"
+                                class="filter-select">
+                                <option value="Totes">Totes</option>
+
+                                <option th:each="status : ${statuses}" th:value="${status.name()}"
+                                    th:text="${status.description}">
+                                </option>
+                            </select>
+                        </div>
+                    </form>
+
+                    <a th:href="@{/assistanceRequest/add}" class="btn-primary">+ Nova sol·licitud</a>
+                </div>
+            </div>
+
+            <div th:if="${#lists.isEmpty(requestsPaged)}" class="empty-state">
+                <p>No s'han trobat sol·licituds amb aquests criteris.</p>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(requestsPaged)}" class="table-card"
+                th:with="requestsPage=${requestsPaged[__${selectedPage}__]}">
+                <table class="styled-table">
+                    <thead>
+                        <tr>
+                            <th>DATA DE CREACIÓ</th>
+                            <th>TIPUS</th>
+                            <th>POBLACIÓ</th>
+                            <th>DURACIÓ</th>
+                            <th class="text-center">ESTAT</th>
+                            <th class="text-center">ACCIONS</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        <tr th:each="req : ${requestsPage}"
+                            th:classappend="${req.idApRequest == nova} ? 'row-newly-added' : ''">
+
+                            <td th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
+
+                            <td><strong th:text="${req.assistantType}">PAP</strong></td>
+
+                            <td th:text="${req.city}">Castelló</td>
+
+                            <td th:text="${req.monthsRequired} + ' mesos'">6 mesos</td>
+
+                            <td class="text-center">
+                                <span class="table-badge"
+                                    th:classappend="${'badge-' + #strings.toLowerCase(req.status.name())}"
+                                    th:text="${req.status.description}">
+                                    Estado
+                                </span>
+                            </td>
+
+                            <td class="text-center">
+                                <div class="actions-cell">
+                                    <!-- Botón Veure Detall (Sempre visible) -->
+                                    <a th:href="@{/assistanceRequest/details/{id}(id=${req.idApRequest})}"
+                                        class="action-btn" title="Veure detall">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                                            <circle cx="12" cy="12" r="3"></circle>
+                                        </svg>
+                                    </a>
+
+                                    <!-- Botón Modificar (Només PENDING) -->
+                                    <a th:if="${req.status.name() == 'PENDING'}"
+                                        th:href="@{/assistanceRequest/update/{id}(id=${req.idApRequest})}"
+                                        class="action-btn" title="Modificar sol·licitud">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                                            <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                                        </svg>
+                                    </a>
+
+                                    <!-- Botón Eliminar (Només PENDING) -->
+                                    <a th:if="${req.status.name() == 'PENDING'}"
+                                        th:href="@{/assistanceRequest/delete/{id}(id=${req.idApRequest})}"
+                                        th:onclick="return confirm('Estàs segur d\'esborrar la sol·licitud amb ID \'' + [[${req.idApRequest}]] + '\'?');"
+                                        class="action-btn text-danger" title="Eliminar sol·licitud">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <polyline points="3 6 5 6 21 6"></polyline>
+                                            <path
+                                                d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                            </path>
+                                            <line x1="10" y1="11" x2="10" y2="17"></line>
+                                            <line x1="14" y1="11" x2="14" y2="17"></line>
+                                        </svg>
+                                    </a>
+
+                                    <!-- Botón Veure Candidats (Només ACCEPTED) -->
+                                    <a th:if="${req.status.name() == 'ACCEPTED'}"
+                                        th:href="@{/candidacy/listCandidates/{id}(id=${req.idApRequest})}"
+                                        class="action-btn text-success" title="Veure candidats">
+                                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                                            viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                                            stroke-linecap="round" stroke-linejoin="round">
+                                            <path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path>
+                                            <circle cx="9" cy="7" r="4"></circle>
+                                            <path d="M23 21v-2a4 4 0 0 0-3-3.87"></path>
+                                            <path d="M16 3.13a4 4 0 0 1 0 7.75"></path>
+                                        </svg>
+                                    </a>
+                                </div>
+                            </td>
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <div th:unless="${#lists.isEmpty(requestsPaged)}" class="results-count">
+                Mostrant del
+                <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+                al
+                <strong th:text="${(selectedPage * pageLength) + #lists.size(requestsPaged[selectedPage])}">5</strong>
+                de
+                <strong th:text="${totalRequests}">12</strong> sol·licituds
+            </div>
+
+            <nav aria-label="Selecció de pàgina en llistat de sol·licituds" th:unless="${#lists.isEmpty(requestsPaged)}"
+                class="pagination-container">
+                <ul class="pagination">
+                    <li class="page-item" th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+                        th:each="pageNumber : ${pageNumbers}">
+
+                        <a th:href="@{/assistanceRequest/list/{status}(status=${statusFilter.statusSel}, page=${pageNumber - 1})}"
+                            th:text="${pageNumber}" class="page-link">1</a>
+                    </li>
+                </ul>
+            </nav>
+
+        </div>
+    </main>
 
 </body>
+
 </html>

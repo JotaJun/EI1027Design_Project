@@ -56,9 +56,16 @@ public class AssistanceRequestController {
         return Arrays.asList(StaffType.values());
     }
 
-    @GetMapping("/add")
-    public String showAddAssistanceForm(Model model) {
-        model.addAttribute("assistanceRequest", new AssistanceRequest());
+    @GetMapping({"/add", "/add/{dni}"})
+    public String showAddAssistanceForm(Model model, @PathVariable(required = false) String dni, HttpSession session) {
+        AssistanceRequest assistanceRequest = new AssistanceRequest();
+        
+        // Si se pasa un DNI por la URL (caso del tutor legal)
+        if (dni != null) {
+            assistanceRequest.setDniOviUser(dni);
+        }
+        
+        model.addAttribute("assistanceRequest", assistanceRequest);
         return "assistanceRequest/add";
     }
 
@@ -72,25 +79,16 @@ public class AssistanceRequestController {
             return "assistanceRequest/add";
         }
 
-        // !! IMPORTANTE !! Cambiar la configuración general
-
-        // No hace falta comprobar si es null, ya se encarga interceptor
-        //OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-        String dniOviUser = null;
-
         String userRole = (String) session.getAttribute("userRole");
 
         if (AccountType.LEGALGUARDIAN.name().equals(userRole)){
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
             assistanceRequest.setDniLegalGuardian(currentUser.getDni());
-            // dniOviUser cogerlo de un parámetro que se pasa
-        }else {
+            // El dniOviUser ya vendrá en el objeto assistanceRequest (desde el campo oculto del formulario)
+        } else {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-            dniOviUser = currentUser.getDni();
+            assistanceRequest.setDniOviUser(currentUser.getDni());
         }
-
-        // Asignar los datos que faltan
-        assistanceRequest.setDniOviUser(dniOviUser);
 
         assistanceRequestDao.addAssistanceRequest(assistanceRequest);
 

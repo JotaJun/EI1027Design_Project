@@ -1,187 +1,195 @@
 <!DOCTYPE html>
-<html lang="ca" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/base}">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{fragments/base}">
+
 <head>
   <title>Candidats de la sol·licitud - SgOVI</title>
 </head>
+
 <body>
 
-<div layout:fragment="header">
-  <th:block th:if="${session.userRole == 'TECHNICIAN'}">
-    <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
-  </th:block>
-  <th:block th:unless="${session.userRole == 'TECHNICIAN'}">
-    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
-  </th:block>
-</div>
+  <div layout:fragment="header">
+    <th:block th:if="${session.userRole == 'TECHNICIAN'}">
+      <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
+    </th:block>
+    <th:block th:unless="${session.userRole == 'TECHNICIAN'}">
+      <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+    </th:block>
+  </div>
 
-<main layout:fragment="content">
-  <div class="container dashboard-main">
+  <main layout:fragment="content">
+    <div class="container dashboard-main">
 
-    <div class="requests-header-action">
-      <div>
-        <h2 class="welcome-title">Candidats proposats</h2>
-        <p class="date-text" th:text="'Sol·licitud ID: ' + ${idApRequest}">Sol·licitud ID: 123</p>
+      <div class="requests-header-action">
+        <div>
+          <h2 class="welcome-title">Candidats proposats</h2>
+          <p class="date-text" th:text="'Sol·licitud ID: ' + ${idApRequest}">Sol·licitud ID: 123</p>
+        </div>
+
+        <div class="header-actions-group">
+          <form action="#" th:action="@{/candidacy/listCandidates/{id}(id=${idApRequest})}"
+            th:object="${candidacyStatusFilter}" method="post" class="filter-form">
+            <div class="select-wrapper">
+              <label for="statusSelect" class="filter-label">Filtra per estat:</label>
+
+              <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
+                <option value="Totes">Totes</option>
+
+                <option th:each="status : ${candidacyStatuses}" th:value="${status.name()}"
+                  th:text="${status.description}">
+                </option>
+              </select>
+            </div>
+          </form>
+
+          <!-- Tornar a la sol·licitud: per al tècnic apunta a la vista del tècnic -->
+          <a th:if="${session.userRole == 'TECHNICIAN'}"
+            th:href="@{/assistanceRequest/technician/details/{id}(id=${idApRequest})}" class="btn-outline">Tornar a la
+            sol·licitud</a>
+          <a th:unless="${session.userRole == 'TECHNICIAN'}"
+            th:href="@{/assistanceRequest/details/{id}(id=${idApRequest})}" class="btn-outline">Tornar a la
+            sol·licitud</a>
+        </div>
       </div>
 
-      <div class="header-actions-group">
-        <form action="#" th:action="@{/candidacy/listCandidates/{id}(id=${idApRequest})}" th:object="${candidacyStatusFilter}" method="post" class="filter-form">
-          <div class="select-wrapper">
-            <label for="statusSelect" class="filter-label">Filtra per estat:</label>
-
-            <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
-              <option value="Totes">Totes</option>
-
-              <option th:each="status : ${candidacyStatuses}"
-                      th:value="${status.name()}"
-                      th:text="${status.description}">
-              </option>
-            </select>
-          </div>
-        </form>
-
-        <!-- Tornar a la sol·licitud: per al tècnic apunta a la vista del tècnic -->
-        <a th:if="${session.userRole == 'TECHNICIAN'}"
-           th:href="@{/assistanceRequest/technician/details/{id}(id=${idApRequest})}" class="btn-outline">Tornar a la sol·licitud</a>
-        <a th:unless="${session.userRole == 'TECHNICIAN'}"
-           th:href="@{/assistanceRequest/details/{id}(id=${idApRequest})}" class="btn-outline">Tornar a la sol·licitud</a>
+      <div th:if="${#lists.isEmpty(candidaciesPaged)}" class="empty-state">
+        <p>No s'han trobat candidats amb aquests criteris.</p>
       </div>
-    </div>
 
-    <div th:if="${#lists.isEmpty(candidaciesPaged)}" class="empty-state">
-      <p>No s'han trobat candidats amb aquests criteris.</p>
-    </div>
+      <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="table-card"
+        th:with="candidaciesPage=${candidaciesPaged[__${selectedPage}__]}">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>CANDIDAT</th>
+              <th>TIPUS</th>
+              <th>POBLACIÓ</th>
+              <th>EXPERIÈNCIA</th>
+              <th class="text-center">CARNET</th>
+              <th class="text-center">ESTAT</th>
+              <th class="text-center">ACCIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="cand : ${candidaciesPage}">
 
-    <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="table-card" th:with="candidaciesPage=${candidaciesPaged[__${selectedPage}__]}">
-      <table class="styled-table">
-        <thead>
-        <tr>
-          <th>CANDIDAT</th>
-          <th>TIPUS</th>
-          <th>POBLACIÓ</th>
-          <th>EXPERIÈNCIA</th>
-          <th class="text-center">CARNET</th>
-          <th class="text-center">ESTAT</th>
-          <th class="text-center">ACCIONS</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="cand : ${candidaciesPage}">
+              <td><strong th:text="${cand.account.name + ' ' + cand.account.surname}">Joan Pérez</strong></td>
 
-          <td><strong th:text="${cand.account.name + ' ' + cand.account.surname}">Joan Pérez</strong></td>
+              <td th:text="${cand.papPati.staffType}">PAP ó Pati</td>
 
-          <td th:text="${cand.papPati.staffType}">PAP ó Pati</td>
+              <td th:text="${cand.account.city}">Castelló</td>
 
-          <td th:text="${cand.account.city}">Castelló</td>
+              <td th:text="${cand.papPati.yearsOfExperience} + ' anys'">3 anys</td>
 
-          <td th:text="${cand.papPati.yearsOfExperience} + ' anys'">3 anys</td>
+              <td class="text-center">
+                <span th:if="${cand.papPati.drivingLicense}" class="tag text-success">Sí</span>
+                <span th:unless="${cand.papPati.drivingLicense}" class="tag">No</span>
+              </td>
 
-          <td class="text-center">
-            <span th:if="${cand.papPati.drivingLicense}" class="tag text-success">Sí</span>
-            <span th:unless="${cand.papPati.drivingLicense}" class="tag">No</span>
-          </td>
-
-          <td class="text-center">
-            <span class="table-badge"
+              <td class="text-center">
+                <span class="table-badge"
                   th:classappend="${'badge-' + #strings.toLowerCase(cand.candidacy.candidacyStatus.name())}"
                   th:text="${cand.candidacy.candidacyStatus.description}">
-              Estat
-            </span>
-          </td>
+                  Estat
+                </span>
+              </td>
 
-          <td class="text-center">
-            <div class="actions-cell">
+              <td class="text-center">
+                <div class="actions-cell">
 
-              <!-- Botó Veure Detall (Sempre visible) -->
-              <a th:href="@{/candidacy/details/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn" title="Veure perfil complet">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </a>
+                  <!-- Botó Veure Detall (Sempre visible) -->
+                  <a th:href="@{/candidacy/details/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn"
+                    title="Veure perfil complet">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </a>
 
-              <!-- Botons OCULTS per al tècnic -->
-              <th:block th:unless="${session.userRole == 'TECHNICIAN'}">
+                  <!-- Botons OCULTS per al tècnic -->
+                  <th:block th:unless="${session.userRole == 'TECHNICIAN'}">
 
-                <!-- Botó Obrir Xat -->
-                <a th:href="@{/communication/chat/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn" title="Obrir Xat">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
-                  </svg>
-                </a>
+                    <!-- Botó Obrir Xat -->
+                    <a th:href="@{/communication/chat/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn"
+                      title="Obrir Xat">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M21 15a2 2 0 0 1-2 2H7l-4 4V5a2 2 0 0 1 2-2h14a2 2 0 0 1 2 2z"></path>
+                      </svg>
+                    </a>
 
-                <!-- Botó Rebutjar candidatura -->
-                <a th:if="${cand.candidacy.candidacyStatus.name() != 'CONTRACTED' &amp;&amp; cand.candidacy.candidacyStatus.name() != 'TALKSENDED'}"
-                   th:href="@{/candidacy/reject/{id}(id=${cand.candidacy.idCandidacy})}"
-                   th:onclick="return confirm('Estàs segur que vols rebutjar la candidatura de \'' + [[${cand.account.name}]] + ' ' + [[${cand.account.surname}]] + '\'?');"
-                   class="action-btn text-danger" title="Rebutjar candidatura">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <circle cx="12" cy="12" r="10"></circle>
-                    <line x1="15" y1="9" x2="9" y2="15"></line>
-                    <line x1="9" y1="9" x2="15" y2="15"></line>
-                  </svg>
-                </a>
+                    <!-- Botó Rebutjar candidatura -->
+                    <a th:if="${cand.candidacy.candidacyStatus.name() != 'CONTRACTED' &amp;&amp; cand.candidacy.candidacyStatus.name() != 'TALKSENDED'}"
+                      th:href="@{/candidacy/reject/{id}(id=${cand.candidacy.idCandidacy})}"
+                      th:onclick="return confirm('Estàs segur que vols rebutjar la candidatura de \'' + [[${cand.account.name}]] + ' ' + [[${cand.account.surname}]] + '\'?');"
+                      class="action-btn text-danger" title="Rebutjar candidatura">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <circle cx="12" cy="12" r="10"></circle>
+                        <line x1="15" y1="9" x2="9" y2="15"></line>
+                        <line x1="9" y1="9" x2="15" y2="15"></line>
+                      </svg>
+                    </a>
 
-                <!-- Botó Emplenar Contracte / Altre Contracte -->
-                <a th:if="${cand.candidacy.candidacyStatus.name() != 'TALKSENDED'}"
-                   th:href="@{/contract/add/{id}(id=${cand.candidacy.idCandidacy})}"
-                   class="action-btn text-primary"
-                   th:title="${cand.candidacy.candidacyStatus.name() == 'CONTRACTED'} ? 'Emplenar altre contracte' : 'Emplenar Contracte'">
-                  <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
-                    <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
-                  </svg>
-                </a>
+                    <!-- Botó Emplenar Contracte / Altre Contracte -->
+                    <a th:if="${cand.candidacy.candidacyStatus.name() != 'TALKSENDED'}"
+                      th:href="@{/contract/add/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn text-primary"
+                      th:title="${cand.candidacy.candidacyStatus.name() == 'CONTRACTED'} ? 'Emplenar altre contracte' : 'Emplenar Contracte'">
+                      <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                        <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                      </svg>
+                    </a>
 
-              </th:block>
+                  </th:block>
 
-              <!-- Botó Veure Contractes (visible per a tots si CONTRACTED) -->
-              <a th:if="${cand.candidacy.candidacyStatus.name() == 'CONTRACTED'}"
-                 th:href="@{/contract/list/{id}(id=${cand.candidacy.idCandidacy})}"
-                 class="action-btn text-success" title="Veure Contractes">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
-                  <polyline points="14 2 14 8 20 8"></polyline>
-                  <line x1="16" y1="13" x2="8" y2="13"></line>
-                  <line x1="16" y1="17" x2="8" y2="17"></line>
-                  <polyline points="10 9 9 9 8 9"></polyline>
-                </svg>
-              </a>
+                  <!-- Botó Veure Contractes (visible per a tots si CONTRACTED) -->
+                  <a th:if="${cand.candidacy.candidacyStatus.name() == 'CONTRACTED'}"
+                    th:href="@{/contract/list/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn text-success"
+                    title="Veure Contractes">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path>
+                      <polyline points="14 2 14 8 20 8"></polyline>
+                      <line x1="16" y1="13" x2="8" y2="13"></line>
+                      <line x1="16" y1="17" x2="8" y2="17"></line>
+                      <polyline points="10 9 9 9 8 9"></polyline>
+                    </svg>
+                  </a>
 
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
 
-    <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="results-count">
-      Mostrant del
-      <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
-      al
-      <strong th:text="${(selectedPage * pageLength) + #lists.size(candidaciesPaged[selectedPage])}">5</strong>
-      de
-      <strong th:text="${totalCandidacies}">12</strong> candidats
-    </div>
+      <div th:unless="${#lists.isEmpty(candidaciesPaged)}" class="results-count">
+        Mostrant del
+        <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+        al
+        <strong th:text="${(selectedPage * pageLength) + #lists.size(candidaciesPaged[selectedPage])}">5</strong>
+        de
+        <strong th:text="${totalCandidacies}">12</strong> candidats
+      </div>
 
-    <nav aria-label="Selecció de pàgina en llistat de candidats"
-         th:unless="${#lists.isEmpty(candidaciesPaged)}"
-         class="pagination-container">
-      <ul class="pagination">
-        <li class="page-item"
-            th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+      <nav aria-label="Selecció de pàgina en llistat de candidats" th:unless="${#lists.isEmpty(candidaciesPaged)}"
+        class="pagination-container">
+        <ul class="pagination">
+          <li class="page-item" th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
             th:each="pageNumber : ${pageNumbers}">
 
-          <a th:href="@{/candidacy/listCandidates/{id}/{status}(id=${idApRequest}, status=${candidacyStatusFilter.statusSel}, page=${pageNumber - 1})}"
-             th:text="${pageNumber}"
-             class="page-link">1</a>
-        </li>
-      </ul>
-    </nav>
+            <a th:href="@{/candidacy/listCandidates/{id}/{status}(id=${idApRequest}, status=${candidacyStatusFilter.statusSel}, page=${pageNumber - 1})}"
+              th:text="${pageNumber}" class="page-link">1</a>
+          </li>
+        </ul>
+      </nav>
 
-  </div>
-</main>
+    </div>
+  </main>
 
 </body>
+
 </html>

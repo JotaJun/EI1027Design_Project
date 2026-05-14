@@ -14,6 +14,7 @@ import es.uji.ei1027.SgOviProject.filters.AccountTypeFilter;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -58,9 +59,6 @@ public class AccountController {
         this.accountDao = accountDao;
     }
 
-
-
-
     @RequestMapping("/list")
     public String listAccounts(Model model) {
         model.addAttribute("accounts", accountDao.getAccounts());
@@ -86,9 +84,10 @@ public class AccountController {
     public String approveAccount(@PathVariable String dni, Model model, HttpSession session) {
         String userRole = (String) session.getAttribute("userRole");
         if (!"TECHNICIAN".equals(userRole)) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot aprovar comptes", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "Només el personal tècnic pot aprovar comptes", "Error 403 - Sense permisos");
         }
-        
+
         Account account = accountDao.getAccount(dni);
         account.setStatus(Status.ACCEPTED);
         accountDao.updateAccount(account);
@@ -103,11 +102,62 @@ public class AccountController {
     }
 
     @RequestMapping(value = "/update", method = RequestMethod.POST)
-    public String processUpdateSubmit(@ModelAttribute("account") Account account, BindingResult result) {
+    public String processUpdateSubmit(@ModelAttribute("account") Account account,
+            @RequestParam(value = "signatureCode", required = false) String signatureCode,
+            BindingResult result,
+            HttpSession session,
+            Model model) {
         if (result.hasErrors()) {
             return "account/update";
         }
+
+        String userRole = (String) session.getAttribute("userRole");
+
+        // Validación de la firma si es un Tutor
+        if ("LEGALGUARDIAN".equals(userRole)) {
+            LegalGuardian lgSession = (LegalGuardian) session.getAttribute("specificAccount");
+            // Recuperamos el tutor de la BD porque el de la sesión suele tener la firma a null por seguridad
+            LegalGuardian lg = legalGuardianDao.getLegalGuardian(lgSession.getDni());
+            
+            if (signatureCode == null || signatureCode.trim().isEmpty()) {
+                model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar els canvis.");
+                return "account/update";
+            }
+
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            boolean isValid = false;
+            try {
+                isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+            } catch (Exception e) {
+                // Si la firma en la BD no está encriptada (datos de prueba), probamos comparación directa
+                isValid = signatureCode.equals(lg.getSignatureCode());
+            }
+
+            if (!isValid) {
+                model.addAttribute("signatureError", "El codi de firma no és correcte.");
+                return "account/update";
+            }
+        }
+
+        // Recuperem el compte existent per no perdre dades que no estan al formulari
+        // (com la contrasenya o l'estat)
+        Account existingAccount = accountDao.getAccount(account.getDni());
+        account.setPassword(existingAccount.getPassword());
+
+        if (account.getStatus() == null) {
+            account.setStatus(existingAccount.getStatus());
+        }
+
+        if (account.getDeniedReason() == null) {
+            account.setDeniedReason(existingAccount.getDeniedReason());
+        }
+
         accountDao.updateAccount(account);
+
+        if ("LEGALGUARDIAN".equals(userRole)) {
+            return "redirect:/account/wardDetails/" + account.getDni();
+        }
+
         return "redirect:/account/list";
     }
 
@@ -117,22 +167,24 @@ public class AccountController {
         return "redirect:/account/list";
     }
 
-    @GetMapping(value = {"/wardList", "/wardList/{status}"})
+    @GetMapping(value = { "/wardList", "/wardList/{status}" })
     public String listWardedAccounts(Model model,
-                                     @PathVariable(required = false) String status,
-                                     @RequestParam("page") Optional<Integer> page,
-                                     HttpSession session) {
+            @PathVariable(required = false) String status,
+            @RequestParam("page") Optional<Integer> page,
+            HttpSession session) {
 
         Account currentUser = (Account) session.getAttribute("account");
         String dni = currentUser.getDni();
 
-        if (status == null) status = "Tots";
+        if (status == null)
+            status = "Tots";
 
-        //Obtener los oviUsers
+        // Obtener los oviUsers
         List<OviUser> wardedUsers = oviUserDao.getWardedOviUsers(dni);
         List<AccountWithTypeDTO> allWithType = new ArrayList<>();
 
-        //preguntar a lledo si usar esto o un dao en account que recupere lista a paritr de uan lsita de ovis, los dos usan for asi que ns que es mas eficiente
+        // preguntar a lledo si usar esto o un dao en account que recupere lista a
+        // paritr de uan lsita de ovis, los dos usan for asi que ns que es mas eficiente
         for (OviUser oviUser : wardedUsers) {
             Account account = accountDao.getAccount(oviUser.getDni());
             if (account != null) {
@@ -140,13 +192,13 @@ public class AccountController {
             }
         }
 
-        //filtros
+        // filtros
         final String statusFinal = status;
         List<AccountWithTypeDTO> filtered = allWithType.stream()
                 .filter(dto -> statusFinal.equals("Tots") || dto.getAccount().getStatus().name().equals(statusFinal))
                 .collect(Collectors.toList());
 
-        //Paginar
+        // Paginar
         ArrayList<ArrayList<AccountWithTypeDTO>> accountsPaged = new ArrayList<>();
         int ini = 0;
         int fin = pageLength;
@@ -160,7 +212,7 @@ public class AccountController {
             accountsPaged.add(new ArrayList<>(filtered.subList(ini, filtered.size())));
         }
 
-        //Números de página
+        // Números de página
         int totalPages = accountsPaged.size();
         if (totalPages > 0) {
             List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
@@ -171,8 +223,10 @@ public class AccountController {
 
         int currentPage = page.orElse(0);
         if (totalPages > 0) {
-            if (currentPage < 0) currentPage = 0;
-            if (currentPage >= totalPages) currentPage = totalPages - 1;
+            if (currentPage < 0)
+                currentPage = 0;
+            if (currentPage >= totalPages)
+                currentPage = totalPages - 1;
         } else {
             currentPage = 0;
         }
@@ -199,13 +253,14 @@ public class AccountController {
         return "redirect:/account/wardList/" + statusFilter.getStatusSel();
     }
 
-    @GetMapping(value = {"/pendingAccounts", "/pendingAccounts/{type}"})
+    @GetMapping(value = { "/pendingAccounts", "/pendingAccounts/{type}" })
     public String listPendingAccounts(Model model,
-                                      @PathVariable(required = false) String type,
-                                      @RequestParam("page") Optional<Integer> page,
-                                      jakarta.servlet.http.HttpSession session) {
+            @PathVariable(required = false) String type,
+            @RequestParam("page") Optional<Integer> page,
+            jakarta.servlet.http.HttpSession session) {
 
-        if (type == null) type = "Tots";
+        if (type == null)
+            type = "Tots";
 
         // 1. Obtener todas las cuentas pendientes y enriquecerlas con su tipo
         List<Account> allPending = accountDao.getPendingAccounts();
@@ -259,8 +314,10 @@ public class AccountController {
 
         int currentPage = page.orElse(0);
         if (totalPages > 0) {
-            if (currentPage < 0) currentPage = 0;
-            if (currentPage >= totalPages) currentPage = totalPages - 1;
+            if (currentPage < 0)
+                currentPage = 0;
+            if (currentPage >= totalPages)
+                currentPage = totalPages - 1;
         } else {
             currentPage = 0;
         }
@@ -289,15 +346,17 @@ public class AccountController {
         return "redirect:/account/pendingAccounts/" + filter.getTypeSel();
     }
 
-    @GetMapping(value = {"/allAccounts", "/allAccounts/{type}", "/allAccounts/{type}/{status}"})
+    @GetMapping(value = { "/allAccounts", "/allAccounts/{type}", "/allAccounts/{type}/{status}" })
     public String listAllAccounts(Model model,
-                                  @PathVariable(required = false) String type,
-                                  @PathVariable(required = false) String status,
-                                  @RequestParam("page") Optional<Integer> page,
-                                  jakarta.servlet.http.HttpSession session) {
+            @PathVariable(required = false) String type,
+            @PathVariable(required = false) String status,
+            @RequestParam("page") Optional<Integer> page,
+            jakarta.servlet.http.HttpSession session) {
 
-        if (type == null) type = "Tots";
-        if (status == null) status = "Tots";
+        if (type == null)
+            type = "Tots";
+        if (status == null)
+            status = "Tots";
 
         // 1. Todas las cuentas con su tipo detectado
         List<Account> all = accountDao.getAccounts();
@@ -348,8 +407,10 @@ public class AccountController {
 
         int currentPage = page.orElse(0);
         if (totalPages > 0) {
-            if (currentPage < 0) currentPage = 0;
-            if (currentPage >= totalPages) currentPage = totalPages - 1;
+            if (currentPage < 0)
+                currentPage = 0;
+            if (currentPage >= totalPages)
+                currentPage = totalPages - 1;
         } else {
             currentPage = 0;
         }
@@ -373,18 +434,19 @@ public class AccountController {
         model.addAttribute("selectedType", type);
         model.addAttribute("selectedStatus", status);
 
-        session.setAttribute("lastAccountListUrl", "/account/allAccounts/" + type + "/" + status + "?page=" + currentPage);
+        session.setAttribute("lastAccountListUrl",
+                "/account/allAccounts/" + type + "/" + status + "?page=" + currentPage);
 
         return "account/allAccounts";
     }
 
     @PostMapping(value = "/allAccounts")
     public String processAllAccountsFilter(@ModelAttribute("accountTypeFilter") AccountTypeFilter typeFilter,
-                                           @ModelAttribute("statusFilter") StatusFilter statusFilter) {
+            @ModelAttribute("statusFilter") StatusFilter statusFilter) {
         return "redirect:/account/allAccounts/" + typeFilter.getTypeSel() + "/" + statusFilter.getStatusSel();
     }
 
-    @GetMapping(value = {"/details/{dni}", "/wardDetails/{dni}"})
+    @GetMapping(value = { "/details/{dni}", "/wardDetails/{dni}" })
     public String detailsAccount(@PathVariable String dni,
             @RequestParam(required = false, defaultValue = "false") boolean readOnly,
             Model model,
@@ -392,7 +454,7 @@ public class AccountController {
 
         String userRole = (String) session.getAttribute("userRole");
         Account currentUser = (Account) session.getAttribute("account");
-        
+
         String viewName = "account/details";
 
         // Seguridad: Si es un tutor legal, validar que el DNI pertenece a su tutelado
@@ -437,9 +499,10 @@ public class AccountController {
     public String denyReasonForm(@PathVariable String dni, Model model, HttpSession session) {
         String userRole = (String) session.getAttribute("userRole");
         if (!"TECHNICIAN".equals(userRole)) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot denegar comptes", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "Només el personal tècnic pot denegar comptes", "Error 403 - Sense permisos");
         }
-        
+
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
         return "account/denyReason";
@@ -449,9 +512,10 @@ public class AccountController {
     public String processDenyReason(@ModelAttribute("account") Account account, Model model, HttpSession session) {
         String userRole = (String) session.getAttribute("userRole");
         if (!"TECHNICIAN".equals(userRole)) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot denegar comptes", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "Només el personal tècnic pot denegar comptes", "Error 403 - Sense permisos");
         }
-        
+
         Account existing = accountDao.getAccount(account.getDni());
         existing.setStatus(Status.REJECTED);
         existing.setDeniedReason(account.getDeniedReason());
@@ -468,13 +532,16 @@ public class AccountController {
         Account currentUser = (Account) session.getAttribute("account");
 
         if (!"LEGALGUARDIAN".equals(userRole)) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només els tutors legals poden donar de baixa un compte d'usuari OVI", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "Només els tutors legals poden donar de baixa un compte d'usuari OVI",
+                    "Error 403 - Sense permisos");
         }
 
         // Verificar que el usuario OVI le pertenece
         OviUser oviUser = oviUserDao.getOviUser(dni);
         if (oviUser == null || !currentUser.getDni().equals(oviUser.getDniLegalGuardian())) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("No tens permisos per donar de baixa aquest compte", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "No tens permisos per donar de baixa aquest compte", "Error 403 - Sense permisos");
         }
 
         Account account = accountDao.getAccount(dni);
@@ -488,13 +555,15 @@ public class AccountController {
         Account currentUser = (Account) session.getAttribute("account");
 
         if (!"LEGALGUARDIAN".equals(userRole)) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només els tutors legals poden donar de baixa un compte", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "Només els tutors legals poden donar de baixa un compte", "Error 403 - Sense permisos");
         }
 
         // Verificar pertenencia
         OviUser oviUser = oviUserDao.getOviUser(account.getDni());
         if (oviUser == null || !currentUser.getDni().equals(oviUser.getDniLegalGuardian())) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("No tens permisos per donar de baixa aquest compte", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "No tens permisos per donar de baixa aquest compte", "Error 403 - Sense permisos");
         }
 
         Account existing = accountDao.getAccount(account.getDni());
@@ -509,8 +578,9 @@ public class AccountController {
         existing.setStatus(Status.REJECTED);
         existing.setDeniedReason(account.getDeniedReason());
         accountDao.updateAccount(existing);
-        
-        model.addAttribute("result", "rejected"); // Podríamos crear un 'deactivated' si hubiera un done específico, pero reutilizamos el done de rejected
+
+        model.addAttribute("result", "rejected"); // Podríamos crear un 'deactivated' si hubiera un done específico,
+                                                  // pero reutilizamos el done de rejected
         return "account/done";
     }
 
@@ -520,9 +590,10 @@ public class AccountController {
     public String deleteReasonForm(@PathVariable String dni, Model model, HttpSession session) {
         String userRole = (String) session.getAttribute("userRole");
         if (!"TECHNICIAN".equals(userRole)) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot eliminar comptes", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "Només el personal tècnic pot eliminar comptes", "Error 403 - Sense permisos");
         }
-        
+
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
         return "account/deleteReason";
@@ -532,9 +603,10 @@ public class AccountController {
     public String processDeleteReason(@ModelAttribute("account") Account account, HttpSession session) {
         String userRole = (String) session.getAttribute("userRole");
         if (!"TECHNICIAN".equals(userRole)) {
-            throw new es.uji.ei1027.SgOviProject.exception.SgOviException("Només el personal tècnic pot eliminar comptes", "Error 403 - Sense permisos");
+            throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
+                    "Només el personal tècnic pot eliminar comptes", "Error 403 - Sense permisos");
         }
-        
+
         accountDao.deleteAccount(account.getDni());
         return "redirect:/account/allAccounts";
     }
@@ -543,7 +615,7 @@ public class AccountController {
 
     @GetMapping(value = "/apHistory/{dni}")
     public String apHistory(@PathVariable String dni, Model model,
-                            jakarta.servlet.http.HttpSession session) {
+            jakarta.servlet.http.HttpSession session) {
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
 
@@ -558,7 +630,7 @@ public class AccountController {
 
     @GetMapping(value = "/candidacyHistory/{dni}")
     public String candidacyHistory(@PathVariable String dni, Model model,
-                                   jakarta.servlet.http.HttpSession session) {
+            jakarta.servlet.http.HttpSession session) {
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
 

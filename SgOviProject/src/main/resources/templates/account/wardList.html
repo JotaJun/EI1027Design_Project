@@ -1,127 +1,123 @@
 <!DOCTYPE html>
-<html lang="ca" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/base}">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+  layout:decorate="~{fragments/base}">
+
 <head>
   <title>Els Meus Tutelats - SgOVI</title>
 </head>
+
 <body>
 
-<div layout:fragment="header">
-  <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header }"></div>
-</div>
-
-<main layout:fragment="content">
-  <div class="container dashboard-main">
-
-    <div class="requests-header-action">
-      <div>
-        <h2 class="welcome-title">Els meus usuaris OVI tutelats</h2>
-        <p class="date-text">Consulta la llista dels usuaris OVI al teu càrrec i el seu estat.</p>
-      </div>
-
-      <div class="header-actions-group">
-        <form action="#" th:action="@{/account/wardList}" method="post"
-              th:object="${statusFilter}" class="filter-form">
-
-          <div class="select-wrapper">
-            <label for="statusSelect" class="filter-label">Estat:</label>
-            <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
-              <option value="Tots">Tots</option>
-              <option th:each="s : ${accountStatuses}"
-                      th:value="${s.name()}"
-                      th:text="${s.description}">
-              </option>
-            </select>
-          </div>
-        </form>
-      </div>
-    </div>
-
-    <div th:if="${#lists.isEmpty(accountsPaged)}" class="empty-state">
-      <p>No hi ha tutelats registrats amb aquests criteris.</p>
-    </div>
-
-    <div th:unless="${#lists.isEmpty(accountsPaged)}" class="table-card" th:with="accountsPage=${accountsPaged[__${selectedPage}__]}">
-      <table class="styled-table">
-        <thead>
-        <tr>
-          <th>USUARI</th>
-          <th>DNI</th>
-          <th>CORREU</th>
-          <th>TELÈFON</th>
-          <th>POBLACIÓ</th>
-          <th class="text-center">ESTAT</th>
-          <th class="text-center">ACCIONS</th>
-        </tr>
-        </thead>
-        <tbody>
-        <tr th:each="dto : ${accountsPage}">
-
-          <td><strong th:text="${dto.account.name + ' ' + dto.account.surname}">Joan Pérez</strong></td>
-
-          <td th:text="${dto.account.dni}">12345678A</td>
-
-          <td th:text="${dto.account.email}">joan@example.com</td>
-
-          <td th:text="${dto.account.phoneNumber}">612345678</td>
-
-          <td th:text="${dto.account.city}">Castelló</td>
-
-          <td class="text-center">
-            <span class="table-badge"
-                  th:classappend="${'badge-' + #strings.toLowerCase(dto.account.status.name())}"
-                  th:text="${dto.account.status.description}">Estat</span>
-          </td>
-
-          <td class="text-center">
-            <div class="actions-cell">
-              <a th:href="@{/account/wardDetails/{dni}(dni=${dto.account.dni})}"
-                 class="action-btn" title="Veure informació del compte">
-                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
-                  <circle cx="12" cy="12" r="3"></circle>
-                </svg>
-              </a>
-            </div>
-          </td>
-        </tr>
-        </tbody>
-      </table>
-    </div>
-
-    <div th:unless="${#lists.isEmpty(accountsPaged)}" class="results-count">
-      Mostrant del
-      <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
-      al
-      <strong th:text="${(selectedPage * pageLength) + #lists.size(accountsPaged[selectedPage])}">5</strong>
-      de
-      <strong th:text="${totalAccounts}">0</strong> comptes.
-    </div>
-
-    <nav aria-label="Selecció de pàgina en llistat de tutelats"
-         th:unless="${#lists.isEmpty(accountsPaged)}"
-         class="pagination-container">
-      <ul class="pagination">
-        <li class="page-item"
-            th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
-            th:each="pageNumber : ${pageNumbers}">
-          
-          <a th:if="${selectedStatus == 'Tots'}" 
-             th:href="@{/account/wardList(page=${pageNumber - 1})}"
-             th:text="${pageNumber}"
-             class="page-link">1</a>
-             
-          <a th:unless="${selectedStatus == 'Tots'}" 
-             th:href="@{/account/wardList/{status}(status=${selectedStatus}, page=${pageNumber - 1})}"
-             th:text="${pageNumber}"
-             class="page-link">1</a>
-        </li>
-      </ul>
-    </nav>
-
+  <div layout:fragment="header">
+    <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header }"></div>
   </div>
-</main>
+
+  <main layout:fragment="content">
+    <div class="container dashboard-main">
+
+      <div class="requests-header-action">
+        <div>
+          <h2 class="welcome-title">Els meus usuaris OVI tutelats</h2>
+          <p class="date-text">Consulta la llista dels usuaris OVI al teu càrrec i el seu estat.</p>
+        </div>
+
+        <div class="header-actions-group">
+          <form action="#" th:action="@{/account/wardList}" method="post" th:object="${statusFilter}"
+            class="filter-form">
+
+            <div class="select-wrapper">
+              <label for="statusSelect" class="filter-label">Estat:</label>
+              <select id="statusSelect" th:field="*{statusSel}" th:onchange="this.form.submit()" class="filter-select">
+                <option value="Tots">Tots</option>
+                <option th:each="s : ${accountStatuses}" th:value="${s.name()}" th:text="${s.description}">
+                </option>
+              </select>
+            </div>
+          </form>
+        </div>
+      </div>
+
+      <div th:if="${#lists.isEmpty(accountsPaged)}" class="empty-state">
+        <p>No hi ha tutelats registrats amb aquests criteris.</p>
+      </div>
+
+      <div th:unless="${#lists.isEmpty(accountsPaged)}" class="table-card"
+        th:with="accountsPage=${accountsPaged[__${selectedPage}__]}">
+        <table class="styled-table">
+          <thead>
+            <tr>
+              <th>USUARI</th>
+              <th>DNI</th>
+              <th>CORREU</th>
+              <th>TELÈFON</th>
+              <th>POBLACIÓ</th>
+              <th class="text-center">ESTAT</th>
+              <th class="text-center">ACCIONS</th>
+            </tr>
+          </thead>
+          <tbody>
+            <tr th:each="dto : ${accountsPage}">
+
+              <td><strong th:text="${dto.account.name + ' ' + dto.account.surname}">Joan Pérez</strong></td>
+
+              <td th:text="${dto.account.dni}">12345678A</td>
+
+              <td th:text="${dto.account.email}">joan@example.com</td>
+
+              <td th:text="${dto.account.phoneNumber}">612345678</td>
+
+              <td th:text="${dto.account.city}">Castelló</td>
+
+              <td class="text-center">
+                <span class="table-badge" th:classappend="${'badge-' + #strings.toLowerCase(dto.account.status.name())}"
+                  th:text="${dto.account.status.description}">Estat</span>
+              </td>
+
+              <td class="text-center">
+                <div class="actions-cell">
+                  <a th:href="@{/account/wardDetails/{dni}(dni=${dto.account.dni})}" class="action-btn"
+                    title="Veure informació del compte">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                      stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                      <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                      <circle cx="12" cy="12" r="3"></circle>
+                    </svg>
+                  </a>
+                </div>
+              </td>
+            </tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div th:unless="${#lists.isEmpty(accountsPaged)}" class="results-count">
+        Mostrant del
+        <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+        al
+        <strong th:text="${(selectedPage * pageLength) + #lists.size(accountsPaged[selectedPage])}">5</strong>
+        de
+        <strong th:text="${totalAccounts}">0</strong> comptes.
+      </div>
+
+      <nav aria-label="Selecció de pàgina en llistat de tutelats" th:unless="${#lists.isEmpty(accountsPaged)}"
+        class="pagination-container">
+        <ul class="pagination">
+          <li class="page-item" th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+            th:each="pageNumber : ${pageNumbers}">
+
+            <a th:if="${selectedStatus == 'Tots'}" th:href="@{/account/wardList(page=${pageNumber - 1})}"
+              th:text="${pageNumber}" class="page-link">1</a>
+
+            <a th:unless="${selectedStatus == 'Tots'}"
+              th:href="@{/account/wardList/{status}(status=${selectedStatus}, page=${pageNumber - 1})}"
+              th:text="${pageNumber}" class="page-link">1</a>
+          </li>
+        </ul>
+      </nav>
+
+    </div>
+  </main>
 
 </body>
+
 </html>

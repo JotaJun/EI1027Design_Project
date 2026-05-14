@@ -1,84 +1,93 @@
 <!DOCTYPE html>
-<html lang="ca" xmlns:th="http://www.thymeleaf.org"
-      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
-      layout:decorate="~{fragments/base}">
+<html lang="ca" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+    layout:decorate="~{fragments/base}">
+
 <head>
     <title>Eliminar Compte - SgOVI</title>
 </head>
+
 <body>
 
-<div layout:fragment="header">
-    <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
-</div>
+    <div layout:fragment="header">
+        <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
+    </div>
 
-<main layout:fragment="content">
-    <div class="container dashboard-main">
+    <main layout:fragment="content">
+        <div class="container dashboard-main">
 
-        <div class="card-header-section card-header-icon-layout">
-            <div class="icon-square icon-red">
-                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                    <polyline points="3 6 5 6 21 6"></polyline>
-                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                    <line x1="10" y1="11" x2="10" y2="17"></line>
-                    <line x1="14" y1="11" x2="14" y2="17"></line>
-                </svg>
-            </div>
-            <div class="text-center">
-                <h2 class="card-title">Eliminar compte</h2>
-                <p class="card-subtitle">
-                    Compte de: <strong th:text="${account.name + ' ' + account.surname}">Nom Cognom</strong>
-                    &nbsp;·&nbsp; DNI: <span th:text="${account.dni}">12345678A</span>
-                </p>
-            </div>
-        </div>
-
-        <br>
-
-        <div class="card assistance-card">
-            <div class="alert-box alert-rejected" style="margin-bottom: 1.5rem;">
-                <div class="alert-icon">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                        <circle cx="12" cy="12" r="10"></circle>
-                        <line x1="12" y1="8" x2="12" y2="12"></line>
-                        <line x1="12" y1="16" x2="12.01" y2="16"></line>
+            <div class="card-header-section card-header-icon-layout">
+                <div class="icon-square icon-red">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <polyline points="3 6 5 6 21 6"></polyline>
+                        <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        <line x1="10" y1="11" x2="10" y2="17"></line>
+                        <line x1="14" y1="11" x2="14" y2="17"></line>
                     </svg>
                 </div>
-                <div class="alert-content">
-                    <h4 class="alert-title">Atenció: Aquesta acció és irreversible</h4>
-                    <p class="alert-message">S'eliminaran permanentment totes les dades d'aquest compte del sistema. Assegura't que és la decisió correcta.</p>
+                <div class="text-center">
+                    <h2 class="card-title">Eliminar compte</h2>
+                    <p class="card-subtitle">
+                        Compte de: <strong th:text="${account.name + ' ' + account.surname}">Nom Cognom</strong>
+                        &nbsp;·&nbsp; DNI: <span th:text="${account.dni}">12345678A</span>
+                    </p>
                 </div>
             </div>
 
-            <form th:action="@{/account/deleteReason}" th:object="${account}" method="post" class="assistance-form">
-                <input type="hidden" th:field="*{dni}"/>
+            <br>
 
-                <div class="form-group">
-                    <label for="deniedReason">Motiu de l'eliminació <span class="required-asterisk">*</span></label>
-                    <div class="input-wrapper">
-                        <textarea id="deniedReason" th:field="*{deniedReason}" rows="5" maxlength="255" required
-                                  placeholder="Descriu per quin motiu s'elimina aquest compte..."></textarea>
+            <div class="card assistance-card">
+                <div class="alert-box alert-rejected" style="margin-bottom: 1.5rem;">
+                    <div class="alert-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none"
+                            stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <circle cx="12" cy="12" r="10"></circle>
+                            <line x1="12" y1="8" x2="12" y2="12"></line>
+                            <line x1="12" y1="16" x2="12.01" y2="16"></line>
+                        </svg>
+                    </div>
+                    <div class="alert-content">
+                        <h4 class="alert-title">Atenció: Aquesta acció és irreversible</h4>
+                        <p class="alert-message">S'eliminaran permanentment totes les dades d'aquest compte del sistema.
+                            Assegura't que és la decisió correcta.</p>
                     </div>
                 </div>
 
-                <div class="form-actions-centered actions-bordered">
-                    <button type="submit"
-                            class="btn-outline-danger btn-icon"
-                            onclick="return confirm('Estàs completament segur que vols eliminar aquest compte? Aquesta acció no es pot desfer.');">
-                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
-                            <polyline points="3 6 5 6 21 6"></polyline>
-                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
-                        </svg>
-                        Confirmar eliminació
-                    </button>
-                    <a th:href="@{/account/details/{dni}(dni=${account.dni}, readOnly=true)}" class="btn-outline btn-icon">
-                        Cancel·lar
-                    </a>
-                </div>
-            </form>
-        </div>
+                <form th:action="@{/account/deleteReason}" th:object="${account}" method="post" class="assistance-form">
+                    <input type="hidden" th:field="*{dni}" />
 
-    </div>
-</main>
+                    <div class="form-group">
+                        <label for="deniedReason">Motiu de l'eliminació <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <textarea id="deniedReason" th:field="*{deniedReason}" rows="5" maxlength="255" required
+                                placeholder="Descriu per quin motiu s'elimina aquest compte..."></textarea>
+                        </div>
+                    </div>
+
+                    <div class="form-actions-centered actions-bordered">
+                        <button type="submit" class="btn-outline-danger btn-icon"
+                            onclick="return confirm('Estàs completament segur que vols eliminar aquest compte? Aquesta acció no es pot desfer.');">
+                            <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24"
+                                fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round"
+                                stroke-linejoin="round">
+                                <polyline points="3 6 5 6 21 6"></polyline>
+                                <path
+                                    d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2">
+                                </path>
+                            </svg>
+                            Confirmar eliminació
+                        </button>
+                        <a th:href="@{/account/details/{dni}(dni=${account.dni}, readOnly=true)}"
+                            class="btn-outline btn-icon">
+                            Cancel·lar
+                        </a>
+                    </div>
+                </form>
+            </div>
+
+        </div>
+    </main>
 
 </body>
+
 </html>

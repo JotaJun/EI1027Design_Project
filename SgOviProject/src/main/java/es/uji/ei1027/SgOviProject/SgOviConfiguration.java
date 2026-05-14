@@ -96,7 +96,6 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                 registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER))
                                 .addPathPatterns(
                                                 "/oviUser/**",
-                                                "/assistanceRequest/add",
                                                 "/assistanceRequest/list/**",
                                                 "/assistanceRequest/details/**",
                                                 "/assistanceRequest/update/**",
@@ -145,5 +144,10 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/communication/chat/**",
                                                 "/contract/list/**",
                                                 "/contract/details/**");
+
+                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.LEGALGUARDIAN))
+                                .addPathPatterns(
+                                                "/assistanceRequest/add"
+                                                );
         }
 }

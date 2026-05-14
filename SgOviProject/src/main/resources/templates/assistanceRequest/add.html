@@ -35,6 +35,8 @@
 
 
             <form th:action="@{/assistanceRequest/add}" th:object="${assistanceRequest}" method="post" class="assistance-form">
+                <!-- Campo oculto para el DNI del usuario OVI (especialmente importante para el tutor legal) -->
+                <input type="hidden" th:field="*{dniOviUser}" />
 
                 <div class="form-grid">
 
