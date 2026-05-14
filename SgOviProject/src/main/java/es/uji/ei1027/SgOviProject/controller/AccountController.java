@@ -14,6 +14,7 @@ import es.uji.ei1027.SgOviProject.filters.AccountTypeFilter;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
@@ -102,10 +103,86 @@ public class AccountController {
         return "redirect:/account/list";
     }
 
-    @RequestMapping(value = "/ward/list/{dni}")
-    public String listWardedAccounts(@PathVariable String dni, Model model) {
-        model.addAttribute("accounts", oviUserDao.getWardedOviUsers(dni));
-        return "account/ward/list";
+    @GetMapping(value = {"/wardList", "/wardList/{status}"})
+    public String listWardedAccounts(Model model,
+                                     @PathVariable(required = false) String status,
+                                     @RequestParam("page") Optional<Integer> page,
+                                     HttpSession session) {
+
+        Account currentUser = (Account) session.getAttribute("account");
+        String dni = currentUser.getDni();
+
+        if (status == null) status = "Tots";
+
+        //Obtener los oviUsers
+        List<OviUser> wardedUsers = oviUserDao.getWardedOviUsers(dni);
+        List<AccountWithTypeDTO> allWithType = new ArrayList<>();
+
+        //preguntar a lledo si usar esto o un dao en account que recupere lista a paritr de uan lsita de ovis, los dos usan for asi que ns que es mas eficiente
+        for (OviUser oviUser : wardedUsers) {
+            Account account = accountDao.getAccount(oviUser.getDni());
+            if (account != null) {
+                allWithType.add(new AccountWithTypeDTO(account, AccountType.OVIUSER));
+            }
+        }
+
+        //filtros
+        final String statusFinal = status;
+        List<AccountWithTypeDTO> filtered = allWithType.stream()
+                .filter(dto -> statusFinal.equals("Tots") || dto.getAccount().getStatus().name().equals(statusFinal))
+                .collect(Collectors.toList());
+
+        //Paginar
+        ArrayList<ArrayList<AccountWithTypeDTO>> accountsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= filtered.size()) {
+            accountsPaged.add(new ArrayList<>(filtered.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < filtered.size()) {
+            accountsPaged.add(new ArrayList<>(filtered.subList(ini, filtered.size())));
+        }
+
+        //Números de página
+        int totalPages = accountsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
+
+        // 5. Preparar filtros para la vista
+        StatusFilter statusFilter = new StatusFilter();
+        statusFilter.setStatusSel(status);
+
+        model.addAttribute("statusFilter", statusFilter);
+        model.addAttribute("accountStatuses", Arrays.asList(Status.values()));
+        model.addAttribute("accountsPaged", accountsPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalAccounts", filtered.size());
+        model.addAttribute("pageLength", pageLength);
+        model.addAttribute("selectedStatus", status);
+
+        session.setAttribute("lastAccountListUrl", "/account/wardList/" + status + "?page=" + currentPage);
+
+        return "account/wardList";
+    }
+
+    @PostMapping(value = "/wardList")
+    public String processWardListFilter(@ModelAttribute("statusFilter") StatusFilter statusFilter) {
+        return "redirect:/account/wardList/" + statusFilter.getStatusSel();
     }
 
     @GetMapping(value = {"/pendingAccounts", "/pendingAccounts/{type}"})
@@ -401,8 +478,4 @@ public class AccountController {
         return "account/candidacyHistory";
     }
 
-    @GetMapping("/ward/list")
-    public String listWards(Model model) {
-        return null;
-    }
 }
