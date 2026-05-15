@@ -33,8 +33,8 @@
         </header>
 
         <p class="login-subtitle subtitle-spaced">
-            La teua petició d'assistència personal s'ha registrat amb èxit.<br>
-            Rebràs un email quan hi haja novetats.
+            La teua petició d'assistència personal amb id: <strong>#<span th:text="${idApRequest}"> 45 </span></strong>  s'ha registrat amb èxit.<br>
+            Rebràs un email a <strong><span th:text="${session.account.email}">ejemplo@correo.com</span></strong> quan hi haja novetats.
         </p>
 
         <div class="stacked-btn-group">

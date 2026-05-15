@@ -1,12 +1,12 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
+import es.uji.ei1027.SgOviProject.dao.AccountDao;
+import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
-import es.uji.ei1027.SgOviProject.model.Contract;
-import es.uji.ei1027.SgOviProject.model.OviUser;
-import es.uji.ei1027.SgOviProject.model.PapPati;
+import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -42,6 +42,12 @@ public class ContractController {
     @Autowired
     private CandidacyService candidacyService;
 
+    @Autowired
+    private AccountDao accountDao;
+
+    @Autowired
+    private CandidacyDao candidacyDao;
+
     @GetMapping("/add/{idCandidacy}")
     public String showContractForm(Model model,
                                    HttpSession session,
@@ -65,7 +71,7 @@ public class ContractController {
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
         if(!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
         }
 
         ContractValidator contractValidator = new ContractValidator();
@@ -222,6 +228,23 @@ public class ContractController {
         model.addAttribute("idCandidacy", idCandidacy);
         model.addAttribute("idContract", idContract);
 
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+
+        if (candidacy == null){
+            throw new SgOviException("No s'ha trobar la candidatura", "Error 404 - No trobat");
+        }
+
+        Account assistantAccount = accountDao.getAccount(candidacy.getDniPapPati());
+
+        if (assistantAccount == null) {
+            throw new SgOviException("No s'ha trobat al candidat", "Error 404 - No trobat");
+        }
+
+        String assistantName = assistantAccount.getName() + ' ' + assistantAccount.getSurname();
+
+        model.addAttribute("assistantEmail", assistantAccount.getEmail());
+        model.addAttribute("assistantName", assistantName);
+
         return "contract/done";
     }
 
@@ -254,12 +277,12 @@ public class ContractController {
         // Recuperar el contrato original de la BD para no perder los datos que no queremos cambiar
         Contract contractOriginal = contractDao.getContract(contractModificado.getIdContract());
         if (contractOriginal == null) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
         OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
         if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), oviUser)) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
         }
 
         ContractValidator contractValidator = new ContractValidator();
@@ -302,7 +325,7 @@ public class ContractController {
 
         contractDao.updateContract(contractOriginal);
 
-        return "redirect:/contract/details/" + contractOriginal.getIdContract();
+        return "redirect:/contract/done/" + contractModificado.getIdCandidacy() + "/" + contractModificado.getIdContract();
     }
 
     private void checkAuthorizationOrThrow(HttpSession session, int idCandidacy) {
