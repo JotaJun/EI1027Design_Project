@@ -1266,6 +1266,12 @@ select:focus {
     color: var(--color-secondary);
 }
 
+/* Resaltar fila al pasar el ratón en la tabla principal */
+.styled-table tbody tr:hover {
+    background-color: var(--color-background);
+    transition: background-color 0.2s ease;
+}
+
 
 /* =========================================
    MODIFICADORES: Detall de la sol·licitud
