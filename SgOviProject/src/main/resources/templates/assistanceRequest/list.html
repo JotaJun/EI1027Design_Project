@@ -62,7 +62,7 @@
                         <tr th:each="req : ${requestsPage}"
                             th:classappend="${req.idApRequest == nova} ? 'row-newly-added' : ''">
 
-                            <td th:text="'#' + ${req.idApRequest}">id</td> <!-- !!! NO COPIAR ESTA COLUMNA EN OTROS LISTADOS,
+                            <td><strong th:text="'#' + ${req.idApRequest}">id</strong></td> <!-- !!! NO COPIAR ESTA COLUMNA EN OTROS LISTADOS,
                                                                                     Aquí se hace para poder identificar a la hora de borrar, no hay otra manera-->
 
                             <td th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</td>
