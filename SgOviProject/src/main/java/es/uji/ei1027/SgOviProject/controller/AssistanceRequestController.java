@@ -1,10 +1,7 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.AssistanceRequestComparator;
-import es.uji.ei1027.SgOviProject.dao.AccountDao;
-import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
-import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
-import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
+import es.uji.ei1027.SgOviProject.dao.*;
 import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.*;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
@@ -46,6 +43,9 @@ public class AssistanceRequestController {
     @Autowired
     private CandidacyDao candidacyDao;
 
+    @Autowired
+    private OviUserDao oviUserDao;
+
     @ModelAttribute("genderList")
     public List<Gender> genderList() {
         return Arrays.asList(Gender.values());
@@ -60,8 +60,17 @@ public class AssistanceRequestController {
     public String showAddAssistanceForm(Model model, @PathVariable(required = false) String dni, HttpSession session) {
         AssistanceRequest assistanceRequest = new AssistanceRequest();
         
+        String userRole = (String) session.getAttribute("userRole");
+
         // Si se pasa un DNI por la URL (caso del tutor legal)
         if (dni != null) {
+            if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+                LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+                OviUser wardedUser = oviUserDao.getOviUser(dni);
+                if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                    throw new SgOviException("No tens permisos per a realitzar una petició per a aquest usuari", "Error 403 - Sense permisos");
+                }
+            }
             assistanceRequest.setDniOviUser(dni);
         }
         
@@ -83,6 +92,13 @@ public class AssistanceRequestController {
 
         if (AccountType.LEGALGUARDIAN.name().equals(userRole)){
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            
+            // SEGURIDAD: Validar que el DNI del usuario OVI pertenece a un tutelado del tutor actual
+            OviUser wardedUser = oviUserDao.getOviUser(assistanceRequest.getDniOviUser());
+            if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                throw new SgOviException("No tens permisos per a realitzar una petició per a aquest usuari", "Error 403 - Sense permisos");
+            }
+            
             assistanceRequest.setDniLegalGuardian(currentUser.getDni());
             // El dniOviUser ya vendrá en el objeto assistanceRequest (desde el campo oculto del formulario)
         } else {
@@ -295,10 +311,18 @@ public class AssistanceRequestController {
     }
 
     @GetMapping("/done/{idApRequest}")
-    public String apRequestDone(Model model, @PathVariable int idApRequest) {
-        // Pasamos el ID a la vista done.html para que pueda usarlo en el botón de
-        // "Volver"
+    public String apRequestDone(Model model, @PathVariable int idApRequest, HttpSession session) {
         model.addAttribute("idApRequest", idApRequest);
+
+        String userRole = (String) session.getAttribute("userRole");
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+            if (request != null) {
+                model.addAttribute("dniOviUser", request.getDniOviUser());
+            }
+            return "assistanceRequest/doneTutor";
+        }
+
         return "assistanceRequest/done";
     }
 
