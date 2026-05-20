@@ -9,7 +9,15 @@
 <body>
 
 <div layout:fragment="header">
-  <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+  <th:block th:if="${session.userRole == 'TECHNICIAN'}">
+    <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
+  </th:block>
+  <th:block th:if="${session.userRole == 'PAPPATI'}">
+    <div th:replace="~{fragments/papPati-returnMain-header :: papPati-returnMain-header}"></div>
+  </th:block>
+  <th:block th:unless="${session.userRole == 'TECHNICIAN' or session.userRole == 'PAPPATI'}">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+  </th:block>
 </div>
 
 <main layout:fragment="content">
@@ -29,8 +37,8 @@
       <table class="styled-table">
         <thead>
         <tr>
-          <th>ASSISTENT</th>
-          <th>TIPUS</th>
+          <th>DATA CREACIÓ</th>
+          <th>NOM</th>
           <th>DATA FI</th>
           <th>SALARI/HORA</th>
           <th class="text-center">ACCIONS</th>
@@ -39,9 +47,8 @@
         <tbody>
         <tr th:each="item : ${contractsPage}">
 
-
-          <td><strong th:text="${item.assistantName}">Nom Assistent</strong></td>
-          <td th:text="${item.assistantType}">PAP</td>
+          <td th:text="${#temporals.format(item.contract.creationDate, 'dd/MM/yyyy')}">31/12/2026</td>
+          <td><strong th:text="${item.contractedName}">Nom complet</strong></td>
 
           <td th:text="${item.contract.endDate != null ? #temporals.format(item.contract.endDate, 'dd/MM/yyyy') : 'Indefinit'}">31/12/2026</td>
           <td th:text="${item.contract.hourlySalary} + ' €/h'">10.5 €/h</td>

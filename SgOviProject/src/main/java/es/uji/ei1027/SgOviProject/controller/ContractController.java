@@ -337,9 +337,18 @@ public class ContractController {
     public String listAllUserContracts(Model model,
                                        @RequestParam("page") Optional<Integer> page,
                                        HttpSession session) {
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
+        List<ContractListAllDTO> contractsDto;
 
-        List<ContractListAllDTO> contractsDto = contractService.listAllContractsFromUser(currentUser);
+        if (userRole == AccountType.OVIUSER) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            contractsDto = contractService.listAllContractsFromOviUser(currentUser);
+        } else if (userRole == AccountType.PAPPATI) {
+            PapPati currentUser = (PapPati) session.getAttribute("specificAccount");
+            contractsDto = contractService.listAllContractsFromPapPati(currentUser);
+        } else {
+            throw new SgOviException("No tens permisos per veure aquest llistat", "Error 403 - Sense permisos");
+        }
 
         if (contractsDto != null && !contractsDto.isEmpty()) {
             contractsDto.sort((dto1, dto2) -> new ContractComparator().compare(dto1.getContract(), dto2.getContract()));

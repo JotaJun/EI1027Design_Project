@@ -25,9 +25,12 @@ public class ContractService {
     private PapPatiDao papPatiDao;
 
     @Autowired
+    private OviUserDao oviUserDao;
+
+    @Autowired
     private AccountDao accountDao;
 
-    public List<ContractListAllDTO> listAllContractsFromUser(OviUser oviUser){
+    public List<ContractListAllDTO> listAllContractsFromOviUser(OviUser oviUser){
 
         List<AssistanceRequest> assistanceRequests = assistanceRequestDao.getAcceptedAssistanceRequestsByDni(oviUser.getDni());
 
@@ -55,7 +58,35 @@ public class ContractService {
             Account accountPapPati = accountDao.getAccount(papPati.getDni());
 
             String papPatiName = accountPapPati.getName() + ' ' + accountPapPati.getSurname();
-            contractsDto.add(new ContractListAllDTO(c, papPati.getStaffType(), papPatiName));
+            contractsDto.add(new ContractListAllDTO(c, papPatiName));
+        }
+
+        return contractsDto; // debería de haber al menos un contrato si llega aqui, si falla algo devolverá una lista vacía
+
+    }
+
+    public List<ContractListAllDTO> listAllContractsFromPapPati(PapPati papPati){
+
+        List<Candidacy> candidacies = candidacyDao.getCandidaciesByStaffDni(papPati.getDni());
+
+        if ( candidacies.isEmpty() ) return new ArrayList<>();
+
+        List<Contract> contracts = new ArrayList<>();
+
+        for (Candidacy c : candidacies){
+            contracts.addAll(contractDao.getContractsByIdCandidacy(c.getIdCandidacy()));
+        }
+
+        List<ContractListAllDTO> contractsDto = new ArrayList<>();
+
+        for (Contract c : contracts){
+            Candidacy candidacy = candidacyDao.getCandidacyById(c.getIdCandidacy());
+            AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
+            OviUser oviUser = oviUserDao.getOviUser(request.getDniOviUser());
+            Account accountOviUser = accountDao.getAccount(oviUser.getDni());
+
+            String name = accountOviUser.getName() + ' ' + accountOviUser.getSurname();
+            contractsDto.add(new ContractListAllDTO(c, name));
         }
 
         return contractsDto; // debería de haber al menos un contrato si llega aqui, si falla algo devolverá una lista vacía

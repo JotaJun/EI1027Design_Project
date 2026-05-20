@@ -6,13 +6,11 @@ import es.uji.ei1027.SgOviProject.model.Contract;
 public class ContractListAllDTO {
 
     private Contract contract;
-    private StaffType assistantType;
-    private String assistantName;
+    private String contractedName;
 
-    public ContractListAllDTO(Contract contract, StaffType assistantType, String name){
+    public ContractListAllDTO(Contract contract, String name){
         this.contract = contract;
-        this.assistantType = assistantType;
-        this.assistantName = name;
+        this.contractedName = name;
     }
 
     public Contract getContract() {
@@ -23,28 +21,19 @@ public class ContractListAllDTO {
         this.contract = contract;
     }
 
-    public StaffType getAssistantType() {
-        return assistantType;
+    public String getContractedName() {
+        return contractedName;
     }
 
-    public void setAssistantType(StaffType assistantType) {
-        this.assistantType = assistantType;
-    }
-
-    public String getAssistantName() {
-        return assistantName;
-    }
-
-    public void setAssistantName(String assistantName) {
-        this.assistantName = assistantName;
+    public void setContractedName(String contractedName) {
+        this.contractedName = contractedName;
     }
 
     @Override
     public String toString() {
         return "ContractListAllDTO{" +
                 "contract=" + contract +
-                ", assistantType=" + assistantType +
-                ", assistantName='" + assistantName + '\'' +
+                ", contractedName='" + contractedName + '\'' +
                 '}';
     }
 }
