@@ -109,6 +109,15 @@ public class AssistanceRequestDao {
         }
     }
 
+    public List<AssistanceRequest> getAcceptedAssistanceRequestsByDni(String dniOviUser) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniOviUser=? AND status='accepted'",
+                    new AssistanceRequestRowMapper(), dniOviUser);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
     public List<AssistanceRequest> getAssistanceRequestsByDniAndStatus(String dniOviUser, String status) {
         try {
             if (status.equals("Totes")) {

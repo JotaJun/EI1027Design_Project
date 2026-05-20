@@ -149,5 +149,10 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                 .addPathPatterns(
                                                 "/assistanceRequest/add"
                                                 );
+
+                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.LEGALGUARDIAN, AccountType.TECHNICIAN))
+                        .addPathPatterns(
+                                "/contract/listAll"
+                        );
         }
 }

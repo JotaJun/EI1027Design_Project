@@ -4,10 +4,12 @@ import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
+import es.uji.ei1027.SgOviProject.dto.ContractListAllDTO;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
+import es.uji.ei1027.SgOviProject.services.ContractService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -47,6 +49,9 @@ public class ContractController {
 
     @Autowired
     private CandidacyDao candidacyDao;
+
+    @Autowired
+    private ContractService contractService;
 
     @GetMapping("/add/{idCandidacy}")
     public String showContractForm(Model model,
@@ -326,6 +331,61 @@ public class ContractController {
         contractDao.updateContract(contractOriginal);
 
         return "redirect:/contract/done/" + contractModificado.getIdCandidacy() + "/" + contractModificado.getIdContract();
+    }
+
+    @GetMapping("/listAll")
+    public String listAllUserContracts(Model model,
+                                       @RequestParam("page") Optional<Integer> page,
+                                       HttpSession session) {
+        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        List<ContractListAllDTO> contractsDto = contractService.listAllContractsFromUser(currentUser);
+
+        if (contractsDto != null && !contractsDto.isEmpty()) {
+            contractsDto.sort((dto1, dto2) -> new ContractComparator().compare(dto1.getContract(), dto2.getContract()));
+        } else {
+            contractsDto = new ArrayList<>();
+        }
+
+        ArrayList<ArrayList<ContractListAllDTO>> contractsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, contractsDto.size())));
+        }
+
+        int totalPages = contractsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
+
+        model.addAttribute("contractsPaged", contractsPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalContracts", contractsDto.size());
+        model.addAttribute("pageLength", pageLength);
+
+        // Guardar URL exacta para el botón de volver
+        String exactUrl = "/contract/listAll?page=" + currentPage;
+        session.setAttribute("lastContractListUrl", exactUrl);
+
+        return "contract/listAll";
     }
 
     private void checkAuthorizationOrThrow(HttpSession session, int idCandidacy) {

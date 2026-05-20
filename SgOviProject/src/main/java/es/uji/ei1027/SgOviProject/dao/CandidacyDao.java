@@ -88,6 +88,15 @@ public class CandidacyDao {
         }
     }
 
+    public List<Candidacy> getContractedCandidaciesByIdApRequest(int idApRequest){
+        try {
+            return jdbcTemplate.query("SELECT * FROM Candidacy WHERE idApRequest=? AND candidacyStatus='contracted'",
+                    new CandidacyRowMapper(), idApRequest);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Candidacy>();
+        }
+    }
+
     public List<Candidacy> getCandidaciesByIdApRequestAndStatus(int idApRequest, String status){
         try {
             return jdbcTemplate.query("SELECT * FROM Candidacy WHERE idApRequest=? AND candidacyStatus=LOWER(?)",
