@@ -1168,7 +1168,7 @@ select:focus {
 .styled-table {
     width: 100%;
     border-collapse: collapse;
-    text-align: left;
+    text-align: center;
 }
 
 .styled-table thead {
