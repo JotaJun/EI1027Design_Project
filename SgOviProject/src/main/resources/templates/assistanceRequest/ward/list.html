@@ -12,8 +12,23 @@
         <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header }"></div>
     </div>
 
+    <!-- Parámetro 'from': cuando se viene desde wardDetails, se muestra botón de tornar -->
+    <!-- El controlador pasa 'fromAccount' y 'fromDni' al modelo -->
+
     <main layout:fragment="content">
         <div class="container dashboard-main">
+
+            <!-- Botó de tornar al compte (només si vens des de wardDetails) -->
+            <div th:if="${fromAccount}" class="requests-header-action" style="margin-bottom: 10px;">
+                <a th:href="@{/account/wardDetails/{dni}(dni=${fromDni})}" class="btn-back">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none"
+                        stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                        <line x1="19" y1="12" x2="5" y2="12"></line>
+                        <polyline points="12 19 5 12 12 5"></polyline>
+                    </svg>
+                    Tornar al compte
+                </a>
+            </div>
 
             <div class="requests-header-action">
                 <h2 class="welcome-title">Sol·licituds dels meus tutelats</h2>
@@ -22,6 +37,10 @@
 
                     <form action="#" th:action="@{/assistanceRequest/ward/list}" th:object="${statusFilter}" method="post"
                         class="filter-form">
+                        
+                        <!-- Inputs ocultos para mantener los parámetros 'from' y 'fromDni' al filtrar -->
+                        <input type="hidden" name="from" th:if="${fromAccount}" th:value="account" />
+                        <input type="hidden" name="fromDni" th:if="${fromAccount}" th:value="${fromDni}" />
                         
                         <div style="display: flex; gap: 15px;">
                         <div class="select-wrapper">
@@ -47,7 +66,7 @@
                         </div>
                     </form>
 
-                    <a th:href="@{/assistanceRequest/ward/add}" class="btn-primary">+ Nova sol·licitud</a>
+                    <a th:href="@{/assistanceRequest/ward/add}" class="btn-primary" style="white-space: nowrap;">+ Nova sol·licitud</a>
                 </div>
             </div>
 
@@ -143,7 +162,7 @@
                     <li class="page-item" th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
                         th:each="pageNumber : ${pageNumbers}">
 
-                        <a th:href="@{/assistanceRequest/ward/list/{status}/{ward}(status=${statusFilter.statusSel}, ward=${statusFilter.wardDni}, page=${pageNumber - 1})}"
+                        <a th:href="@{/assistanceRequest/ward/list/{status}/{ward}(status=${statusFilter.statusSel}, ward=${statusFilter.wardDni}, page=${pageNumber - 1}, from=${fromAccount ? 'account' : null}, fromDni=${fromAccount ? fromDni : null})}"
                             th:text="${pageNumber}" class="page-link">1</a>
                     </li>
                 </ul>

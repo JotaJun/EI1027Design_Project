@@ -122,7 +122,9 @@ public class AssistanceRequestController {
                                        @PathVariable(required = false) String status,
                                        @PathVariable(required = false) String wardDni,
                                        @RequestParam("page") Optional<Integer> page,
-                                       @RequestParam("nova") Optional<Integer> nova) {
+                                       @RequestParam("nova") Optional<Integer> nova,
+                                       @RequestParam(value = "from", required = false) String from,
+                                       @RequestParam(value = "fromDni", required = false) String fromDni) {
         LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
 
         if (status == null)
@@ -130,6 +132,13 @@ public class AssistanceRequestController {
             
         if (wardDni == null)
             wardDni = "Tots";
+
+        // Si se viene desde wardDetails, pasar datos al modelo
+        if ("account".equals(from) && fromDni != null) {
+            model.addAttribute("fromAccount", true);
+            model.addAttribute("fromDni", fromDni);
+        }
+
 
         List<AssistanceRequest> requests = assistanceRequestDao
                 .getAssistanceRequestsByLegalGuardianAndStatusAndWard(currentUser.getDni(), status, wardDni);
@@ -212,9 +221,15 @@ public class AssistanceRequestController {
     }
 
     @PostMapping("/ward/list")
-    public String processWardFilter(@ModelAttribute("statusFilter") WardStatusFilter filter) {
+    public String processWardFilter(@ModelAttribute("statusFilter") WardStatusFilter filter,
+                                    @RequestParam(value = "from", required = false) String from,
+                                    @RequestParam(value = "fromDni", required = false) String fromDni) {
         String wardPath = filter.getWardDni() != null && !filter.getWardDni().isEmpty() ? "/" + filter.getWardDni() : "/Tots";
-        return "redirect:/assistanceRequest/ward/list/" + filter.getStatusSel() + wardPath;
+        String redirectUrl = "redirect:/assistanceRequest/ward/list/" + filter.getStatusSel() + wardPath;
+        if ("account".equals(from) && fromDni != null) {
+            redirectUrl += "?from=account&fromDni=" + fromDni;
+        }
+        return redirectUrl;
     }
 
     @GetMapping("/ward/add")
