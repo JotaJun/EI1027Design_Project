@@ -151,6 +151,22 @@ public class AssistanceRequestDao {
         }
     }
 
+    public List<AssistanceRequest> getAssistanceRequestsByLegalGuardianAndStatusAndWard(String dniLegalGuardian, String status, String dniOviUser) {
+        try {
+            if (dniOviUser == null || dniOviUser.equals("Tots") || dniOviUser.isEmpty()) {
+                return getAssistanceRequestsByLegalGuardianAndStatus(dniLegalGuardian, status);
+            }
+            if (status.equals("Totes")) {
+                return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniLegalGuardian=? AND dniOviUser=?",
+                        new AssistanceRequestRowMapper(), dniLegalGuardian, dniOviUser);
+            }
+            return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniLegalGuardian=? AND status=LOWER(?) AND dniOviUser=?",
+                    new AssistanceRequestRowMapper(), dniLegalGuardian, status, dniOviUser);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
     public List<AssistanceRequest> getPendingRequests() {
         try {
             return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE status=?",

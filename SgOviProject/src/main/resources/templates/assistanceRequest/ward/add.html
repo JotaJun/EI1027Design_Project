@@ -44,7 +44,7 @@
                                 <option value="" disabled selected>Selecciona un tutelat</option>
                                 <option th:each="ward : ${wards}"
                                         th:value="${ward.dni}"
-                                        th:text="${ward.dni}">
+                                        th:text="${ward.name + ' ' + ward.surname + ' — ' + ward.dni}">
                                 </option>
                             </select>
                         </div>
