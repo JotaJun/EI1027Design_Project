@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Sol·licitud d'Assistència per a Tutelat</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header }"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="card-header-section card-header-icon-layout">
+            <div class="icon-square icon-orange">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <path d="M16 21v-2a4 4 0 0 0-4-4H6a4 4 0 0 0-4 4v2"></path>
+                    <circle cx="9" cy="7" r="4"></circle>
+                    <line x1="19" y1="8" x2="19" y2="14"></line>
+                    <line x1="22" y1="11" x2="16" y2="11"></line>
+                </svg>
+            </div>
+            <div>
+                <h2 class="card-title">Sol·licitud d'Assistència per a Tutelat</h2>
+                <p class="card-subtitle">Emplena les dades següents per a sol·licitar assistència per a un dels teus tutelats. Els camps amb asterisc (<span class="required-asterisk">*</span>) són obligatoris.</p>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card assistance-card">
+
+            <form th:action="@{/assistanceRequest/ward/add}" th:object="${assistanceRequest}" method="post" class="assistance-form">
+
+                <div class="form-grid">
+
+                    <div class="form-group form-full-width">
+                        <label for="dniOviUser">Selecciona el tutelat <span class="required-asterisk">*</span></label>
+                        <div class="select-wrapper">
+                            <select id="dniOviUser" th:field="*{dniOviUser}" required>
+                                <option value="" disabled selected>Selecciona un tutelat</option>
+                                <option th:each="ward : ${wards}"
+                                        th:value="${ward.dni}"
+                                        th:text="${ward.dni}">
+                                </option>
+                            </select>
+                        </div>
+                        <span th:if="${#fields.hasErrors('dniOviUser')}" th:errors="*{dniOviUser}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="assistantType">Tipus d'assistent <span class="required-asterisk">*</span></label>
+                        <div class="select-wrapper">
+                            <select id="assistantType" th:field="*{assistantType}" required>
+                                <option value="" disabled selected>Selecciona una opció</option>
+                                <option th:each="type : ${staffTypeList}"
+                                        th:value="${type.name()}"
+                                        th:text="${type.getDescription()}">
+                                </option>
+                            </select>
+                        </div>
+                        <span th:if="${#fields.hasErrors('assistantType')}" th:errors="*{assistantType}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="initialDateRequired">Data d'inici necessària <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="date" id="initialDateRequired"
+                                   th:field="*{initialDateRequired}"
+                                   th:min="${#temporals.format(#temporals.createNow(), 'yyyy-MM-dd')}"
+                                   required>
+                        </div>
+                        <span th:if="${#fields.hasErrors('initialDateRequired')}" th:errors="*{initialDateRequired}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="monthsRequired">Duració estimada (mesos) <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="number" id="monthsRequired" th:field="*{monthsRequired}" min="1" placeholder="Ex: 6" required>
+                        </div>
+                        <span th:if="${#fields.hasErrors('monthsRequired')}" th:errors="*{monthsRequired}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="city">Població on es donarà el servei <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="text" id="city" th:field="*{city}" placeholder="Ex: València" required>
+                        </div>
+                        <span th:if="${#fields.hasErrors('city')}" th:errors="*{city}" class="error-text"></span>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="gender">Preferència de gènere de l'assistent</label>
+                        <div class="select-wrapper">
+                            <select id="gender" th:field="*{gender}">
+                                <option value="">Sense preferència</option>
+                                <option th:each="gen : ${genderList}"
+                                        th:value="${gen.name()}"
+                                        th:text="${gen.getDescription()}">
+                                </option>
+                            </select>
+                        </div>
+                    </div>
+
+                    <div class="form-group">
+                        <label for="yearsOfExperience">Anys d'experiència mínima requerida</label>
+                        <div class="input-wrapper">
+                            <input type="number" id="yearsOfExperience" th:field="*{yearsOfExperience}" min="0" placeholder="Ex: 2">
+                        </div>
+                        <span th:if="${#fields.hasErrors('yearsOfExperience')}" th:errors="*{yearsOfExperience}" class="error-text"></span>
+                    </div>
+
+                </div>
+
+                <div class="checkbox-container mt-15">
+                    <input type="checkbox" id="drivingLicense" th:field="*{drivingLicense}">
+                    <label for="drivingLicense">Requerirà que tinga carnet de conduir?</label>
+                </div>
+
+                <div class="form-group form-full-width">
+                    <label for="description">Descriu el motiu pel qual necessites assistència personal <span class="required-asterisk">*</span></label>
+                    <div class="input-wrapper textarea-wrapper">
+                        <textarea id="description" th:field="*{description}" placeholder="Explica les necessitats i com un assistent personal pot ajudar al tutelat en el seu dia a dia..." required></textarea>
+                    </div>
+                    <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-text"></span>
+                </div>
+
+                <div class="form-actions form-actions-centered">
+                    <button type="reset" class="dash-btn dash-btn-outline btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <path d="M3 12a9 9 0 1 0 9-9 9.75 9.75 0 0 0-6.74 2.74L3 8"></path>
+                            <path d="M3 3v5h5"></path>
+                        </svg>
+                        Netejar formulari
+                    </button>
+                    <button type="submit" class="dash-btn dash-btn-primary btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="22" y1="2" x2="11" y2="13"></line>
+                            <polygon points="22 2 15 22 11 13 2 9 22 2"></polygon>
+                        </svg>
+                        Registrar sol·licitud
+                    </button>
+                </div>
+
+            </form>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

@@ -130,6 +130,27 @@ public class AssistanceRequestDao {
         }
     }
 
+    public List<AssistanceRequest> getAssistanceRequestsByLegalGuardian(String dniLegalGuardian) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniLegalGuardian=?",
+                    new AssistanceRequestRowMapper(), dniLegalGuardian);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
+    public List<AssistanceRequest> getAssistanceRequestsByLegalGuardianAndStatus(String dniLegalGuardian, String status) {
+        try {
+            if (status.equals("Totes")) {
+                return getAssistanceRequestsByLegalGuardian(dniLegalGuardian);
+            }
+            return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniLegalGuardian=? AND status=LOWER(?)",
+                    new AssistanceRequestRowMapper(), dniLegalGuardian, status);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
     public List<AssistanceRequest> getPendingRequests() {
         try {
             return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE status=?",

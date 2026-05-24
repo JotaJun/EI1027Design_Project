@@ -114,6 +114,116 @@ public class AssistanceRequestController {
     // Número de peticiones que queremos mostrar al usuario
     private int pageLength = 5;
 
+    @GetMapping({"/ward/list", "/ward/list/{status}"})
+    public String wardAssistanceRequests(Model model, HttpSession session,
+                                       @PathVariable(required = false) String status,
+                                       @RequestParam("page") Optional<Integer> page,
+                                       @RequestParam("nova") Optional<Integer> nova) {
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+
+        if (status == null)
+            status = "Totes";
+
+        List<AssistanceRequest> requests = assistanceRequestDao
+                .getAssistanceRequestsByLegalGuardianAndStatus(currentUser.getDni(), status);
+
+        requests.sort(new AssistanceRequestComparator());
+
+        ArrayList<ArrayList<AssistanceRequest>> requestsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, requests.size())));
+        }
+
+        model.addAttribute("requestsPaged", requestsPaged);
+
+        int totalPages = requestsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
+        int novaReqId = nova.orElse(-1);
+
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("nova", novaReqId);
+        model.addAttribute("totalRequests", requests.size());
+        model.addAttribute("pageLength", pageLength);
+
+        StatusFilter filter = new StatusFilter();
+        filter.setStatusSel(status);
+
+        model.addAttribute("statusFilter", filter);
+        model.addAttribute("statuses", Status.values());
+
+        String exactUrl = "/assistanceRequest/ward/list/" + status + "?page=" + currentPage;
+        session.setAttribute("lastRequestListUrl", exactUrl);
+
+        return "assistanceRequest/ward/list";
+    }
+
+    @PostMapping("/ward/list")
+    public String processWardFilter(@ModelAttribute("statusFilter") StatusFilter filter) {
+        return "redirect:/assistanceRequest/ward/list/" + filter.getStatusSel();
+    }
+
+    @GetMapping("/ward/add")
+    public String showAddWardAssistanceForm(Model model, HttpSession session) {
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+        List<OviUser> wards = oviUserDao.getWardedOviUsers(currentUser.getDni());
+        
+        AssistanceRequest assistanceRequest = new AssistanceRequest();
+        assistanceRequest.setDniLegalGuardian(currentUser.getDni());
+        
+        model.addAttribute("assistanceRequest", assistanceRequest);
+        model.addAttribute("wards", wards);
+        return "assistanceRequest/ward/add";
+    }
+
+    @PostMapping("/ward/add")
+    public String processAddWardAssistanceForm(@ModelAttribute("assistanceRequest") AssistanceRequest assistanceRequest,
+                                             BindingResult bindingResult,
+                                             HttpSession session,
+                                             Model model) {
+        AssistanceRequestValidator assistanceRequestValidator = new AssistanceRequestValidator();
+        assistanceRequestValidator.validate(assistanceRequest, bindingResult);
+        
+        if (bindingResult.hasErrors()) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            List<OviUser> wards = oviUserDao.getWardedOviUsers(currentUser.getDni());
+            model.addAttribute("wards", wards);
+            return "assistanceRequest/ward/add";
+        }
+
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+        
+        OviUser wardedUser = oviUserDao.getOviUser(assistanceRequest.getDniOviUser());
+        if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+            throw new SgOviException("No tens permisos per a realitzar una petició per a aquest usuari", "Error 403 - Sense permisos");
+        }
+        
+        assistanceRequest.setDniLegalGuardian(currentUser.getDni());
+
+        assistanceRequestDao.addAssistanceRequest(assistanceRequest);
+        return "redirect:/assistanceRequest/ward/list?nova=" + assistanceRequest.getIdApRequest();
+    }
+
     @GetMapping({ "/list", "/list/{status}" }) // Acepta la ruta base o con filtro
     public String showList(Model model, HttpSession session,
             @PathVariable(required = false) String status,
