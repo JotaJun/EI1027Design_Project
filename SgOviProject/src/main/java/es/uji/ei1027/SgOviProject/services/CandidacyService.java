@@ -102,6 +102,15 @@ public class CandidacyService {
         return candidacy.getDniPapPati().equals(papPati.getDni());
     }
 
+    public boolean isCandidacyFromWard(int idCandidacy, LegalGuardian legalGuardian, OviUser oviUser){
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+        if (candidacy == null) return false;
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
+        if (request == null) return false;
+        return request.getDniOviUser().equals(oviUser.getDni())&&oviUser.getDniLegalGuardian().equals(legalGuardian.getDni());
+
+    }
+
     public void contractDone(Contract contract){
         Candidacy candidacy = candidacyDao.getCandidacyById(contract.getIdCandidacy());
 
