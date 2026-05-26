@@ -83,7 +83,10 @@ public class LegalGuardianController {
     }
 
     @RequestMapping("/main")
-    public String oviUserMain(Model model) {
+    public String oviUserMain(Model model, HttpSession session) {
+        // Limpiar el estado del botón de volver de tutelados
+        session.removeAttribute("fromAccount");
+        session.removeAttribute("fromAccountDni");
 
         // Generar la fecha para la vista
         DateTimeFormatter formatter = DateTimeFormatter.ofPattern("EEEE, d MMMM 'de' yyyy", new Locale("ca", "ES"));

@@ -465,6 +465,8 @@ public class AccountController {
                 throw new es.uji.ei1027.SgOviProject.exception.SgOviException(
                         "No tens permisos per veure els detalls d'aquest compte", "Error 403 - Sense permisos");
             }
+            session.setAttribute("fromAccount", true);
+            session.setAttribute("fromAccountDni", dni);
         }
 
         Account account = accountDao.getAccount(dni);

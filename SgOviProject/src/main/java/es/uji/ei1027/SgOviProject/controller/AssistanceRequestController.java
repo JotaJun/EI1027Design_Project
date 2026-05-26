@@ -122,9 +122,7 @@ public class AssistanceRequestController {
                                        @PathVariable(required = false) String status,
                                        @PathVariable(required = false) String wardDni,
                                        @RequestParam("page") Optional<Integer> page,
-                                       @RequestParam("nova") Optional<Integer> nova,
-                                       @RequestParam(value = "from", required = false) String from,
-                                       @RequestParam(value = "fromDni", required = false) String fromDni) {
+                                       @RequestParam("nova") Optional<Integer> nova) {
         LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
 
         if (status == null)
@@ -133,10 +131,13 @@ public class AssistanceRequestController {
         if (wardDni == null)
             wardDni = "Tots";
 
-        // Si se viene desde wardDetails, pasar datos al modelo
-        if ("account".equals(from) && fromDni != null) {
+        // Si se viene desde wardDetails, recuperar los datos desde la sesión
+        Boolean fromAccount = (Boolean) session.getAttribute("fromAccount");
+        String fromAccountDni = (String) session.getAttribute("fromAccountDni");
+
+        if (Boolean.TRUE.equals(fromAccount) && fromAccountDni != null) {
             model.addAttribute("fromAccount", true);
-            model.addAttribute("fromDni", fromDni);
+            model.addAttribute("fromDni", fromAccountDni);
         } else {
             model.addAttribute("fromAccount", false);
             model.addAttribute("fromDni", null);
@@ -224,15 +225,9 @@ public class AssistanceRequestController {
     }
 
     @PostMapping("/ward/list")
-    public String processWardFilter(@ModelAttribute("statusFilter") WardStatusFilter filter,
-                                    @RequestParam(value = "from", required = false) String from,
-                                    @RequestParam(value = "fromDni", required = false) String fromDni) {
+    public String processWardFilter(@ModelAttribute("statusFilter") WardStatusFilter filter) {
         String wardPath = filter.getWardDni() != null && !filter.getWardDni().isEmpty() ? "/" + filter.getWardDni() : "/Tots";
-        String redirectUrl = "redirect:/assistanceRequest/ward/list/" + filter.getStatusSel() + wardPath;
-        if ("account".equals(from) && fromDni != null) {
-            redirectUrl += "?from=account&fromDni=" + fromDni;
-        }
-        return redirectUrl;
+        return "redirect:/assistanceRequest/ward/list/" + filter.getStatusSel() + wardPath;
     }
 
     @GetMapping("/ward/add")
@@ -477,7 +472,7 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició original", "Error 404 - No trobat");
         }
 
-        if ((!originalRequest.getDniOviUser().equals(currentAccount.getDni()))||(!originalRequest.getDniLegalGuardian().equals(currentAccount.getDni()))) {
+        if ((!originalRequest.getDniOviUser().equals(currentAccount.getDni()))&&(!originalRequest.getDniLegalGuardian().equals(currentAccount.getDni()))) {
             throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
         }
 
@@ -493,7 +488,7 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.updateAssistanceRequest(originalRequest);
 
-        return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest();
+        return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest() + "?origin=wardList";
     }
 
     @GetMapping(value = "/delete/{idApRequest}")

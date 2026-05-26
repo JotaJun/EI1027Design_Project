@@ -38,10 +38,6 @@
                     <form action="#" th:action="@{/assistanceRequest/ward/list}" th:object="${statusFilter}" method="post"
                         class="filter-form">
                         
-                        <!-- Inputs ocultos para mantener los parámetros 'from' y 'fromDni' al filtrar -->
-                        <input type="hidden" name="from" th:if="${fromAccount}" th:value="account" />
-                        <input type="hidden" name="fromDni" th:if="${fromAccount}" th:value="${fromDni}" />
-                        
                         <div style="display: flex; gap: 15px;">
                         <div class="select-wrapper">
                             <label for="statusSelect" class="filter-label">Filtra per estat:</label>
@@ -162,7 +158,7 @@
                     <li class="page-item" th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
                         th:each="pageNumber : ${pageNumbers}">
 
-                        <a th:href="@{/assistanceRequest/ward/list/{status}/{ward}(status=${statusFilter.statusSel}, ward=${statusFilter.wardDni}, page=${pageNumber - 1}, from=${fromAccount ? 'account' : null}, fromDni=${fromAccount ? fromDni : null})}"
+                        <a th:href="@{/assistanceRequest/ward/list/{status}/{ward}(status=${statusFilter.statusSel}, ward=${statusFilter.wardDni}, page=${pageNumber - 1})}"
                             th:text="${pageNumber}" class="page-link">1</a>
                     </li>
                 </ul>
