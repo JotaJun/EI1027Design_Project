@@ -372,7 +372,8 @@ public class AssistanceRequestController {
     @GetMapping(value = "/details/{idApRequest}")
     public String showDetails(Model model, @PathVariable int idApRequest, HttpSession session) {
         // No hace falta comprobar si es null, ya se encarga interceptor
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+
 
         // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
@@ -381,8 +382,20 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
         }
 
-        if (!request.getDniOviUser().equals(currentUser.getDni())) {
-            throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
+        String userRole = (String) session.getAttribute("userRole");
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+            if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
+            }
+        }
+        else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!request.getDniOviUser().equals(currentUser.getDni())) {
+
+                throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
+            }
         }
 
         // Si la solicitud fue creada por un tutor, recuperamos sus datos
