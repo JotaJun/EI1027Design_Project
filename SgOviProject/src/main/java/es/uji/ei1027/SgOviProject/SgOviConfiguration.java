@@ -97,9 +97,6 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                 .addPathPatterns(
                                                 "/oviUser/**",
                                                 "/assistanceRequest/list/**",
-                                                "/assistanceRequest/details/**",
-                                                "/assistanceRequest/update/**",
-                                                "/assistanceRequest/delete/**",
                                                 "/candidacy/reject/**",
                                                 "/contract/add/**",
                                                 "/contract/update/**")
@@ -128,7 +125,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                 .addPathPatterns(
                                                 "/legalGuardian/**",
                                                 "/account/wardList/**",
-                                                "/account/wardDetails/")
+                                                "/account/wardDetails/",
+                                                "/assistanceRequest/ward/**")
                                 .excludePathPatterns("/legalGuardian/register");
 
                 // --- REGLAS COMPARTIDAS ---
@@ -147,7 +145,10 @@ public class SgOviConfiguration implements WebMvcConfigurer {
 
                 registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.LEGALGUARDIAN))
                                 .addPathPatterns(
-                                                "/assistanceRequest/add"
+                                                "/assistanceRequest/add",
+                                                "/assistanceRequest/details/**",
+                                                "/assistanceRequest/update/**",
+                                                "/assistanceRequest/delete/**"
                                                 );
 
                 registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.LEGALGUARDIAN,

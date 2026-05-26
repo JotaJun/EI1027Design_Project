@@ -382,6 +382,7 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
         }
 
+        //Comprobamos si es tutor u oviuser
         String userRole = (String) session.getAttribute("userRole");
         if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
@@ -393,7 +394,6 @@ public class AssistanceRequestController {
         else {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
             if (!request.getDniOviUser().equals(currentUser.getDni())) {
-
                 throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
             }
         }
