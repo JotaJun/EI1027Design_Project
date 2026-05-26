@@ -137,6 +137,9 @@ public class AssistanceRequestController {
         if ("account".equals(from) && fromDni != null) {
             model.addAttribute("fromAccount", true);
             model.addAttribute("fromDni", fromDni);
+        } else {
+            model.addAttribute("fromAccount", false);
+            model.addAttribute("fromDni", null);
         }
 
 
@@ -415,8 +418,6 @@ public class AssistanceRequestController {
 
     @GetMapping(value = "/update/{idApRequest}")
     public String editApRequest(Model model, @PathVariable int idApRequest, HttpSession session) {
-        // No hace falta comprobar si es null, ya se encarga interceptor
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
         // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
@@ -425,8 +426,20 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
         }
 
-        if (!request.getDniOviUser().equals(currentUser.getDni())) {
-            throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
+        //Comprobamos si es tutor u oviuser
+        String userRole = (String) session.getAttribute("userRole");
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+            if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
+            }
+        } else {
+            // No hace falta comprobar si es null, ya se encarga interceptor
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!request.getDniOviUser().equals(currentUser.getDni())) {
+                throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
+            }
         }
 
         model.addAttribute("assistanceRequest", request);
@@ -443,17 +456,28 @@ public class AssistanceRequestController {
             return "assistanceRequest/update";
         }
 
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        String userRole = (String) session.getAttribute("userRole");
+        Account currentAccount= null;
+        //Comprobamos si es OVIUSER o tutor
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            currentAccount = accountDao.getAccount(currentUser.getDni());
+        }
+        else if(AccountType.OVIUSER.name().equals(userRole)){
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            currentAccount = accountDao.getAccount(currentUser.getDni());
+        }
+
 
         // RECUPERAMOS LA PETICIÓN ORIGINAL DE LA BASE DE DATOS
         AssistanceRequest originalRequest = assistanceRequestDao
                 .getAssistanceRequest(assistanceRequest.getIdApRequest());
 
-        if (originalRequest == null) {
+        if (originalRequest == null || currentAccount == null) {
             throw new SgOviException("No s'ha trobat la petició original", "Error 404 - No trobat");
         }
-        
-        if (!originalRequest.getDniOviUser().equals(currentUser.getDni())) {
+
+        if ((!originalRequest.getDniOviUser().equals(currentAccount.getDni()))||(!originalRequest.getDniLegalGuardian().equals(currentAccount.getDni()))) {
             throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
         }
 
@@ -474,7 +498,8 @@ public class AssistanceRequestController {
 
     @GetMapping(value = "/delete/{idApRequest}")
     public String deleteApRequest(Model model, @PathVariable int idApRequest, HttpSession session) {
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+        String redirect="redirect:/assistanceRequest/list";
 
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
@@ -484,9 +509,21 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
         }
 
-        if (!request.getDniOviUser().equals(currentUser.getDni())) {
-            throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
+        String userRole = (String) session.getAttribute("userRole");
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+            if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
+            }
+            redirect="redirect:/assistanceRequest/ward/list";
+        } else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!request.getDniOviUser().equals(currentUser.getDni())) {
+                throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
+            }
         }
+
 
         if (request.getStatus() != Status.PENDING) {
             throw new SgOviException("Només es poden esborrar les peticions en estat PENDING", "Error de Validació");
@@ -494,7 +531,7 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.deleteAssistanceRequest(idApRequest);
 
-        return "redirect:/assistanceRequest/list";
+        return redirect;
     }
 
     @GetMapping("/done/{idApRequest}")
