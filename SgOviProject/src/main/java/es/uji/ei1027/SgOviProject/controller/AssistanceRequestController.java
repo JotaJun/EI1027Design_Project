@@ -525,7 +525,6 @@ public class AssistanceRequestController {
     @GetMapping(value = "/delete/{idApRequest}")
     public String deleteApRequest(Model model, @PathVariable int idApRequest, HttpSession session) {
 
-        String redirect="redirect:/assistanceRequest/list";
 
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
@@ -533,6 +532,10 @@ public class AssistanceRequestController {
         // estado PENDING
         if (request == null) {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        if (request.getStatus() != Status.PENDING) {
+            throw new SgOviException("Només es poden esborrar les peticions en estat PENDING", "Error de Validació");
         }
 
         String userRole = (String) session.getAttribute("userRole");
@@ -556,13 +559,10 @@ public class AssistanceRequestController {
         }
 
 
-        if (request.getStatus() != Status.PENDING) {
-            throw new SgOviException("Només es poden esborrar les peticions en estat PENDING", "Error de Validació");
-        }
 
         assistanceRequestDao.deleteAssistanceRequest(idApRequest);
 
-        return redirect;
+        return "redirect:/assistanceRequest/list";
     }
 
     @PostMapping(value = "/delete")

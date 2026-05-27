@@ -1,10 +1,7 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.CommunicationComparator;
-import es.uji.ei1027.SgOviProject.dao.AccountDao;
-import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
-import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
-import es.uji.ei1027.SgOviProject.dao.CommunicationDao;
+import es.uji.ei1027.SgOviProject.dao.*;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.enums.CandidacyStatus;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
@@ -36,6 +33,9 @@ public class CommunicationController {
     @Autowired
     private AccountDao accountDao;
 
+    @Autowired
+    private OviUserDao oviUserDao;
+
     @GetMapping("/chat/{idCandidacy}")
     public String showChat(@PathVariable int idCandidacy,
                            Model model,
@@ -48,10 +48,12 @@ public class CommunicationController {
         Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
 
         Account otherUser = null;
-        if (role == AccountType.OVIUSER) {
+        if (role == AccountType.OVIUSER || role == AccountType.LEGALGUARDIAN) {
             otherUser = accountDao.getAccount(candidacy.getDniPapPati());
         } else if (role == AccountType.PAPPATI) {
-            otherUser = accountDao.getAccount(request.getDniOviUser());
+            if(request.getDniLegalGuardian()!=null){
+                otherUser = accountDao.getAccount(request.getDniOviUser());
+            } else otherUser = accountDao.getAccount(request.getDniLegalGuardian());
         }
 
         String otherUserName = "Usuari Desconegut";
@@ -126,8 +128,12 @@ public class CommunicationController {
 
         boolean isAuthorized = false;
         if (role == AccountType.OVIUSER && request.getDniOviUser().equals(currentUser.getDni())) {
-            isAuthorized = true;
+            if(oviUserDao.getOviUser(currentUser.getDni()).getDniLegalGuardian()==null) {
+                isAuthorized = true;
+            } else throw new SgOviException("Els permisos per accedir a aquest xat corresponen al teu tutor", "Error 403 - Sense permisos");
         } else if (role == AccountType.PAPPATI && candidacy.getDniPapPati().equals(currentUser.getDni())) {
+            isAuthorized = true;
+        } else if(role == AccountType.LEGALGUARDIAN && oviUserDao.getOviUser(request.getDniOviUser()).getDniLegalGuardian().equals(currentUser.getDni())) {
             isAuthorized = true;
         }
 
