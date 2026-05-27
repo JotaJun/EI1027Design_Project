@@ -552,7 +552,10 @@ public class AccountController {
     }
 
     @PostMapping(value = "/deactivateWard")
-    public String processDeactivateWard(@ModelAttribute("account") Account account, Model model, HttpSession session) {
+    public String processDeactivateWard(@ModelAttribute("account") Account account,
+                                        @RequestParam(value = "signatureCode", required = false) String signatureCode,
+                                        Model model,
+                                        HttpSession session) {
         String userRole = (String) session.getAttribute("userRole");
         Account currentUser = (Account) session.getAttribute("account");
 
@@ -570,6 +573,28 @@ public class AccountController {
 
         Account existing = accountDao.getAccount(account.getDni());
 
+        // Validación de la firma para el Tutor
+        LegalGuardian lg = legalGuardianDao.getLegalGuardian(currentUser.getDni());
+        if (signatureCode == null || signatureCode.trim().isEmpty()) {
+            model.addAttribute("account", existing);
+            model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar la baixa.");
+            return "account/deactivateWard";
+        }
+
+        BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+        boolean isValid = false;
+        try {
+            isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+        } catch (Exception e) {
+            isValid = signatureCode.equals(lg.getSignatureCode());
+        }
+
+        if (!isValid) {
+            model.addAttribute("account", existing);
+            model.addAttribute("signatureError", "El codi de firma no és correcte.");
+            return "account/deactivateWard";
+        }
+
         // Validación backend del motivo
         if (account.getDeniedReason() == null || account.getDeniedReason().trim().isEmpty()) {
             model.addAttribute("account", existing);
@@ -582,7 +607,7 @@ public class AccountController {
         accountDao.updateAccount(existing);
 
         model.addAttribute("result", "rejected"); // Podríamos crear un 'deactivated' si hubiera un done específico,
-                                                  // pero reutilizamos el done de rejected
+                                                   // pero reutilizamos el done de rejected
         return "account/done";
     }
 

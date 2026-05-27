@@ -1,0 +1,102 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org"
+      xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+<head>
+    <title>Confirmar eliminació de sol·licitud</title>
+</head>
+<body>
+
+<div layout:fragment="header">
+    <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
+</div>
+
+<main layout:fragment="content">
+    <div class="container dashboard-main">
+
+        <div class="card-header-section card-header-icon-layout">
+            <div class="icon-square icon-orange">
+                <svg xmlns="http://www.w3.org/2000/svg" width="1em" height="1em" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                    <polyline points="3 6 5 6 21 6"></polyline>
+                    <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                    <line x1="10" y1="11" x2="10" y2="17"></line>
+                    <line x1="14" y1="11" x2="14" y2="17"></line>
+                </svg>
+            </div>
+            <div>
+                <h2 class="card-title">Confirmar eliminació de sol·licitud</h2>
+                <p class="card-subtitle">Estàs segur que vols esborrar aquesta sol·licitud d'assistència? Aquesta acció no es pot desfer.</p>
+            </div>
+        </div>
+
+        <br>
+
+        <div class="card assistance-card">
+            
+            <h3 class="detail-section-title mt-10">Detalls de la Sol·licitud a Eliminar</h3>
+            <div class="form-grid">
+                <div class="detail-group">
+                    <span class="detail-label">ID de la Sol·licitud</span>
+                    <span class="detail-value"><strong th:text="'#' + ${req.idApRequest}">#123</strong></span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Tutelat (DNI)</span>
+                    <span class="detail-value" th:text="${oviUserAccount.name} + ' ' + ${oviUserAccount.surname} + ' (' + ${req.dniOviUser} + ')'">Nom Tutelat (12345678A)</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Data de Creació</span>
+                    <span class="detail-value" th:text="${#temporals.format(req.creationDate, 'dd/MM/yyyy')}">24/03/2026</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Tipus d'Assistent</span>
+                    <span class="detail-value" th:text="${req.assistantType.description}">PAP</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Població</span>
+                    <span class="detail-value" th:text="${req.city}">Castelló</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Duració</span>
+                    <span class="detail-value" th:text="${req.monthsRequired} + ' mesos'">6 mesos</span>
+                </div>
+            </div>
+
+            <form th:action="@{/assistanceRequest/delete}" method="post" class="assistance-form">
+                <input type="hidden" name="idApRequest" th:value="${req.idApRequest}" />
+
+                <div class="form-grid">
+                    <div class="form-group">
+                        <label for="signatureCode">Codi de firma del Tutor Legal <span class="required-asterisk">*</span></label>
+                        <div class="input-wrapper">
+                            <input type="password" id="signatureCode" name="signatureCode" required class="form-control"
+                                   placeholder="Introdueix el teu codi de firma per a confirmar" />
+                        </div>
+                        <span th:if="${signatureError != null}" th:text="${signatureError}" class="error-message"></span>
+                    </div>
+                </div>
+
+                <div class="form-actions-centered actions-bordered mt-15">
+                    <a th:href="@{/assistanceRequest/ward/list}" class="btn-outline btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <line x1="18" y1="6" x2="6" y2="18"></line>
+                            <line x1="6" y1="6" x2="18" y2="18"></line>
+                        </svg>
+                        Cancel·lar
+                    </a>
+                    
+                    <button type="submit" class="btn-primary btn-icon">
+                        <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
+                            <polyline points="3 6 5 6 21 6"></polyline>
+                            <path d="M19 6v14a2 2 0 0 1-2 2H7a2 2 0 0 1-2-2V6m3 0V4a2 2 0 0 1 2-2h4a2 2 0 0 1 2 2v2"></path>
+                        </svg>
+                        Eliminar definitivament
+                    </button>
+                </div>
+            </form>
+        </div>
+
+    </div>
+</main>
+
+</body>
+</html>

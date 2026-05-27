@@ -45,6 +45,15 @@
                     </div>
                 </div>
 
+                <div class="form-group">
+                    <label for="signatureCode">Codi de firma del Tutor Legal <span class="required-asterisk">*</span></label>
+                    <div class="input-wrapper">
+                        <input type="password" id="signatureCode" name="signatureCode" required class="form-control"
+                               placeholder="Introdueix el teu codi de firma" />
+                    </div>
+                    <span th:if="${signatureError != null}" th:text="${signatureError}" class="error-message"></span>
+                </div>
+
                 <div class="form-actions-centered actions-bordered">
                     <button type="submit" class="btn-primary btn-icon">
                         Confirmar baixa

@@ -199,7 +199,7 @@
           </a>
 
           <a th:href="@{/assistanceRequest/delete/{id}(id=${req.idApRequest})}"
-            th:onclick="return confirm('Estàs segur d\'esborrar la sol·licitud amb ID \'' + [[${req.idApRequest}]] + '\'?');"
+            th:onclick="${session.userRole == 'LEGALGUARDIAN'} ? null : 'return confirm(\'Estàs segur d\'esborrar la sol·licitud amb ID \\\'' + [[${req.idApRequest}]] + '\\\'?\');'"
             class="btn-outline-danger btn-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

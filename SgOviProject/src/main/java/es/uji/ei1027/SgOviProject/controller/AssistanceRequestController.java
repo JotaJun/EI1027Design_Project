@@ -9,6 +9,7 @@ import es.uji.ei1027.SgOviProject.filters.StatusFilter;
 import es.uji.ei1027.SgOviProject.filters.WardStatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -46,6 +47,9 @@ public class AssistanceRequestController {
 
     @Autowired
     private OviUserDao oviUserDao;
+
+    @Autowired
+    private LegalGuardianDao legalGuardianDao;
 
     @ModelAttribute("genderList")
     public List<Gender> genderList() {
@@ -444,7 +448,9 @@ public class AssistanceRequestController {
     @PostMapping(value = "/update")
     public String processUpdateApRequest(@ModelAttribute("assistanceRequest") AssistanceRequest assistanceRequest,
             BindingResult bindingResult,
-            HttpSession session) {
+            @RequestParam(value = "signatureCode", required = false) String signatureCode,
+            HttpSession session,
+            Model model) {
         AssistanceRequestValidator assistanceRequestValidator = new AssistanceRequestValidator();
         assistanceRequestValidator.validate(assistanceRequest, bindingResult);
         if (bindingResult.hasErrors()) {
@@ -457,6 +463,28 @@ public class AssistanceRequestController {
         if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
             currentAccount = accountDao.getAccount(currentUser.getDni());
+            
+            // Validación de la firma para el Tutor
+            LegalGuardian lg = legalGuardianDao.getLegalGuardian(currentUser.getDni());
+            
+            if (signatureCode == null || signatureCode.trim().isEmpty()) {
+                model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar els canvis.");
+                return "assistanceRequest/update";
+            }
+
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            boolean isValid = false;
+            try {
+                isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+            } catch (Exception e) {
+                // Si la firma en la BD no está encriptada (datos de prueba), probamos comparación directa
+                isValid = signatureCode.equals(lg.getSignatureCode());
+            }
+
+            if (!isValid) {
+                model.addAttribute("signatureError", "El codi de firma no és correcte.");
+                return "assistanceRequest/update";
+            }
         }
         else if(AccountType.OVIUSER.name().equals(userRole)){
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
@@ -488,7 +516,10 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.updateAssistanceRequest(originalRequest);
 
-        return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest() + "?origin=wardList";
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest() + "?origin=wardList";
+        }
+        return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest();
     }
 
     @GetMapping(value = "/delete/{idApRequest}")
@@ -511,7 +542,12 @@ public class AssistanceRequestController {
             if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
                 throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
             }
-            redirect="redirect:/assistanceRequest/ward/list";
+            
+            // Devolver página intermedia de confirmación para tutor
+            Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+            model.addAttribute("oviUserAccount", oviUserAccount);
+            model.addAttribute("req", request);
+            return "assistanceRequest/deleteConfirm";
         } else {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
             if (!request.getDniOviUser().equals(currentUser.getDni())) {
@@ -527,6 +563,61 @@ public class AssistanceRequestController {
         assistanceRequestDao.deleteAssistanceRequest(idApRequest);
 
         return redirect;
+    }
+
+    @PostMapping(value = "/delete")
+    public String processDeleteApRequest(@RequestParam("idApRequest") int idApRequest,
+                                         @RequestParam(value = "signatureCode", required = false) String signatureCode,
+                                         HttpSession session,
+                                         Model model) {
+        String userRole = (String) session.getAttribute("userRole");
+        if (!AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            throw new SgOviException("Operació no permesa per a aquest rol", "Error 403 - Sense permisos");
+        }
+
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+        OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+        if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+            throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
+        }
+
+        if (request.getStatus() != Status.PENDING) {
+            throw new SgOviException("Només es poden esborrar les peticions en estat PENDING", "Error de Validació");
+        }
+
+        // Validar firma
+        LegalGuardian lg = legalGuardianDao.getLegalGuardian(currentUser.getDni());
+        if (signatureCode == null || signatureCode.trim().isEmpty()) {
+            Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+            model.addAttribute("oviUserAccount", oviUserAccount);
+            model.addAttribute("req", request);
+            model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar l'eliminació.");
+            return "assistanceRequest/deleteConfirm";
+        }
+
+        BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+        boolean isValid = false;
+        try {
+            isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+        } catch (Exception e) {
+            isValid = signatureCode.equals(lg.getSignatureCode());
+        }
+
+        if (!isValid) {
+            Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+            model.addAttribute("oviUserAccount", oviUserAccount);
+            model.addAttribute("req", request);
+            model.addAttribute("signatureError", "El codi de firma no és correcte.");
+            return "assistanceRequest/deleteConfirm";
+        }
+
+        assistanceRequestDao.deleteAssistanceRequest(idApRequest);
+        return "redirect:/assistanceRequest/ward/list";
     }
 
     @GetMapping("/done/{idApRequest}")
