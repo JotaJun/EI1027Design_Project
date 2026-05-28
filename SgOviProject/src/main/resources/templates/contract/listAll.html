@@ -15,7 +15,10 @@
   <th:block th:if="${session.userRole == 'PAPPATI'}">
     <div th:replace="~{fragments/papPati-returnMain-header :: papPati-returnMain-header}"></div>
   </th:block>
-  <th:block th:unless="${session.userRole == 'TECHNICIAN' or session.userRole == 'PAPPATI'}">
+  <th:block th:if="${session.userRole == 'LEGALGUARDIAN'}">
+    <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
+  </th:block>
+  <th:block th:if="${session.userRole == 'OVIUSER'}">
     <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
   </th:block>
 </div>

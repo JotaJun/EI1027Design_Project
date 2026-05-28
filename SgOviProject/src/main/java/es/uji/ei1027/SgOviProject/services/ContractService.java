@@ -65,6 +65,15 @@ public class ContractService {
 
     }
 
+    public List<ContractListAllDTO> listAllContractsFromLegalGuardian(LegalGuardian legalGuardian) {
+        List<OviUser> wards = oviUserDao.getWardedOviUsers(legalGuardian.getDni());
+        List<ContractListAllDTO> allContracts = new ArrayList<>();
+        for (OviUser ward : wards) {
+            allContracts.addAll(listAllContractsFromOviUser(ward));
+        }
+        return allContracts;
+    }
+
     public List<ContractListAllDTO> listAllContractsFromPapPati(PapPati papPati){
 
         List<Candidacy> candidacies = candidacyDao.getCandidaciesByStaffDni(papPati.getDni());

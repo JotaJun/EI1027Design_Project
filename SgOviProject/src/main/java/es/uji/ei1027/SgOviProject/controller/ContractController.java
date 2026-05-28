@@ -280,8 +280,18 @@ public class ContractController {
             throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
-        OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
-        if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), oviUser)) {
+        AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if (userRole == AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromWard(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else if (userRole == AccountType.OVIUSER) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else {
             throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
         }
 
@@ -302,8 +312,18 @@ public class ContractController {
             throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
-        OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
-        if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), oviUser)) {
+        AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if (userRole == AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromWard(contractModificado.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else if (userRole == AccountType.OVIUSER) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else {
             throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
         }
 
@@ -360,6 +380,9 @@ public class ContractController {
         if (userRole == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
             contractsDto = contractService.listAllContractsFromOviUser(currentUser);
+        } else if (userRole == AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            contractsDto = contractService.listAllContractsFromLegalGuardian(currentUser);
         } else if (userRole == AccountType.PAPPATI) {
             PapPati currentUser = (PapPati) session.getAttribute("specificAccount");
             contractsDto = contractService.listAllContractsFromPapPati(currentUser);
@@ -425,6 +448,11 @@ public class ContractController {
         if (userRole == AccountType.OVIUSER) {
             OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
             if (!candidacyService.isCandidacyFromOviUser(idCandidacy, oviUser)) {
+                throw new SgOviException("No tens permisos per accedir a aquest recurs", "Error 403 - Sense permisos");
+            }
+        } else if (userRole == AccountType.LEGALGUARDIAN) {
+            LegalGuardian legalGuardian = (LegalGuardian) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromWard(idCandidacy, legalGuardian)) {
                 throw new SgOviException("No tens permisos per accedir a aquest recurs", "Error 403 - Sense permisos");
             }
         } else if (userRole == AccountType.PAPPATI) {
