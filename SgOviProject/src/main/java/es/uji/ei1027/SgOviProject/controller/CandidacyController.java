@@ -168,7 +168,7 @@ public class CandidacyController {
                 LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
                 AssistanceRequest assistanceRequest = assistanceRequestDao.getAssistanceRequest(candidacyDao.getCandidacyById(idCandidacy).getIdApRequest());
                 OviUser warded= oviUserDao.getOviUser(assistanceRequest.getDniOviUser());
-                if (!candidacyService.isCandidacyFromWard(idCandidacy, currentUser, warded)) {
+                if (!candidacyService.isCandidacyFromWard(idCandidacy, currentUser)) {
                     throw new SgOviException("No tens permisos per veure els detalls d'aquesta candidatura", "Error 403 - Sense permisos");
                 }
             } else {
@@ -197,9 +197,7 @@ public class CandidacyController {
         }
         if(userRole.equals(AccountType.LEGALGUARDIAN.name())) {
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
-            AssistanceRequest assistanceRequest = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
-            OviUser warded= oviUserDao.getOviUser(assistanceRequest.getDniOviUser());
-            if (!candidacyService.isCandidacyFromWard(idCandidacy, currentUser, warded)) {
+            if (!candidacyService.isCandidacyFromWard(idCandidacy, currentUser)) {
                 throw new SgOviException("No tens permisos per veure els detalls d'aquesta candidatura", "Error 403 - Sense permisos");
             }
         } else {

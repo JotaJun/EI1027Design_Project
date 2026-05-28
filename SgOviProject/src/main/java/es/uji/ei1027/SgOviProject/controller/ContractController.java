@@ -57,10 +57,18 @@ public class ContractController {
     public String showContractForm(Model model,
                                    HttpSession session,
                                    @PathVariable int idCandidacy) {
-        // Comprobar que la idCandidacy corresponde al usuario loggeado
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
-        if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) return "redirect:/oviUser/main";
+        // Comprobar que la idCandidacy corresponde al usuario loggeado o a su tutor
+        AccountType role = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if(role==AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromWard(idCandidacy, currentUser)) return "redirect:/legalGuardian/main";
+        } else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) return "redirect:/oviUser/main";
+        }
+
+
 
         Contract contract = new Contract();
         contract.setIdCandidacy(idCandidacy);
@@ -74,10 +82,19 @@ public class ContractController {
                                          BindingResult bindingResult,
                                          HttpSession session,
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-        if(!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
-            throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
+        AccountType role = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if(role==AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromWard(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
+            }
         }
+
 
         ContractValidator contractValidator = new ContractValidator();
         contractValidator.validate(contract, bindingResult);
