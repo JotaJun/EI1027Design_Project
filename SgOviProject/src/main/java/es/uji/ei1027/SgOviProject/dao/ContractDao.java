@@ -95,4 +95,31 @@ public class ContractDao {
             return new ArrayList<Contract>();
         }
     }
+
+    /* Tots els contractes associats a un OviUser (via AssistanceRequest → Candidacy → Contract) */
+    public List<Contract> getContractsByOviUserDni(String dniOviUser) {
+        try {
+            String sql = "SELECT c.* FROM Contract c " +
+                         "JOIN Candidacy ca ON c.idCandidacy = ca.idCandidacy " +
+                         "JOIN AssistanceRequest ar ON ca.idApRequest = ar.idApRequest " +
+                         "WHERE ar.dniOviUser = ? " +
+                         "ORDER BY c.startDate DESC";
+            return jdbcTemplate.query(sql, new ContractRowMapper(), dniOviUser);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Contract>();
+        }
+    }
+
+    /* Tots els contractes associats a un PapPati (via Candidacy → Contract) */
+    public List<Contract> getContractsByPapPatiDni(String dniPapPati) {
+        try {
+            String sql = "SELECT c.* FROM Contract AS c " +
+                         "JOIN Candidacy AS ca ON c.idCandidacy = ca.idCandidacy " +
+                         "WHERE ca.dniPapPati = ? " +
+                         "ORDER BY c.startDate DESC";
+            return jdbcTemplate.query(sql, new ContractRowMapper(), dniPapPati);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<Contract>();
+        }
+    }
 }

@@ -3,6 +3,7 @@ package es.uji.ei1027.SgOviProject.controller;
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.AssistanceRequestDao;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
+import es.uji.ei1027.SgOviProject.dao.ContractDao;
 import es.uji.ei1027.SgOviProject.dao.LegalGuardianDao;
 import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dao.PapPatiDao;
@@ -12,6 +13,7 @@ import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.enums.Status;
 import es.uji.ei1027.SgOviProject.filters.AccountTypeFilter;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
+import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import org.jasypt.util.password.BasicPasswordEncryptor;
@@ -53,6 +55,9 @@ public class AccountController {
 
     @Autowired
     private CandidacyDao candidacyDao;
+
+    @Autowired
+    private ContractDao contractDao;
 
     @Autowired
     public void setAccountDao(AccountDao accountDao) {
@@ -670,6 +675,34 @@ public class AccountController {
 
         session.setAttribute("lastCandidacyHistoryDni", dni);
         return "account/candidacyHistory";
+    }
+
+    // ===== CONTRACTES D'UN COMPTE (tecnic) =====
+
+    @GetMapping(value = "/contracts/{dni}")
+    public String contractsByAccount(@PathVariable String dni, Model model, HttpSession session) {
+        Account account = accountDao.getAccount(dni);
+        if (account == null) {
+            throw new SgOviException("No s'ha trobat el compte", "Error 404 - No trobat");
+        }
+
+        String role = null;
+        List<Contract> contracts = new ArrayList<>();
+
+        if (oviUserDao.getOviUser(dni) != null) {
+            role = "OVIUSER";
+            contracts = contractDao.getContractsByOviUserDni(dni);
+        } else if (papPatiDao.getPapPati(dni) != null) {
+            role = "PAPPATI";
+            contracts = contractDao.getContractsByPapPatiDni(dni);
+        }
+
+        model.addAttribute("account", account);
+        model.addAttribute("role", role);
+        model.addAttribute("contracts", contracts);
+
+        session.setAttribute("lastContractAccountDni", dni);
+        return "account/contractsList";
     }
 
 }

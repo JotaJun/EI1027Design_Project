@@ -109,7 +109,8 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/assistanceRequest/technician/**",
                                                 "/account/deleteReason/**",
                                                 "/account/apHistory/**",
-                                                "/account/candidacyHistory/**");
+                                                "/account/candidacyHistory/**",
+                                                "/account/contracts/**");
 
                 // PAPPATI (Solo rutas exclusivas de PAPPATI)
                 registry.addInterceptor(new RoleInterceptor(AccountType.PAPPATI))
