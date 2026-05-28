@@ -499,6 +499,7 @@ public class AccountController {
         }
 
         // Si no es PapPati ni OviUser, es tutor legal
+        model.addAttribute("role", "LEGALGUARDIAN");
         return viewName;
     }
 

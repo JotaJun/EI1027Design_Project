@@ -43,16 +43,16 @@
                 <h3 class="detail-section-title mt-10">Dades Personals</h3>
                 <div class="form-grid">
                     <div class="detail-group">
+                        <span class="detail-label">Nom</span>
+                        <span class="detail-value" th:text="${account.name}">Nom</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Cognoms</span>
+                        <span class="detail-value" th:text="${account.surname}">Cognoms</span>
+                    </div>
+                    <div class="detail-group">
                         <span class="detail-label">DNI</span>
                         <span class="detail-value" th:text="${account.dni}">12345678A</span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label">Correu electrònic</span>
-                        <span class="detail-value" th:text="${account.email}">exemple@mail.com</span>
-                    </div>
-                    <div class="detail-group">
-                        <span class="detail-label">Telèfon</span>
-                        <span class="detail-value" th:text="${account.phoneNumber}">612345678</span>
                     </div>
                     <div class="detail-group">
                         <span class="detail-label">Data de naixement</span>
@@ -62,23 +62,37 @@
                     <div class="detail-group">
                         <span class="detail-label">Gènere</span>
                         <span class="detail-value"
-                            th:text="${account.gender != null ? account.gender.name() : 'No especificat'}">Masculí</span>
+                            th:text="${account.gender != null ? account.gender.description : 'No especificat'}">Masculí</span>
                     </div>
                 </div>
 
+                <!-- ===== CONTACTE ===== -->
+                <h3 class="detail-section-title">Contacte</h3>
+                <div class="form-grid">
+                    <div class="detail-group">
+                        <span class="detail-label">Correu electrònic</span>
+                        <span class="detail-value" th:text="${account.email}">correu@exemple.com</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Telèfon</span>
+                        <span class="detail-value" th:text="${account.phoneNumber}">600000000</span>
+                    </div>
+                </div>
+
+                <!-- ===== ADREÇA ===== -->
                 <h3 class="detail-section-title">Adreça</h3>
                 <div class="form-grid">
                     <div class="detail-group">
-                        <span class="detail-label">Carrer</span>
-                        <span class="detail-value" th:text="${account.street}">Carrer Major, 1</span>
-                    </div>
-                    <div class="detail-group">
                         <span class="detail-label">Població</span>
-                        <span class="detail-value" th:text="${account.city}">Castelló</span>
+                        <span class="detail-value" th:text="${account.city}">Població</span>
                     </div>
                     <div class="detail-group">
-                        <span class="detail-label">Codi postal</span>
-                        <span class="detail-value" th:text="${account.zipCode}">12001</span>
+                        <span class="detail-label">Carrer / Adreça</span>
+                        <span class="detail-value" th:text="${account.street}">Carrer...</span>
+                    </div>
+                    <div class="detail-group">
+                        <span class="detail-label">Codi Postal</span>
+                        <span class="detail-value" th:text="${account.zipCode}">12000</span>
                     </div>
                 </div>
 
