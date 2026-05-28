@@ -96,9 +96,7 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                 registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER))
                                 .addPathPatterns(
                                                 "/oviUser/**",
-                                                "/assistanceRequest/list/**",
-                                                "/contract/add/**",
-                                                "/contract/update/**")
+                                                "/assistanceRequest/list/**")
                                 .excludePathPatterns("/oviUser/register");
 
                 // TECHNICIAN
@@ -144,7 +142,9 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                                 "/assistanceRequest/details/**",
                                                 "/assistanceRequest/update/**",
                                                 "/assistanceRequest/delete/**",
-                                                "/candidacy/reject/**"
+                                                "/candidacy/reject/**",
+                                                "/contract/add/**",
+                                                "/contract/update/**"
                                                 );
                 //Contractes i comunicacions: (technician en mode lectura)
                 registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.LEGALGUARDIAN,
