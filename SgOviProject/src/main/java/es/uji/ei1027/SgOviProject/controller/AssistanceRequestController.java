@@ -6,8 +6,10 @@ import es.uji.ei1027.SgOviProject.dto.CandidacyDTO;
 import es.uji.ei1027.SgOviProject.enums.*;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.filters.StatusFilter;
+import es.uji.ei1027.SgOviProject.filters.WardStatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
@@ -45,6 +47,9 @@ public class AssistanceRequestController {
 
     @Autowired
     private OviUserDao oviUserDao;
+
+    @Autowired
+    private LegalGuardianDao legalGuardianDao;
 
     @ModelAttribute("genderList")
     public List<Gender> genderList() {
@@ -108,11 +113,182 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.addAssistanceRequest(assistanceRequest);
 
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest() + "?origin=profile";
+        }
         return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest();
     }
 
-    // Número de peticiones que queremos mostrar al usuario
     private int pageLength = 5;
+
+    @GetMapping({"/ward/list", "/ward/list/{status}", "/ward/list/{status}/{wardDni}"})
+    public String wardAssistanceRequests(Model model, HttpSession session,
+                                       @PathVariable(required = false) String status,
+                                       @PathVariable(required = false) String wardDni,
+                                       @RequestParam("page") Optional<Integer> page,
+                                       @RequestParam("nova") Optional<Integer> nova) {
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+
+        if (status == null)
+            status = "Totes";
+            
+        if (wardDni == null)
+            wardDni = "Tots";
+
+        // Si se viene desde wardDetails, recuperar los datos desde la sesión
+        Boolean fromAccount = (Boolean) session.getAttribute("fromAccount");
+        String fromAccountDni = (String) session.getAttribute("fromAccountDni");
+
+        if (Boolean.TRUE.equals(fromAccount) && fromAccountDni != null) {
+            model.addAttribute("fromAccount", true);
+            model.addAttribute("fromDni", fromAccountDni);
+        } else {
+            model.addAttribute("fromAccount", false);
+            model.addAttribute("fromDni", null);
+        }
+
+
+        List<AssistanceRequest> requests = assistanceRequestDao
+                .getAssistanceRequestsByLegalGuardianAndStatusAndWard(currentUser.getDni(), status, wardDni);
+
+        requests.sort(new AssistanceRequestComparator());
+
+        Map<String, String> userNameByDni = new HashMap<>();
+        List<String> dnis = requests.stream()
+                .map(AssistanceRequest::getDniOviUser)
+                .distinct()
+                .collect(Collectors.toList());
+        for (String dni : dnis) {
+            Account acc = accountDao.getAccount(dni);
+            if (acc != null) {
+                userNameByDni.put(dni, acc.getName() + " " + acc.getSurname());
+            } else {
+                userNameByDni.put(dni, "");
+            }
+        }
+        model.addAttribute("userNameByDni", userNameByDni);
+
+        ArrayList<ArrayList<AssistanceRequest>> requestsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < requests.size()) {
+            requestsPaged.add(new ArrayList<>(requests.subList(ini, requests.size())));
+        }
+
+        model.addAttribute("requestsPaged", requestsPaged);
+
+        int totalPages = requestsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
+        int novaReqId = nova.orElse(-1);
+
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("nova", novaReqId);
+        model.addAttribute("totalRequests", requests.size());
+        model.addAttribute("pageLength", pageLength);
+
+        WardStatusFilter filter = new WardStatusFilter();
+        filter.setStatusSel(status);
+        filter.setWardDni(wardDni);
+
+        model.addAttribute("statusFilter", filter);
+        model.addAttribute("statuses", Status.values());
+        
+        List<OviUser> oviWards = oviUserDao.getWardedOviUsers(currentUser.getDni());
+        List<Account> wardAccounts = new ArrayList<>();
+        for (OviUser ward : oviWards) {
+            Account account = accountDao.getAccount(ward.getDni());
+            if (account != null) {
+                wardAccounts.add(account);
+            }
+        }
+        model.addAttribute("wards", wardAccounts);
+
+        String exactUrl = "/assistanceRequest/ward/list/" + status + "/" + wardDni + "?page=" + currentPage;
+        session.setAttribute("lastRequestListUrl", exactUrl);
+
+        return "assistanceRequest/ward/list";
+    }
+
+    @PostMapping("/ward/list")
+    public String processWardFilter(@ModelAttribute("statusFilter") WardStatusFilter filter) {
+        String wardPath = filter.getWardDni() != null && !filter.getWardDni().isEmpty() ? "/" + filter.getWardDni() : "/Tots";
+        return "redirect:/assistanceRequest/ward/list/" + filter.getStatusSel() + wardPath;
+    }
+
+    @GetMapping("/ward/add")
+    public String showAddWardAssistanceForm(Model model, HttpSession session) {
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+        List<OviUser> oviWards = oviUserDao.getWardedOviUsers(currentUser.getDni());
+        
+        List<Account> activeWardAccounts = new ArrayList<>();
+        for (OviUser ward : oviWards) {
+            Account acc = accountDao.getAccount(ward.getDni());
+            if (acc != null && acc.getStatus() == Status.ACCEPTED) {
+                activeWardAccounts.add(acc);
+            }
+        }
+        
+        AssistanceRequest assistanceRequest = new AssistanceRequest();
+        assistanceRequest.setDniLegalGuardian(currentUser.getDni());
+        
+        model.addAttribute("assistanceRequest", assistanceRequest);
+        model.addAttribute("wards", activeWardAccounts);
+        return "assistanceRequest/ward/add";
+    }
+
+    @PostMapping("/ward/add")
+    public String processAddWardAssistanceForm(@ModelAttribute("assistanceRequest") AssistanceRequest assistanceRequest,
+                                             BindingResult bindingResult,
+                                             HttpSession session,
+                                             Model model) {
+        AssistanceRequestValidator assistanceRequestValidator = new AssistanceRequestValidator();
+        assistanceRequestValidator.validate(assistanceRequest, bindingResult);
+        
+        if (bindingResult.hasErrors()) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            List<OviUser> oviWards = oviUserDao.getWardedOviUsers(currentUser.getDni());
+            List<Account> activeWardAccounts = new ArrayList<>();
+            for (OviUser ward : oviWards) {
+                Account acc = accountDao.getAccount(ward.getDni());
+                if (acc != null && acc.getStatus() == Status.ACCEPTED) {
+                    activeWardAccounts.add(acc);
+                }
+            }
+            model.addAttribute("wards", activeWardAccounts);
+            return "assistanceRequest/ward/add";
+        }
+
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+        
+        OviUser wardedUser = oviUserDao.getOviUser(assistanceRequest.getDniOviUser());
+        if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+            throw new SgOviException("No tens permisos per a realitzar una petició per a aquest usuari", "Error 403 - Sense permisos");
+        }
+        
+        assistanceRequest.setDniLegalGuardian(currentUser.getDni());
+
+        assistanceRequestDao.addAssistanceRequest(assistanceRequest);
+        return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest() + "?origin=wardList";
+    }
 
     @GetMapping({ "/list", "/list/{status}" }) // Acepta la ruta base o con filtro
     public String showList(Model model, HttpSession session,
@@ -198,7 +374,8 @@ public class AssistanceRequestController {
     @GetMapping(value = "/details/{idApRequest}")
     public String showDetails(Model model, @PathVariable int idApRequest, HttpSession session) {
         // No hace falta comprobar si es null, ya se encarga interceptor
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
+
 
         // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
@@ -207,8 +384,20 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
         }
 
-        if (!request.getDniOviUser().equals(currentUser.getDni())) {
-            throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
+        //Comprobamos si es tutor u oviuser
+        String userRole = (String) session.getAttribute("userRole");
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+            if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
+            }
+        }
+        else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!request.getDniOviUser().equals(currentUser.getDni())) {
+                throw new SgOviException("No tens permisos per veure aquesta petició", "Error 403 - Sense permisos");
+            }
         }
 
         // Si la solicitud fue creada por un tutor, recuperamos sus datos
@@ -228,8 +417,6 @@ public class AssistanceRequestController {
 
     @GetMapping(value = "/update/{idApRequest}")
     public String editApRequest(Model model, @PathVariable int idApRequest, HttpSession session) {
-        // No hace falta comprobar si es null, ya se encarga interceptor
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
         // Comprobar que el id de la ap request pertenece al usuario que la ha pedido
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
@@ -238,8 +425,20 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
         }
 
-        if (!request.getDniOviUser().equals(currentUser.getDni())) {
-            throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
+        //Comprobamos si es tutor u oviuser
+        String userRole = (String) session.getAttribute("userRole");
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+            if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
+            }
+        } else {
+            // No hace falta comprobar si es null, ya se encarga interceptor
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!request.getDniOviUser().equals(currentUser.getDni())) {
+                throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
+            }
         }
 
         model.addAttribute("assistanceRequest", request);
@@ -249,24 +448,59 @@ public class AssistanceRequestController {
     @PostMapping(value = "/update")
     public String processUpdateApRequest(@ModelAttribute("assistanceRequest") AssistanceRequest assistanceRequest,
             BindingResult bindingResult,
-            HttpSession session) {
+            @RequestParam(value = "signatureCode", required = false) String signatureCode,
+            HttpSession session,
+            Model model) {
         AssistanceRequestValidator assistanceRequestValidator = new AssistanceRequestValidator();
         assistanceRequestValidator.validate(assistanceRequest, bindingResult);
         if (bindingResult.hasErrors()) {
             return "assistanceRequest/update";
         }
 
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+        String userRole = (String) session.getAttribute("userRole");
+        Account currentAccount= null;
+        //Comprobamos si es OVIUSER o tutor
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            currentAccount = accountDao.getAccount(currentUser.getDni());
+            
+            // Validación de la firma para el Tutor
+            LegalGuardian lg = legalGuardianDao.getLegalGuardian(currentUser.getDni());
+            
+            if (signatureCode == null || signatureCode.trim().isEmpty()) {
+                model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar els canvis.");
+                return "assistanceRequest/update";
+            }
+
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            boolean isValid = false;
+            try {
+                isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+            } catch (Exception e) {
+                // Si la firma en la BD no está encriptada (datos de prueba), probamos comparación directa
+                isValid = signatureCode.equals(lg.getSignatureCode());
+            }
+
+            if (!isValid) {
+                model.addAttribute("signatureError", "El codi de firma no és correcte.");
+                return "assistanceRequest/update";
+            }
+        }
+        else if(AccountType.OVIUSER.name().equals(userRole)){
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            currentAccount = accountDao.getAccount(currentUser.getDni());
+        }
+
 
         // RECUPERAMOS LA PETICIÓN ORIGINAL DE LA BASE DE DATOS
         AssistanceRequest originalRequest = assistanceRequestDao
                 .getAssistanceRequest(assistanceRequest.getIdApRequest());
 
-        if (originalRequest == null) {
+        if (originalRequest == null || currentAccount == null) {
             throw new SgOviException("No s'ha trobat la petició original", "Error 404 - No trobat");
         }
-        
-        if (!originalRequest.getDniOviUser().equals(currentUser.getDni())) {
+
+        if ((!originalRequest.getDniOviUser().equals(currentAccount.getDni()))&&(!originalRequest.getDniLegalGuardian().equals(currentAccount.getDni()))) {
             throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
         }
 
@@ -282,12 +516,15 @@ public class AssistanceRequestController {
 
         assistanceRequestDao.updateAssistanceRequest(originalRequest);
 
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest() + "?origin=wardList";
+        }
         return "redirect:/assistanceRequest/done/" + assistanceRequest.getIdApRequest();
     }
 
     @GetMapping(value = "/delete/{idApRequest}")
     public String deleteApRequest(Model model, @PathVariable int idApRequest, HttpSession session) {
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+
 
         AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
 
@@ -297,7 +534,55 @@ public class AssistanceRequestController {
             throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
         }
 
-        if (!request.getDniOviUser().equals(currentUser.getDni())) {
+        if (request.getStatus() != Status.PENDING) {
+            throw new SgOviException("Només es poden esborrar les peticions en estat PENDING", "Error de Validació");
+        }
+
+        String userRole = (String) session.getAttribute("userRole");
+        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+            if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
+                throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
+            }
+            
+            // Devolver página intermedia de confirmación para tutor
+            Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+            model.addAttribute("oviUserAccount", oviUserAccount);
+            model.addAttribute("req", request);
+            return "assistanceRequest/deleteConfirm";
+        } else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!request.getDniOviUser().equals(currentUser.getDni())) {
+                throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
+            }
+        }
+
+
+
+        assistanceRequestDao.deleteAssistanceRequest(idApRequest);
+
+        return "redirect:/assistanceRequest/list";
+    }
+
+    @PostMapping(value = "/delete")
+    public String processDeleteApRequest(@RequestParam("idApRequest") int idApRequest,
+                                         @RequestParam(value = "signatureCode", required = false) String signatureCode,
+                                         HttpSession session,
+                                         Model model) {
+        String userRole = (String) session.getAttribute("userRole");
+        if (!AccountType.LEGALGUARDIAN.name().equals(userRole)) {
+            throw new SgOviException("Operació no permesa per a aquest rol", "Error 403 - Sense permisos");
+        }
+
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+        if (request == null) {
+            throw new SgOviException("No s'ha trobat la petició sol·licitada", "Error 404 - No trobat");
+        }
+
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+        OviUser wardedUser = oviUserDao.getOviUser(request.getDniOviUser());
+        if (wardedUser == null || !currentUser.getDni().equals(wardedUser.getDniLegalGuardian())) {
             throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
         }
 
@@ -305,23 +590,54 @@ public class AssistanceRequestController {
             throw new SgOviException("Només es poden esborrar les peticions en estat PENDING", "Error de Validació");
         }
 
-        assistanceRequestDao.deleteAssistanceRequest(idApRequest);
+        // Validar firma
+        LegalGuardian lg = legalGuardianDao.getLegalGuardian(currentUser.getDni());
+        if (signatureCode == null || signatureCode.trim().isEmpty()) {
+            Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+            model.addAttribute("oviUserAccount", oviUserAccount);
+            model.addAttribute("req", request);
+            model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar l'eliminació.");
+            return "assistanceRequest/deleteConfirm";
+        }
 
-        return "redirect:/assistanceRequest/list";
+        BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+        boolean isValid = false;
+        try {
+            isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+        } catch (Exception e) {
+            isValid = signatureCode.equals(lg.getSignatureCode());
+        }
+
+        if (!isValid) {
+            Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+            model.addAttribute("oviUserAccount", oviUserAccount);
+            model.addAttribute("req", request);
+            model.addAttribute("signatureError", "El codi de firma no és correcte.");
+            return "assistanceRequest/deleteConfirm";
+        }
+
+        assistanceRequestDao.deleteAssistanceRequest(idApRequest);
+        return "redirect:/assistanceRequest/ward/list";
     }
 
     @GetMapping("/done/{idApRequest}")
-    public String apRequestDone(Model model, @PathVariable int idApRequest, HttpSession session) {
+    public String apRequestDone(Model model, @PathVariable int idApRequest,
+                                @RequestParam(value = "origin", required = false) String origin,
+                                HttpSession session) {
         model.addAttribute("idApRequest", idApRequest);
 
-        String userRole = (String) session.getAttribute("userRole");
-        if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
-            AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
-            if (request != null) {
-                model.addAttribute("dniOviUser", request.getDniOviUser());
+        // Recuperar el email del oviUser asociado a la solicitud
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(idApRequest);
+        if (request != null) {
+            Account oviUserAccount = accountDao.getAccount(request.getDniOviUser());
+            if (oviUserAccount != null) {
+                model.addAttribute("oviUserEmail", oviUserAccount.getEmail());
             }
-            return "assistanceRequest/doneTutor";
+            model.addAttribute("dniOviUser", request.getDniOviUser());
         }
+
+        // origin: null (oviUser), "wardList" (tutor desde ward/list), "profile" (tutor desde perfil cuenta)
+        model.addAttribute("origin", origin);
 
         return "assistanceRequest/done";
     }

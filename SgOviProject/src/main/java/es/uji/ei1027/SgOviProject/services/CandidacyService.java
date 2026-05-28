@@ -85,15 +85,13 @@ public class CandidacyService {
     }
 
     public boolean isCandidacyFromOviUser(int idCandidacy, OviUser oviUser){
-        List<AssistanceRequest> assistanceRequests = assistanceRequestDao.getAssistanceRequestsByDni(oviUser.getDni());
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+        if (candidacy == null) return false;
 
-        if (assistanceRequests.isEmpty()) return false;
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
+        if (request == null) return false;
 
-        for (AssistanceRequest req : assistanceRequests){
-            if (req.getIdApRequest() == idCandidacy)
-                return true;
-        }
-        return false;
+        return request.getDniOviUser().equals(oviUser.getDni());
     }
 
     public boolean isCandidacyFromPapPati(int idCandidacy, PapPati papPati){
@@ -102,6 +100,15 @@ public class CandidacyService {
         if (candidacy == null) return false;
 
         return candidacy.getDniPapPati().equals(papPati.getDni());
+    }
+
+    public boolean isCandidacyFromWard(int idCandidacy, LegalGuardian legalGuardian, OviUser oviUser){
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+        if (candidacy == null) return false;
+        AssistanceRequest request = assistanceRequestDao.getAssistanceRequest(candidacy.getIdApRequest());
+        if (request == null) return false;
+        return request.getDniOviUser().equals(oviUser.getDni())&&oviUser.getDniLegalGuardian().equals(legalGuardian.getDni());
+
     }
 
     public void contractDone(Contract contract){

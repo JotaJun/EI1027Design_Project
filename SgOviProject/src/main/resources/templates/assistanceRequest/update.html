@@ -3,12 +3,20 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/base}">
 <head>
-    <title>Modificar sol·licitud d'Assistència Personal - SgOVI</title>
+    <title>Modificar sol·licitud d'Assistència Personal</title>
 </head>
 <body>
 
 <div layout:fragment="header">
-    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+    <th:block th:if="${session.userRole == 'LEGALGUARDIAN'}">
+        <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
+    </th:block>
+    <th:block th:if="${session.userRole == 'TECHNICIAN'}">
+        <div th:replace="~{fragments/technician-returnMain-header :: technician-returnMain-header}"></div>
+    </th:block>
+    <th:block th:if="${session.userRole == 'OVIUSER'}">
+        <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header}"></div>
+    </th:block>
 </div>
 
 <main layout:fragment="content">
@@ -109,9 +117,23 @@
                     <span th:if="${#fields.hasErrors('description')}" th:errors="*{description}" class="error-text"></span>
                 </div>
 
+                <th:block th:if="${session.userRole == 'LEGALGUARDIAN'}">
+                    <h3 class="detail-section-title mt-10">Autorització</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="signatureCode">Codi de firma del Tutor Legal <span class="required-asterisk">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="password" id="signatureCode" name="signatureCode" required class="form-control"
+                                       placeholder="Introdueix el teu codi de firma" />
+                            </div>
+                            <span th:if="${signatureError}" class="error-text" th:text="${signatureError}"></span>
+                        </div>
+                    </div>
+                </th:block>
+
                 <div class="form-actions-centered actions-bordered mt-15">
 
-                    <a th:href="@{/assistanceRequest/list}" class="btn-outline btn-icon">
+                    <a th:href="${session.userRole == 'LEGALGUARDIAN'} ? @{/assistanceRequest/ward/list} : @{/assistanceRequest/list}" class="btn-outline btn-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
                             <line x1="18" y1="6" x2="6" y2="18"></line>
                             <line x1="6" y1="6" x2="18" y2="18"></line>

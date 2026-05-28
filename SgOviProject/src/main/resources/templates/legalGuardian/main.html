@@ -3,7 +3,7 @@
       xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
       layout:decorate="~{fragments/base}">
 <head>
-    <title>Panell Principal Tutor Legal - SgOVI</title>
+    <title>Panell Principal Tutor Legal</title>
 </head>
 <body>
 
@@ -77,6 +77,33 @@
                 <div class="dash-card">
                     <div class="dash-card-header">
                         <div class="icon-square icon-orange-light">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                        </div>
+                        <span class="badge badge-orange">NOVA ACCIÓ</span>
+                    </div>
+
+                    <div class="dash-card-body">
+                        <h3>Nova sol·licitud d'Assistència Personal</h3>
+                        <p>Sol·licita un PAP o PATI per a un dels teus tutelats i gestiona la seua assistència personalitzada.</p>
+
+                        <div class="tag-group">
+                            <span class="tag">PAP</span>
+                            <span class="tag">PATI</span>
+                        </div>
+                    </div>
+
+                    <a th:href="@{/assistanceRequest/ward/add}" class="dash-btn dash-btn-primary">
+                        <div class="btn-content-left">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="12" y1="18" x2="12" y2="12"></line><line x1="9" y1="15" x2="15" y2="15"></line></svg>
+                            Començar sol·licitud
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div class="icon-square icon-orange-light">
                             <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#D97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                         </div>
                         <span class="badge badge-orange">TUTELATS</span>
@@ -87,10 +114,32 @@
                         <p>Consulta l'estat i la informació dels usuaris OVI que tens sota la teua tutela.</p>
                     </div>
 
-                    <a th:href="@{/account/wardList}" class="dash-btn dash-btn-primary">
+                    <a th:href="@{/account/wardList}" class="dash-btn dash-btn-outline">
                         <div class="btn-content-left">
                             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M17 21v-2a4 4 0 0 0-4-4H5a4 4 0 0 0-4 4v2"></path><circle cx="9" cy="7" r="4"></circle><path d="M23 21v-2a4 4 0 0 0-3-3.87"></path><path d="M16 3.13a4 4 0 0 1 0 7.75"></path></svg>
                             Veure tutelats
+                        </div>
+                        <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
+                    </a>
+                </div>
+
+                <div class="dash-card">
+                    <div class="dash-card-header">
+                        <div class="icon-square icon-grey-light">
+                            <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="#4B5563" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                        </div>
+                        <span class="badge badge-grey">ASISTÈNCIES</span>
+                    </div>
+
+                    <div class="dash-card-body">
+                        <h3>Asistències actives dels tutelats</h3>
+                        <p>Consulta totes les sol·licituds d'assistència personal que estan actualment actives per als teus tutelats.</p>
+                    </div>
+
+                    <a th:href="@{/assistanceRequest/ward/list}" class="dash-btn dash-btn-outline">
+                        <div class="btn-content-left">
+                            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M14 2H6a2 2 0 0 0-2 2v16a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V8z"></path><polyline points="14 2 14 8 20 8"></polyline><line x1="16" y1="13" x2="8" y2="13"></line><line x1="16" y1="17" x2="8" y2="17"></line><polyline points="10 9 9 9 8 9"></polyline></svg>
+                            Veure asistències
                         </div>
                         <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polyline points="9 18 15 12 9 6"></polyline></svg>
                     </a>

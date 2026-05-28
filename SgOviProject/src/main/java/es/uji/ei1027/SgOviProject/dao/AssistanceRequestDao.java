@@ -109,6 +109,15 @@ public class AssistanceRequestDao {
         }
     }
 
+    public List<AssistanceRequest> getAcceptedAssistanceRequestsByDni(String dniOviUser) {
+        try {
+            return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniOviUser=? AND status='accepted'",
+                    new AssistanceRequestRowMapper(), dniOviUser);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
     public List<AssistanceRequest> getAssistanceRequestsByDniAndStatus(String dniOviUser, String status) {
         try {
             if (status.equals("Totes")) {
@@ -116,6 +125,55 @@ public class AssistanceRequestDao {
             }
             return jdbcTemplate.query("SELECT * FROM AssistanceRequest WHERE dniOviUser=? AND status=LOWER(?)",
                     new AssistanceRequestRowMapper(), dniOviUser, status);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
+    public List<AssistanceRequest> getAssistanceRequestsByLegalGuardian(String dniLegalGuardian) {
+        try {
+            return jdbcTemplate.query("SELECT request.* FROM AssistanceRequest request JOIN OviUser ovi ON request.dniOviUser = ovi.dni WHERE ovi.dniLegalGuardian = ?;",
+                    new AssistanceRequestRowMapper(), dniLegalGuardian);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
+    public List<AssistanceRequest> getAssistanceRequestsByLegalGuardianAndStatus(String dniLegalGuardian, String status) {
+        try {
+            if (status.equals("Totes")) {
+                return getAssistanceRequestsByLegalGuardian(dniLegalGuardian);
+            }
+            return jdbcTemplate.query("SELECT request.* FROM AssistanceRequest request JOIN OviUser ovi ON request.dniOviUser = ovi.dni WHERE ovi.dniLegalGuardian = ? AND status=LOWER(?);",
+                    new AssistanceRequestRowMapper(), dniLegalGuardian, status);
+        } catch (EmptyResultDataAccessException e) {
+            return new ArrayList<AssistanceRequest>();
+        }
+    }
+
+    public List<AssistanceRequest> getAssistanceRequestsByLegalGuardianAndStatusAndWard(String dniLegalGuardian, String status, String dniOviUser) {
+        try {
+            // Si no se filtra por un tutelado concreto, delegamos en el método de arriba
+            if (dniOviUser == null || dniOviUser.equals("Tots") || dniOviUser.isEmpty()) {
+                return getAssistanceRequestsByLegalGuardianAndStatus(dniLegalGuardian, status);
+            }
+
+            //Un tutelado concreto, todas sus solicitudes
+            if (status.equals("Totes")) {
+                return jdbcTemplate.query(
+                        "SELECT request.* FROM AssistanceRequest request " +
+                                "JOIN OviUser ovi ON request.dniOviUser = ovi.dni " +
+                                "WHERE ovi.dniLegalGuardian = ? AND request.dniOviUser = ?;",
+                        new AssistanceRequestRowMapper(), dniLegalGuardian, dniOviUser);
+            }
+
+            //Un tutelado concreto, un estado concreto
+            return jdbcTemplate.query(
+                    "SELECT request.* FROM AssistanceRequest request " +
+                            "JOIN OviUser ovi ON request.dniOviUser = ovi.dni " +
+                            "WHERE ovi.dniLegalGuardian = ? AND request.status = LOWER(?) AND request.dniOviUser = ?;",
+                    new AssistanceRequestRowMapper(), dniLegalGuardian, status, dniOviUser);
+
         } catch (EmptyResultDataAccessException e) {
             return new ArrayList<AssistanceRequest>();
         }

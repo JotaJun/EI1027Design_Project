@@ -97,10 +97,6 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                 .addPathPatterns(
                                                 "/oviUser/**",
                                                 "/assistanceRequest/list/**",
-                                                "/assistanceRequest/details/**",
-                                                "/assistanceRequest/update/**",
-                                                "/assistanceRequest/delete/**",
-                                                "/candidacy/reject/**",
                                                 "/contract/add/**",
                                                 "/contract/update/**")
                                 .excludePathPatterns("/oviUser/register");
@@ -128,26 +124,35 @@ public class SgOviConfiguration implements WebMvcConfigurer {
                                 .addPathPatterns(
                                                 "/legalGuardian/**",
                                                 "/account/wardList/**",
-                                                "/account/wardDetails/")
+                                                "/account/wardDetails/",
+                                                "/assistanceRequest/ward/**")
                                 .excludePathPatterns("/legalGuardian/register");
 
                 // --- REGLAS COMPARTIDAS ---
-                // Candidatures: OVIUSER i TECHNICIAN (tècnic en mode lectura)
-                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.TECHNICIAN))
+                // Candidatures: OVIUSER, LEGAL GUARDIAN (tutor) i TECHNICIAN (tècnic en mode lectura)
+                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.TECHNICIAN, AccountType.LEGALGUARDIAN))
                                 .addPathPatterns(
                                                 "/candidacy/listCandidates/**",
                                                 "/candidacy/details/**");
 
-                // Contractes: OVIUSER, PAPPATI i TECHNICIAN (tècnic en mode lectura)
-                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.PAPPATI, AccountType.TECHNICIAN))
-                                .addPathPatterns(
-                                                "/communication/chat/**",
-                                                "/contract/list/**",
-                                                "/contract/details/**");
 
+                // Accions d'OVIUSER realitzades pel tutor si cal:
                 registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.LEGALGUARDIAN))
                                 .addPathPatterns(
-                                                "/assistanceRequest/add"
+                                                "/assistanceRequest/add",
+                                                "/assistanceRequest/details/**",
+                                                "/assistanceRequest/update/**",
+                                                "/assistanceRequest/delete/**",
+                                                "/candidacy/reject/**"
                                                 );
+                //Contractes i comunicacions: (technician en mode lectura)
+                registry.addInterceptor(new RoleInterceptor(AccountType.OVIUSER, AccountType.LEGALGUARDIAN,
+                                AccountType.TECHNICIAN, AccountType.PAPPATI))
+                        .addPathPatterns(
+                                "/contract/listAll",
+                                "/communication/chat/**",
+                                "/contract/list/**",
+                                "/contract/details/**"
+                        );
         }
 }

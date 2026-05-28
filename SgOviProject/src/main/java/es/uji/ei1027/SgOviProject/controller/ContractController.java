@@ -1,13 +1,15 @@
 package es.uji.ei1027.SgOviProject.controller;
 
 import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
+import es.uji.ei1027.SgOviProject.dao.AccountDao;
+import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
+import es.uji.ei1027.SgOviProject.dto.ContractListAllDTO;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
-import es.uji.ei1027.SgOviProject.model.Contract;
-import es.uji.ei1027.SgOviProject.model.OviUser;
-import es.uji.ei1027.SgOviProject.model.PapPati;
+import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
+import es.uji.ei1027.SgOviProject.services.ContractService;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -42,6 +44,15 @@ public class ContractController {
     @Autowired
     private CandidacyService candidacyService;
 
+    @Autowired
+    private AccountDao accountDao;
+
+    @Autowired
+    private CandidacyDao candidacyDao;
+
+    @Autowired
+    private ContractService contractService;
+
     @GetMapping("/add/{idCandidacy}")
     public String showContractForm(Model model,
                                    HttpSession session,
@@ -65,7 +76,7 @@ public class ContractController {
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
         if(!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
         }
 
         ContractValidator contractValidator = new ContractValidator();
@@ -222,6 +233,23 @@ public class ContractController {
         model.addAttribute("idCandidacy", idCandidacy);
         model.addAttribute("idContract", idContract);
 
+        Candidacy candidacy = candidacyDao.getCandidacyById(idCandidacy);
+
+        if (candidacy == null){
+            throw new SgOviException("No s'ha trobar la candidatura", "Error 404 - No trobat");
+        }
+
+        Account assistantAccount = accountDao.getAccount(candidacy.getDniPapPati());
+
+        if (assistantAccount == null) {
+            throw new SgOviException("No s'ha trobat al candidat", "Error 404 - No trobat");
+        }
+
+        String assistantName = assistantAccount.getName() + ' ' + assistantAccount.getSurname();
+
+        model.addAttribute("assistantEmail", assistantAccount.getEmail());
+        model.addAttribute("assistantName", assistantName);
+
         return "contract/done";
     }
 
@@ -254,12 +282,12 @@ public class ContractController {
         // Recuperar el contrato original de la BD para no perder los datos que no queremos cambiar
         Contract contractOriginal = contractDao.getContract(contractModificado.getIdContract());
         if (contractOriginal == null) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
         OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
         if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), oviUser)) {
-            return "redirect:/oviUser/main";
+            throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
         }
 
         ContractValidator contractValidator = new ContractValidator();
@@ -302,7 +330,71 @@ public class ContractController {
 
         contractDao.updateContract(contractOriginal);
 
-        return "redirect:/contract/details/" + contractOriginal.getIdContract();
+        return "redirect:/contract/done/" + contractModificado.getIdCandidacy() + "/" + contractModificado.getIdContract();
+    }
+
+    @GetMapping("/listAll")
+    public String listAllUserContracts(Model model,
+                                       @RequestParam("page") Optional<Integer> page,
+                                       HttpSession session) {
+        AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
+        List<ContractListAllDTO> contractsDto;
+
+        if (userRole == AccountType.OVIUSER) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            contractsDto = contractService.listAllContractsFromOviUser(currentUser);
+        } else if (userRole == AccountType.PAPPATI) {
+            PapPati currentUser = (PapPati) session.getAttribute("specificAccount");
+            contractsDto = contractService.listAllContractsFromPapPati(currentUser);
+        } else {
+            throw new SgOviException("No tens permisos per veure aquest llistat", "Error 403 - Sense permisos");
+        }
+
+        if (contractsDto != null && !contractsDto.isEmpty()) {
+            contractsDto.sort((dto1, dto2) -> new ContractComparator().compare(dto1.getContract(), dto2.getContract()));
+        } else {
+            contractsDto = new ArrayList<>();
+        }
+
+        ArrayList<ArrayList<ContractListAllDTO>> contractsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, contractsDto.size())));
+        }
+
+        int totalPages = contractsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
+
+        model.addAttribute("contractsPaged", contractsPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalContracts", contractsDto.size());
+        model.addAttribute("pageLength", pageLength);
+
+        // Guardar URL exacta para el botón de volver
+        String exactUrl = "/contract/listAll?page=" + currentPage;
+        session.setAttribute("lastContractListUrl", exactUrl);
+
+        return "contract/listAll";
     }
 
     private void checkAuthorizationOrThrow(HttpSession session, int idCandidacy) {
