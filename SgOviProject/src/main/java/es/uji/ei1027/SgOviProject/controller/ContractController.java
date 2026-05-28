@@ -4,9 +4,11 @@ import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
+import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dto.ContractListAllDTO;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
+import es.uji.ei1027.SgOviProject.filters.WardStatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import es.uji.ei1027.SgOviProject.services.ContractService;
@@ -53,14 +55,25 @@ public class ContractController {
     @Autowired
     private ContractService contractService;
 
+    @Autowired
+    private OviUserDao oviUserDao;
+
     @GetMapping("/add/{idCandidacy}")
     public String showContractForm(Model model,
                                    HttpSession session,
                                    @PathVariable int idCandidacy) {
-        // Comprobar que la idCandidacy corresponde al usuario loggeado
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
-        if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) return "redirect:/oviUser/main";
+        // Comprobar que la idCandidacy corresponde al usuario loggeado o a su tutor
+        AccountType role = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if(role==AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromWard(idCandidacy, currentUser)) return "redirect:/legalGuardian/main";
+        } else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) return "redirect:/oviUser/main";
+        }
+
+
 
         Contract contract = new Contract();
         contract.setIdCandidacy(idCandidacy);
@@ -74,10 +87,19 @@ public class ContractController {
                                          BindingResult bindingResult,
                                          HttpSession session,
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
-        OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-        if(!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
-            throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
+        AccountType role = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if(role==AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromWard(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if(! candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
+            }
         }
+
 
         ContractValidator contractValidator = new ContractValidator();
         contractValidator.validate(contract, bindingResult);
@@ -263,8 +285,18 @@ public class ContractController {
             throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
-        OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
-        if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), oviUser)) {
+        AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if (userRole == AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromWard(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else if (userRole == AccountType.OVIUSER) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else {
             throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
         }
 
@@ -285,8 +317,18 @@ public class ContractController {
             throw new SgOviException("No s'ha trobat el contracte", "Error 404 - No trobat");
         }
 
-        OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
-        if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), oviUser)) {
+        AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
+        if (userRole == AccountType.LEGALGUARDIAN) {
+            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromWard(contractModificado.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else if (userRole == AccountType.OVIUSER) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), currentUser)) {
+                throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+        } else {
             throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
         }
 
@@ -343,6 +385,8 @@ public class ContractController {
         if (userRole == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
             contractsDto = contractService.listAllContractsFromOviUser(currentUser);
+        } else if (userRole == AccountType.LEGALGUARDIAN) {
+            return "redirect:/contract/ward/list";
         } else if (userRole == AccountType.PAPPATI) {
             PapPati currentUser = (PapPati) session.getAttribute("specificAccount");
             contractsDto = contractService.listAllContractsFromPapPati(currentUser);
@@ -397,6 +441,83 @@ public class ContractController {
         return "contract/listAll";
     }
 
+    @GetMapping({"/ward/list", "/ward/list/{wardDni}"})
+    public String wardContractList(Model model, HttpSession session,
+                                   @PathVariable(required = false) String wardDni,
+                                   @RequestParam("page") Optional<Integer> page) {
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+
+        if (wardDni == null)
+            wardDni = "Tots";
+
+        List<ContractListAllDTO> contractsDto = contractService.listAllContractsFromLegalGuardian(currentUser, wardDni);
+
+        if (contractsDto != null && !contractsDto.isEmpty()) {
+            contractsDto.sort((dto1, dto2) -> new ContractComparator().compare(dto1.getContract(), dto2.getContract()));
+        } else {
+            contractsDto = new ArrayList<>();
+        }
+
+        ArrayList<ArrayList<ContractListAllDTO>> contractsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, contractsDto.size())));
+        }
+
+        int totalPages = contractsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
+
+        model.addAttribute("contractsPaged", contractsPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalContracts", contractsDto.size());
+        model.addAttribute("pageLength", pageLength);
+
+        WardStatusFilter filter = new WardStatusFilter();
+        filter.setWardDni(wardDni);
+        model.addAttribute("statusFilter", filter);
+
+        List<OviUser> oviWards = oviUserDao.getWardedOviUsers(currentUser.getDni());
+        List<Account> wardAccounts = new ArrayList<>();
+        for (OviUser ward : oviWards) {
+            Account account = accountDao.getAccount(ward.getDni());
+            if (account != null) {
+                wardAccounts.add(account);
+            }
+        }
+        model.addAttribute("wards", wardAccounts);
+
+        String exactUrl = "/contract/ward/list/" + wardDni + "?page=" + currentPage;
+        session.setAttribute("lastContractListUrl", exactUrl);
+
+        return "contract/ward/list";
+    }
+
+    @PostMapping("/ward/list")
+    public String processWardContractFilter(@ModelAttribute("statusFilter") WardStatusFilter filter) {
+        String wardPath = filter.getWardDni() != null && !filter.getWardDni().isEmpty() ? "/" + filter.getWardDni() : "/Tots";
+        return "redirect:/contract/ward/list" + wardPath;
+    }
+
     private void checkAuthorizationOrThrow(HttpSession session, int idCandidacy) {
         AccountType userRole = AccountType.valueOf((String) session.getAttribute("userRole"));
 
@@ -408,6 +529,11 @@ public class ContractController {
         if (userRole == AccountType.OVIUSER) {
             OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
             if (!candidacyService.isCandidacyFromOviUser(idCandidacy, oviUser)) {
+                throw new SgOviException("No tens permisos per accedir a aquest recurs", "Error 403 - Sense permisos");
+            }
+        } else if (userRole == AccountType.LEGALGUARDIAN) {
+            LegalGuardian legalGuardian = (LegalGuardian) session.getAttribute("specificAccount");
+            if (!candidacyService.isCandidacyFromWard(idCandidacy, legalGuardian)) {
                 throw new SgOviException("No tens permisos per accedir a aquest recurs", "Error 403 - Sense permisos");
             }
         } else if (userRole == AccountType.PAPPATI) {

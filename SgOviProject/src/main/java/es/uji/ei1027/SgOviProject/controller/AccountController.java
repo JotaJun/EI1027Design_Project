@@ -510,6 +510,8 @@ public class AccountController {
             if (wa != null) wardedAccounts.add(wa);
         }
         model.addAttribute("wardedAccounts", wardedAccounts);
+        // Si no es PapPati ni OviUser, es tutor legal
+        model.addAttribute("role", "LEGALGUARDIAN");
         return viewName;
     }
 

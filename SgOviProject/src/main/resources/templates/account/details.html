@@ -29,15 +29,24 @@
             <br>
 
             <div class="header-flex">
-                <h2 class="card-title"></h2>
+                <h2 class="card-title">
+                    Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span>
+                </h2>
                 <span class="status-badge"
                       th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
                       th:text="${account.status.description}">PENDING</span>
             </div>
 
-            <!-- ===== DADES PERSONALS (comuns a tots els rols) ===== -->
             <h3 class="detail-section-title mt-10">Dades Personals</h3>
             <div class="form-grid">
+                <div class="detail-group">
+                    <span class="detail-label">Nom</span>
+                    <span class="detail-value" th:text="${account.name}">Nom</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Cognoms</span>
+                    <span class="detail-value" th:text="${account.surname}">Cognoms</span>
+                </div>
                 <div class="detail-group">
                     <span class="detail-label">Nom</span>
                     <span class="detail-value" th:text="${account.name}">Nom</span>
@@ -51,43 +60,53 @@
                     <span class="detail-value" th:text="${account.dni}">12345678A</span>
                 </div>
                 <div class="detail-group">
-                    <span class="detail-label">Correu electrònic</span>
-                    <span class="detail-value" th:text="${account.email}">exemple@mail.com</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Telèfon</span>
-                    <span class="detail-value" th:text="${account.phoneNumber}">612345678</span>
-                </div>
-                <div class="detail-group">
                     <span class="detail-label">Data de naixement</span>
-                    <span class="detail-value" th:text="${account.birthday != null ? #temporals.format(account.birthday, 'dd/MM/yyyy') : 'No especificada'}">01/01/1990</span>
+                    <span class="detail-value" th:text="${account.birthday != null ? #temporals.format(account.birthday, 'dd/MM/yyyy') : 'No especificada'}">01/01/2000</span>
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Gènere</span>
-                    <span class="detail-value" th:text="${account.gender != null ? account.gender.description : 'No especificat'}">Masculí</span>
+                    <span class="detail-value" th:text="${account.gender != null ? account.gender.description : 'No especificat'}"></span>
+                </div>
+            </div>
+
+            <h3 class="detail-section-title">Contacte</h3>
+            <div class="form-grid">
+                <div class="detail-group">
+                    <span class="detail-label">Correu electrònic</span>
+                    <span class="detail-value" th:text="${account.email}">correu@exemple.com</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Telèfon</span>
+                    <span class="detail-value" th:text="${account.phoneNumber}">600000000</span>
                 </div>
             </div>
 
             <h3 class="detail-section-title">Adreça</h3>
             <div class="form-grid">
                 <div class="detail-group">
-                    <span class="detail-label">Carrer</span>
-                    <span class="detail-value" th:text="${account.street}">Carrer Major, 1</span>
-                </div>
-                <div class="detail-group">
                     <span class="detail-label">Població</span>
-                    <span class="detail-value" th:text="${account.city}">Castelló</span>
+                    <span class="detail-value" th:text="${account.city}">Població</span>
                 </div>
                 <div class="detail-group">
-                    <span class="detail-label">Codi postal</span>
-                    <span class="detail-value" th:text="${account.zipCode}">12001</span>
+                    <span class="detail-label">Carrer / Adreça</span>
+                    <span class="detail-value" th:text="${account.street}">Carrer...</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Codi Postal</span>
+                    <span class="detail-value" th:text="${account.zipCode}">12000</span>
                 </div>
             </div>
 
-            <!-- ===== DADES ESPECÍFIQUES: PAPPATI ===== -->
+            <!-- ===== TIPUS DE COMPTE (Dades específiques segons rol) ===== -->
+            <h3 class="detail-section-title">Tipus de compte</h3>
+
+            <!-- DADES ESPECÍFIQUES: PAPPATI -->
             <th:block th:if="${role == 'PAPPATI'}">
-                <h3 class="detail-section-title">Perfil de Personal d'Assistència</h3>
                 <div class="form-grid">
+                    <div class="detail-group">
+                        <span class="detail-label">Tipus de compte</span>
+                        <span class="detail-value">Personal d'Assistència (PAP/PATI)</span>
+                    </div>
                     <div class="detail-group">
                         <span class="detail-label">Tipus de personal</span>
                         <span class="detail-value"><strong th:text="${papPati.staffType}">PAP</strong></span>
@@ -123,10 +142,13 @@
                 </th:block>
             </th:block>
 
-            <!-- ===== DADES ESPECÍFIQUES: OVIUSER ===== -->
+            <!-- DADES ESPECÍFIQUES: OVIUSER -->
             <th:block th:if="${role == 'OVIUSER'}">
-                <h3 class="detail-section-title">Rol: Usuari OVI</h3>
                 <div class="form-grid">
+                    <div class="detail-group">
+                        <span class="detail-label">Tipus de compte</span>
+                        <span class="detail-value">Usuari OVI</span>
+                    </div>
                     <th:block th:if="${guardianAccount != null}">
                         <div class="detail-group">
                             <span class="detail-label">Tutor legal (DNI)</span>
@@ -150,9 +172,8 @@
                 </div>
             </th:block>
 
-            <!-- ===== DADES ESPECÍFIQUES: TUTOR LEGAL ===== -->
+            <!-- DADES ESPECÍFIQUES: TUTOR LEGAL -->
             <th:block th:if="${role == 'LEGALGUARDIAN'}">
-                <h3 class="detail-section-title">Rol: Tutor Legal</h3>
                 <div class="form-grid">
                     <div class="detail-group">
                         <span class="detail-label">Tipus de compte</span>
