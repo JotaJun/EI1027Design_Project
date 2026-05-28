@@ -4,9 +4,11 @@ import es.uji.ei1027.SgOviProject.comparator.ContractComparator;
 import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.CandidacyDao;
 import es.uji.ei1027.SgOviProject.dao.ContractDao;
+import es.uji.ei1027.SgOviProject.dao.OviUserDao;
 import es.uji.ei1027.SgOviProject.dto.ContractListAllDTO;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
+import es.uji.ei1027.SgOviProject.filters.WardStatusFilter;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import es.uji.ei1027.SgOviProject.services.ContractService;
@@ -52,6 +54,9 @@ public class ContractController {
 
     @Autowired
     private ContractService contractService;
+
+    @Autowired
+    private OviUserDao oviUserDao;
 
     @GetMapping("/add/{idCandidacy}")
     public String showContractForm(Model model,
@@ -381,8 +386,7 @@ public class ContractController {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
             contractsDto = contractService.listAllContractsFromOviUser(currentUser);
         } else if (userRole == AccountType.LEGALGUARDIAN) {
-            LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
-            contractsDto = contractService.listAllContractsFromLegalGuardian(currentUser);
+            return "redirect:/contract/ward/list";
         } else if (userRole == AccountType.PAPPATI) {
             PapPati currentUser = (PapPati) session.getAttribute("specificAccount");
             contractsDto = contractService.listAllContractsFromPapPati(currentUser);
@@ -435,6 +439,83 @@ public class ContractController {
         session.setAttribute("lastContractListUrl", exactUrl);
 
         return "contract/listAll";
+    }
+
+    @GetMapping({"/ward/list", "/ward/list/{wardDni}"})
+    public String wardContractList(Model model, HttpSession session,
+                                   @PathVariable(required = false) String wardDni,
+                                   @RequestParam("page") Optional<Integer> page) {
+        LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
+
+        if (wardDni == null)
+            wardDni = "Tots";
+
+        List<ContractListAllDTO> contractsDto = contractService.listAllContractsFromLegalGuardian(currentUser, wardDni);
+
+        if (contractsDto != null && !contractsDto.isEmpty()) {
+            contractsDto.sort((dto1, dto2) -> new ContractComparator().compare(dto1.getContract(), dto2.getContract()));
+        } else {
+            contractsDto = new ArrayList<>();
+        }
+
+        ArrayList<ArrayList<ContractListAllDTO>> contractsPaged = new ArrayList<>();
+        int ini = 0;
+        int fin = pageLength;
+
+        while (fin <= contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, fin)));
+            ini += pageLength;
+            fin += pageLength;
+        }
+        if (ini < contractsDto.size()) {
+            contractsPaged.add(new ArrayList<>(contractsDto.subList(ini, contractsDto.size())));
+        }
+
+        int totalPages = contractsPaged.size();
+        if (totalPages > 0) {
+            List<Integer> pageNumbers = IntStream.rangeClosed(1, totalPages)
+                    .boxed()
+                    .collect(Collectors.toList());
+            model.addAttribute("pageNumbers", pageNumbers);
+        }
+
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else {
+            currentPage = 0;
+        }
+
+        model.addAttribute("contractsPaged", contractsPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalContracts", contractsDto.size());
+        model.addAttribute("pageLength", pageLength);
+
+        WardStatusFilter filter = new WardStatusFilter();
+        filter.setWardDni(wardDni);
+        model.addAttribute("statusFilter", filter);
+
+        List<OviUser> oviWards = oviUserDao.getWardedOviUsers(currentUser.getDni());
+        List<Account> wardAccounts = new ArrayList<>();
+        for (OviUser ward : oviWards) {
+            Account account = accountDao.getAccount(ward.getDni());
+            if (account != null) {
+                wardAccounts.add(account);
+            }
+        }
+        model.addAttribute("wards", wardAccounts);
+
+        String exactUrl = "/contract/ward/list/" + wardDni + "?page=" + currentPage;
+        session.setAttribute("lastContractListUrl", exactUrl);
+
+        return "contract/ward/list";
+    }
+
+    @PostMapping("/ward/list")
+    public String processWardContractFilter(@ModelAttribute("statusFilter") WardStatusFilter filter) {
+        String wardPath = filter.getWardDni() != null && !filter.getWardDni().isEmpty() ? "/" + filter.getWardDni() : "/Tots";
+        return "redirect:/contract/ward/list" + wardPath;
     }
 
     private void checkAuthorizationOrThrow(HttpSession session, int idCandidacy) {

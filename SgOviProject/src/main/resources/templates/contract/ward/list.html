@@ -1,0 +1,117 @@
+<!DOCTYPE html>
+<html lang="ca" xmlns:th="http://www.thymeleaf.org" xmlns:layout="http://www.ultraq.net.nz/thymeleaf/layout"
+      layout:decorate="~{fragments/base}">
+
+<head>
+  <title>Contractes dels meus tutelats</title>
+</head>
+
+<body>
+
+<div layout:fragment="header">
+  <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
+</div>
+
+<main layout:fragment="content">
+  <div class="container dashboard-main">
+
+    <div class="requests-header-action">
+      <h2 class="welcome-title">Contractes dels meus tutelats</h2>
+
+      <div class="header-actions-group">
+        <form action="#" th:action="@{/contract/ward/list}" th:object="${statusFilter}" method="post"
+              class="filter-form">
+          <div class="select-wrapper">
+            <label for="wardSelect" class="filter-label">Filtra per tutelat:</label>
+            <select id="wardSelect" th:field="*{wardDni}" th:onchange="this.form.submit()" class="filter-select">
+              <option value="Tots">Tots els tutelats</option>
+              <option th:each="ward : ${wards}" th:value="${ward.dni}" th:text="${ward.name} + ' ' + ${ward.surname} + ' (' + ${ward.dni} + ')'"></option>
+            </select>
+          </div>
+        </form>
+      </div>
+    </div>
+
+    <div th:if="${#lists.isEmpty(contractsPaged)}" class="empty-state">
+      <p>No s'han trobat contractes per a aquests criteris.</p>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(contractsPaged)}" class="table-card"
+         th:with="contractsPage=${contractsPaged[__${selectedPage}__]}">
+
+      <table class="styled-table">
+        <thead>
+        <tr>
+          <th>TUTELAT</th>
+          <th>DNI TUTELAT</th>
+          <th>EMPLEAT/DA</th>
+          <th>DATA INICI</th>
+          <th>DATA FI</th>
+          <th>SALARI/HORA</th>
+          <th class="text-center">ACCIONS</th>
+        </tr>
+        </thead>
+        <tbody>
+        <tr th:each="item : ${contractsPage}">
+          <td><strong th:text="${item.oviUserName}">Nom Tutelat</strong></td>
+          <td th:text="${item.oviUserDni}">DNI Tutelat</td>
+          <td><strong th:text="${item.contractedName}">Nom complet empleat/da</strong></td>
+          <td th:text="${#temporals.format(item.contract.creationDate, 'dd/MM/yyyy')}">31/12/2026</td>
+          <td th:text="${item.contract.endDate != null ? #temporals.format(item.contract.endDate, 'dd/MM/yyyy') : 'Indefinit'}">31/12/2026</td>
+          <td th:text="${item.contract.hourlySalary} + ' €/h'">10.5 €/h</td>
+
+          <td class="text-center">
+            <div class="actions-cell">
+              <a th:href="@{/contract/details/{id}(id=${item.contract.idContract})}"
+                 class="action-btn" title="Veure detalls del contracte">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M1 12s4-8 11-8 11 8 11 8-4 8-11 8-11-8-11-8z"></path>
+                  <circle cx="12" cy="12" r="3"></circle>
+                </svg>
+              </a>
+              <a th:href="@{/contract/update/{id}(id=${item.contract.idContract})}"
+                 class="action-btn" title="Actualitzar contracte">
+                <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18"
+                     viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                     stroke-linecap="round" stroke-linejoin="round">
+                  <path d="M11 4H4a2 2 0 0 0-2 2v14a2 2 0 0 0 2 2h14a2 2 0 0 0 2-2v-7"></path>
+                  <path d="M18.5 2.5a2.121 2.121 0 0 1 3 3L12 15l-4 1 1-4 9.5-9.5z"></path>
+                </svg>
+              </a>
+            </div>
+          </td>
+        </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div th:unless="${#lists.isEmpty(contractsPaged)}" class="results-count">
+      Mostrant del
+      <strong th:text="${(selectedPage * pageLength) + 1}">1</strong>
+      al
+      <strong th:text="${(selectedPage * pageLength) + #lists.size(contractsPaged[selectedPage])}">5</strong>
+      de
+      <strong th:text="${totalContracts}">12</strong> contractes
+    </div>
+
+    <nav aria-label="Selecció de pàgina en llistat de contractes"
+         th:unless="${#lists.isEmpty(contractsPaged)}"
+         class="pagination-container">
+      <ul class="pagination">
+        <li class="page-item"
+            th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
+            th:each="pageNumber : ${pageNumbers}">
+
+          <a th:href="@{/contract/ward/list/{ward}(ward=${statusFilter.wardDni}, page=${pageNumber - 1})}"
+             th:text="${pageNumber}" class="page-link">1</a>
+        </li>
+      </ul>
+    </nav>
+
+  </div>
+</main>
+
+</body>
+</html>

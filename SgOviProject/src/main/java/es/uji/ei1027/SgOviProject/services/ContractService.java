@@ -57,8 +57,11 @@ public class ContractService {
             PapPati papPati = papPatiDao.getPapPati(candidacy.getDniPapPati());
             Account accountPapPati = accountDao.getAccount(papPati.getDni());
 
+            Account accountOviUser = accountDao.getAccount(oviUser.getDni());
+
             String papPatiName = accountPapPati.getName() + ' ' + accountPapPati.getSurname();
-            contractsDto.add(new ContractListAllDTO(c, papPatiName));
+            String oviUserName = accountOviUser.getName() + ' ' + accountOviUser.getSurname();
+            contractsDto.add(new ContractListAllDTO(c, papPatiName, oviUserName, oviUser.getDni()));
         }
 
         return contractsDto; // debería de haber al menos un contrato si llega aqui, si falla algo devolverá una lista vacía
@@ -66,10 +69,16 @@ public class ContractService {
     }
 
     public List<ContractListAllDTO> listAllContractsFromLegalGuardian(LegalGuardian legalGuardian) {
+        return listAllContractsFromLegalGuardian(legalGuardian, "Tots");
+    }
+
+    public List<ContractListAllDTO> listAllContractsFromLegalGuardian(LegalGuardian legalGuardian, String wardDni) {
         List<OviUser> wards = oviUserDao.getWardedOviUsers(legalGuardian.getDni());
         List<ContractListAllDTO> allContracts = new ArrayList<>();
         for (OviUser ward : wards) {
-            allContracts.addAll(listAllContractsFromOviUser(ward));
+            if (wardDni.equals("Tots") || ward.getDni().equals(wardDni)) {
+                allContracts.addAll(listAllContractsFromOviUser(ward));
+            }
         }
         return allContracts;
     }
