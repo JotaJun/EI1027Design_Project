@@ -30,7 +30,6 @@
 
             <div class="header-flex">
                 <h2 class="card-title">
-                    Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span>
                 </h2>
                 <span class="status-badge"
                       th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
