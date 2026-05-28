@@ -29,9 +29,7 @@
             <br>
 
             <div class="header-flex">
-                <h2 class="card-title">
-                    Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span>
-                </h2>
+                <h2 class="card-title"></h2>
                 <span class="status-badge"
                       th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
                       th:text="${account.status.description}">PENDING</span>
@@ -40,6 +38,14 @@
             <!-- ===== DADES PERSONALS (comuns a tots els rols) ===== -->
             <h3 class="detail-section-title mt-10">Dades Personals</h3>
             <div class="form-grid">
+                <div class="detail-group">
+                    <span class="detail-label">Nom</span>
+                    <span class="detail-value" th:text="${account.name}">Nom</span>
+                </div>
+                <div class="detail-group">
+                    <span class="detail-label">Cognoms</span>
+                    <span class="detail-value" th:text="${account.surname}">Cognoms</span>
+                </div>
                 <div class="detail-group">
                     <span class="detail-label">DNI</span>
                     <span class="detail-value" th:text="${account.dni}">12345678A</span>
@@ -58,7 +64,7 @@
                 </div>
                 <div class="detail-group">
                     <span class="detail-label">Gènere</span>
-                    <span class="detail-value" th:text="${account.gender != null ? account.gender.name() : 'No especificat'}">Masculí</span>
+                    <span class="detail-value" th:text="${account.gender != null ? account.gender.description : 'No especificat'}">Masculí</span>
                 </div>
             </div>
 

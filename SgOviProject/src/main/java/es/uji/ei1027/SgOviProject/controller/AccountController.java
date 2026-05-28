@@ -483,6 +483,7 @@ public class AccountController {
         if (papPati != null) {
             model.addAttribute("papPati", papPati);
             model.addAttribute("role", "PAPPATI");
+            model.addAttribute("accountType", AccountType.PAPPATI);
             return viewName;
         }
 
@@ -490,6 +491,7 @@ public class AccountController {
         if (oviUser != null) {
             model.addAttribute("oviUser", oviUser);
             model.addAttribute("role", "OVIUSER");
+            model.addAttribute("accountType", AccountType.OVIUSER);
             // Si tiene tutor legal asociado, recuperar también sus datos
             if (oviUser.getDniLegalGuardian() != null) {
                 Account guardianAccount = accountDao.getAccount(oviUser.getDniLegalGuardian());
@@ -498,7 +500,16 @@ public class AccountController {
             return viewName;
         }
 
-        // Si no es PapPati ni OviUser, es tutor legal
+        // Si no es PapPati ni OviUser, es tutor legal (per descart, igual que allAccounts)
+        model.addAttribute("role", "LEGALGUARDIAN");
+        model.addAttribute("accountType", AccountType.LEGALGUARDIAN);
+        List<OviUser> wardedOviUsers = oviUserDao.getWardedOviUsers(dni);
+        List<Account> wardedAccounts = new ArrayList<>();
+        for (OviUser wu : wardedOviUsers) {
+            Account wa = accountDao.getAccount(wu.getDni());
+            if (wa != null) wardedAccounts.add(wa);
+        }
+        model.addAttribute("wardedAccounts", wardedAccounts);
         return viewName;
     }
 
@@ -645,14 +656,42 @@ public class AccountController {
 
     // ===== HISTORIAL D'AR PER OVIUSER (tècnic) =====
 
-    @GetMapping(value = "/apHistory/{dni}")
-    public String apHistory(@PathVariable String dni, Model model,
+    @GetMapping(value = { "/apHistory/{dni}", "/apHistory/{dni}/{page}" })
+    public String apHistory(@PathVariable String dni,
+            @PathVariable(required = false) Optional<Integer> page,
+            Model model,
             jakarta.servlet.http.HttpSession session) {
         Account account = accountDao.getAccount(dni);
         model.addAttribute("account", account);
 
-        List<AssistanceRequest> requests = assistanceRequestDao.getAssistanceRequestsByDni(dni);
-        model.addAttribute("requests", requests);
+        List<AssistanceRequest> allRequests = assistanceRequestDao.getAssistanceRequestsByDni(dni);
+
+        // Paginació
+        ArrayList<ArrayList<AssistanceRequest>> requestsPaged = new ArrayList<>();
+        int ini = 0, fin = pageLength;
+        while (fin <= allRequests.size()) {
+            requestsPaged.add(new ArrayList<>(allRequests.subList(ini, fin)));
+            ini += pageLength; fin += pageLength;
+        }
+        if (ini < allRequests.size()) {
+            requestsPaged.add(new ArrayList<>(allRequests.subList(ini, allRequests.size())));
+        }
+
+        int totalPages = requestsPaged.size();
+        int currentPage = page.orElse(0);
+        if (totalPages > 0) {
+            if (currentPage < 0) currentPage = 0;
+            if (currentPage >= totalPages) currentPage = totalPages - 1;
+        } else { currentPage = 0; }
+
+        if (totalPages > 0) {
+            model.addAttribute("pageNumbers", IntStream.rangeClosed(1, totalPages).boxed().collect(Collectors.toList()));
+        }
+
+        model.addAttribute("requestsPaged", requestsPaged);
+        model.addAttribute("selectedPage", currentPage);
+        model.addAttribute("totalRequests", allRequests.size());
+        model.addAttribute("pageLength", pageLength);
 
         session.setAttribute("lastApHistoryDni", dni);
         return "account/apHistory";
