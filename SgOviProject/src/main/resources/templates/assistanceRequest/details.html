@@ -188,7 +188,7 @@
           </div>
         </th:block>
 
-        <div th:if="${req.status.name() == 'PENDING'}" class="form-actions-centered actions-bordered">
+        <div th:if="${req.status.name() == 'PENDING' and !(session.userRole == 'OVIUSER' and session.specificAccount.dniLegalGuardian != null)}" class="form-actions-centered actions-bordered">
           <a th:href="@{/assistanceRequest/update/{id}(id=${req.idApRequest})}" class="btn-outline btn-icon">
             <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
               stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

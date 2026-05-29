@@ -155,7 +155,8 @@
         <th:block th:unless="${session.userRole == 'TECHNICIAN'}">
           <div class="form-actions-centered actions-bordered mt-15">
 
-            <a th:href="@{/communication/chat/{id}(id=${candidacyDto.candidacy.idCandidacy})}"
+            <a th:if="${!(session.userRole == 'OVIUSER' and session.specificAccount.dniLegalGuardian != null)}"
+              th:href="@{/communication/chat/{id}(id=${candidacyDto.candidacy.idCandidacy})}"
               class="btn-outline btn-icon">
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
                 stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
@@ -164,7 +165,7 @@
               Obrir Xat
             </a>
 
-            <a th:if="${candidacyDto.candidacy.candidacyStatus.name() != 'CONTRACTED' &amp;&amp; candidacyDto.candidacy.candidacyStatus.name() != 'TALKSENDED'}"
+            <a th:if="${candidacyDto.candidacy.candidacyStatus.name() != 'CONTRACTED' &amp;&amp; candidacyDto.candidacy.candidacyStatus.name() != 'TALKSENDED' and !(session.userRole == 'OVIUSER' and session.specificAccount.dniLegalGuardian != null)}"
               th:href="@{/candidacy/reject/{id}(id=${candidacyDto.candidacy.idCandidacy})}"
               th:onclick="return confirm('Estàs segur que vols rebutjar la candidatura de \'' + [[${candidacyDto.account.name}]] + ' ' + [[${candidacyDto.account.surname}]] + '\'?');"
               class="btn-outline-danger btn-icon">
@@ -177,7 +178,7 @@
               Rebutjar candidatura
             </a>
 
-            <a th:if="${candidacyDto.candidacy.candidacyStatus.name() != 'TALKSENDED'}"
+            <a th:if="${candidacyDto.candidacy.candidacyStatus.name() != 'TALKSENDED' and !(session.userRole == 'OVIUSER' and session.specificAccount.dniLegalGuardian != null)}"
               th:href="@{/contract/add/{id}(id=${candidacyDto.candidacy.idCandidacy})}" class="btn-primary btn-icon">
 
               <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" viewBox="0 0 24 24" fill="none"
