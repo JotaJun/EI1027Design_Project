@@ -110,8 +110,8 @@
                     </svg>
                   </a>
 
-                  <!-- Botons OCULTS per al tècnic -->
-                  <th:block th:unless="${session.userRole == 'TECHNICIAN'}">
+                  <!-- Botons OCULTS per al tècnic i per a OVIUSER amb tutor -->
+                  <th:block th:unless="${session.userRole == 'TECHNICIAN' || (session.userRole == 'OVIUSER' && session.specificAccount.dniLegalGuardian != null)}">
 
                     <!-- Botó Obrir Xat -->
                     <a th:href="@{/communication/chat/{id}(id=${cand.candidacy.idCandidacy})}" class="action-btn"

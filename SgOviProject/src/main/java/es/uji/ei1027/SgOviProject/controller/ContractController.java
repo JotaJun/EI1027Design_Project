@@ -68,8 +68,11 @@ public class ContractController {
         if(role==AccountType.LEGALGUARDIAN) {
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
             if(! candidacyService.isCandidacyFromWard(idCandidacy, currentUser)) return "redirect:/legalGuardian/main";
-        } else {
+        } else if (role == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per formalitzar un contracte corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
             if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) return "redirect:/oviUser/main";
         }
 
@@ -87,15 +90,19 @@ public class ContractController {
                                          BindingResult bindingResult,
                                          HttpSession session,
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
+        int idCandidacy = contract.getIdCandidacy();
         AccountType role = AccountType.valueOf((String) session.getAttribute("userRole"));
         if(role==AccountType.LEGALGUARDIAN) {
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
-            if(! candidacyService.isCandidacyFromWard(contract.getIdCandidacy(), currentUser)) {
+            if(! candidacyService.isCandidacyFromWard(idCandidacy, currentUser)) {
                 throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
             }
-        } else {
+        } else if (role == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
-            if(! candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per formalitzar un contracte corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
+            if(! candidacyService.isCandidacyFromOviUser(idCandidacy, currentUser)) {
                 throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
             }
         }
@@ -293,6 +300,9 @@ public class ContractController {
             }
         } else if (userRole == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per modificar un contracte corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
             if (!candidacyService.isCandidacyFromOviUser(contract.getIdCandidacy(), currentUser)) {
                 throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
             }
@@ -325,6 +335,9 @@ public class ContractController {
             }
         } else if (userRole == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per modificar un contracte corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
             if (!candidacyService.isCandidacyFromOviUser(contractModificado.getIdCandidacy(), currentUser)) {
                 throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
             }

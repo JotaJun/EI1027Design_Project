@@ -8,7 +8,12 @@
 <body>
 
 <div layout:fragment="header">
-  <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header }"></div>
+  <th:block th:if="${session.userRole == 'LEGALGUARDIAN'}">
+    <div th:replace="~{fragments/legalGuardian-returnMain-header :: legalGuardian-returnMain-header}"></div>
+  </th:block>
+  <th:block th:if="${session.userRole == 'OVIUSER'}">
+    <div th:replace="~{fragments/user-returnMain-header :: user-returnMain-header}"></div>
+  </th:block>
 </div>
 
 <main layout:fragment="content">

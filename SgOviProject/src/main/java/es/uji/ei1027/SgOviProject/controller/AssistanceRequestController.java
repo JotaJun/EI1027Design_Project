@@ -67,6 +67,14 @@ public class AssistanceRequestController {
         
         String userRole = (String) session.getAttribute("userRole");
 
+        // Si es OVIUSER, comprobar si tiene tutor legal
+        if (AccountType.OVIUSER.name().equals(userRole)) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per realizar una petició corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
+        }
+
         // Si se pasa un DNI por la URL (caso del tutor legal)
         if (dni != null) {
             if (AccountType.LEGALGUARDIAN.name().equals(userRole)) {
@@ -94,6 +102,13 @@ public class AssistanceRequestController {
         }
 
         String userRole = (String) session.getAttribute("userRole");
+
+        if (AccountType.OVIUSER.name().equals(userRole)) {
+            OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per realizar una petició corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
+        }
 
         if (AccountType.LEGALGUARDIAN.name().equals(userRole)){
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
@@ -436,6 +451,9 @@ public class AssistanceRequestController {
         } else {
             // No hace falta comprobar si es null, ya se encarga interceptor
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per modificar aquesta petició corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
             if (!request.getDniOviUser().equals(currentUser.getDni())) {
                 throw new SgOviException("No tens permisos per editar aquesta petició", "Error 403 - Sense permisos");
             }
@@ -488,6 +506,9 @@ public class AssistanceRequestController {
         }
         else if(AccountType.OVIUSER.name().equals(userRole)){
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per modificar aquesta petició corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
             currentAccount = accountDao.getAccount(currentUser.getDni());
         }
 
@@ -553,6 +574,9 @@ public class AssistanceRequestController {
             return "assistanceRequest/deleteConfirm";
         } else {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
+            if (currentUser.getDniLegalGuardian() != null) {
+                throw new SgOviException("Els permisos per esborrar aquesta petició corresponen al teu tutor", "Error 403 - Sense permisos");
+            }
             if (!request.getDniOviUser().equals(currentUser.getDni())) {
                 throw new SgOviException("No tens permisos per esborrar aquesta petició", "Error 403 - Sense permisos");
             }

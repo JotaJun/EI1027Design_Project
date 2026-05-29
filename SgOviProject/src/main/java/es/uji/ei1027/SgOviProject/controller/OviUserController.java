@@ -4,6 +4,7 @@ import es.uji.ei1027.SgOviProject.dao.AccountDao;
 import es.uji.ei1027.SgOviProject.dao.LegalGuardianDao;
 import es.uji.ei1027.SgOviProject.dto.OviUserUpdateDTO;
 import es.uji.ei1027.SgOviProject.enums.Gender;
+import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.model.Account;
 import es.uji.ei1027.SgOviProject.model.OviUser;
 import es.uji.ei1027.SgOviProject.services.IntAccountSvc;
@@ -106,6 +107,10 @@ public class OviUserController {
         Account account = (Account) session.getAttribute("account");
         OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
 
+        if (currentUser.getDniLegalGuardian() != null) {
+            throw new SgOviException("Els permisos per modificar el perfil corresponen al teu tutor", "Error 403 - Sense permisos");
+        }
+
         OviUserUpdateDTO updateForm = new OviUserUpdateDTO(account, currentUser);
 
         model.addAttribute("updateForm", updateForm);
@@ -120,6 +125,10 @@ public class OviUserController {
 
         Account account = (Account) session.getAttribute("account");
         OviUser oviUser = (OviUser) session.getAttribute("specificAccount");
+
+        if (oviUser.getDniLegalGuardian() != null) {
+            throw new SgOviException("Els permisos per modificar el perfil corresponen al teu tutor", "Error 403 - Sense permisos");
+        }
 
         // Ponemos datos que no aparecen en el formulario previo a pasarlo por el validador
         form.getAccount().setDni(account.getDni());
