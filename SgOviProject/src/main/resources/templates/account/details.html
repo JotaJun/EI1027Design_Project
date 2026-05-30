@@ -29,8 +29,7 @@
             <br>
 
             <div class="header-flex">
-                <h2 class="card-title">
-                </h2>
+                <h2 class="card-title">Compte de: <span th:text="${account.name + ' ' + account.surname}">Nom Cognom</span></h2>
                 <span class="status-badge"
                       th:classappend="${'badge-' + #strings.toLowerCase(account.status.name())}"
                       th:text="${account.status.description}">PENDING</span>
@@ -46,14 +45,7 @@
                     <span class="detail-label">Cognoms</span>
                     <span class="detail-value" th:text="${account.surname}">Cognoms</span>
                 </div>
-                <div class="detail-group">
-                    <span class="detail-label">Nom</span>
-                    <span class="detail-value" th:text="${account.name}">Nom</span>
-                </div>
-                <div class="detail-group">
-                    <span class="detail-label">Cognoms</span>
-                    <span class="detail-value" th:text="${account.surname}">Cognoms</span>
-                </div>
+
                 <div class="detail-group">
                     <span class="detail-label">DNI</span>
                     <span class="detail-value" th:text="${account.dni}">12345678A</span>
