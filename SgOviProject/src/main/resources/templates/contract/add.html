@@ -123,6 +123,20 @@
 
                 </div>
 
+                <th:block th:if="${session.userRole == 'LEGALGUARDIAN'}">
+                    <h3 class="detail-section-title mt-10">Autorització</h3>
+                    <div class="form-grid">
+                        <div class="form-group">
+                            <label for="signatureCode">Codi de firma del Tutor Legal <span class="required-asterisk">*</span></label>
+                            <div class="input-wrapper">
+                                <input type="password" id="signatureCode" name="signatureCode" required class="form-control"
+                                       placeholder="Introdueix el teu codi de firma" />
+                            </div>
+                            <span th:if="${signatureError}" class="error-text" th:text="${signatureError}"></span>
+                        </div>
+                    </div>
+                </th:block>
+
                 <div class="form-actions form-actions-centered">
                     <button type="reset" class="dash-btn dash-btn-outline btn-icon">
                         <svg xmlns="http://www.w3.org/2000/svg" width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">

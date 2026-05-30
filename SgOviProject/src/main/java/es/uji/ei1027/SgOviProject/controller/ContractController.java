@@ -9,9 +9,11 @@ import es.uji.ei1027.SgOviProject.dto.ContractListAllDTO;
 import es.uji.ei1027.SgOviProject.enums.AccountType;
 import es.uji.ei1027.SgOviProject.exception.SgOviException;
 import es.uji.ei1027.SgOviProject.filters.WardStatusFilter;
+import es.uji.ei1027.SgOviProject.dao.LegalGuardianDao;
 import es.uji.ei1027.SgOviProject.model.*;
 import es.uji.ei1027.SgOviProject.services.CandidacyService;
 import es.uji.ei1027.SgOviProject.services.ContractService;
+import org.jasypt.util.password.BasicPasswordEncryptor;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.beans.factory.annotation.Value;
@@ -58,6 +60,9 @@ public class ContractController {
     @Autowired
     private OviUserDao oviUserDao;
 
+    @Autowired
+    private LegalGuardianDao legalGuardianDao;
+
     @GetMapping("/add/{idCandidacy}")
     public String showContractForm(Model model,
                                    HttpSession session,
@@ -88,6 +93,7 @@ public class ContractController {
     public String processAddContractForm(Model model,
                                          @ModelAttribute("contract") Contract contract,
                                          BindingResult bindingResult,
+                                         @RequestParam(value = "signatureCode", required = false) String signatureCode,
                                          HttpSession session,
                                          @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
         int idCandidacy = contract.getIdCandidacy();
@@ -96,6 +102,27 @@ public class ContractController {
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
             if(! candidacyService.isCandidacyFromWard(idCandidacy, currentUser)) {
                 throw new SgOviException("No tens permisos per emplenar aquest contracte", "Error 403 - Sense permisos");
+            }
+
+            // Validación de la firma
+            LegalGuardian lg = legalGuardianDao.getLegalGuardian(currentUser.getDni());
+
+            if (signatureCode == null || signatureCode.trim().isEmpty()) {
+                model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar el contracte.");
+                return "contract/add";
+            }
+
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            boolean isValid = false;
+            try {
+                isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+            } catch (Exception e) {
+                isValid = signatureCode.equals(lg.getSignatureCode());
+            }
+
+            if (!isValid) {
+                model.addAttribute("signatureError", "El codi de firma no és correcte.");
+                return "contract/add";
             }
         } else if (role == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
@@ -318,6 +345,7 @@ public class ContractController {
     public String processUpdateContractForm(Model model,
                                             @ModelAttribute("contract") Contract contractModificado,
                                             BindingResult bindingResult,
+                                            @RequestParam(value = "signatureCode", required = false) String signatureCode,
                                             HttpSession session,
                                             @RequestParam("ficheroPdf") MultipartFile ficheroPdf) {
 
@@ -332,6 +360,28 @@ public class ContractController {
             LegalGuardian currentUser = (LegalGuardian) session.getAttribute("specificAccount");
             if (!candidacyService.isCandidacyFromWard(contractModificado.getIdCandidacy(), currentUser)) {
                 throw new SgOviException("No tens permisos per actualitzar aquest contracte", "Error 403 - Sense permisos");
+            }
+
+            // Validación de la firma para el Tutor
+            LegalGuardian lg = legalGuardianDao.getLegalGuardian(currentUser.getDni());
+
+            if (signatureCode == null || signatureCode.trim().isEmpty()) {
+                model.addAttribute("signatureError", "Has d'introduir el codi de firma per a confirmar els canvis.");
+                return "contract/update";
+            }
+
+            BasicPasswordEncryptor passwordEncryptor = new BasicPasswordEncryptor();
+            boolean isValid = false;
+            try {
+                isValid = passwordEncryptor.checkPassword(signatureCode, lg.getSignatureCode());
+            } catch (Exception e) {
+                // Si la firma no está encriptada, probamos comparación directa
+                isValid = signatureCode.equals(lg.getSignatureCode());
+            }
+
+            if (!isValid) {
+                model.addAttribute("signatureError", "El codi de firma no és correcte.");
+                return "contract/update";
             }
         } else if (userRole == AccountType.OVIUSER) {
             OviUser currentUser = (OviUser) session.getAttribute("specificAccount");
