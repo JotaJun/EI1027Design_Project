@@ -26,7 +26,7 @@
             <p class="login-subtitle">Necessitem una dada addicional per completar el teu perfil</p>
         </div>
 
-        <form th:action="@{/oviuser/register}" th:object="${oviAccount}" method="post" class="login-form" novalidate>
+        <form th:action="@{/oviUser/register}" th:object="${oviAccount}" method="post" class="login-form" novalidate>
             
             <input type="hidden" th:field="*{dni}">
             

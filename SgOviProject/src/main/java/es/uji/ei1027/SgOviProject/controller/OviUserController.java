@@ -74,6 +74,13 @@ public class OviUserController {
         OviUserValidator oviValidator = new OviUserValidator();
         oviValidator.validate(oviUser, bindingResult);
 
+        if (!bindingResult.hasFieldErrors("dniLegalGuardian")) {
+            if (!legalGuardianDao.existsLegalGuardian(oviUser.getDniLegalGuardian())) {
+                bindingResult.rejectValue("dniLegalGuardian", "notFound",
+                        "Aquest DNI no correspon a cap tutor legal registrat al sistema.");
+            }
+        }
+
         if (bindingResult.hasErrors()) {
             return "oviUser/register";
         }
