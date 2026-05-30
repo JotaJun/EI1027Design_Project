@@ -26,7 +26,10 @@ INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber,
 ('99999999S', 'Hugo', 'Blasco Solá', '2011-11-30', 'Y+B6VK5BPIJBo72+pdjlIcwyTV9fvMAP', 'hblasco@outlook.es', '688999000', 'Vila-real', 'Plaza Tetuán 2', '12540', 'M'),
 ('10101010A', 'Ariel', 'Gómez Ferrando', '2006-05-10', 'Y+B6VK5BPIJBo72+pdjlIcwyTV9fvMAP', 'ariel.g@icloud.com', '699000111', 'Castelló', 'Calle Enmedio 15', '12001', 'X'),
 ('20202020B', 'Pau', 'Vidal Marín', '2009-01-05', 'Y+B6VK5BPIJBo72+pdjlIcwyTV9fvMAP', 'pvidal@protonmail.com', '601234567', 'Almassora', 'Carrer Major 33', '12550', 'M'),
-('30303030C', 'Elena', 'Moltó Ibáñez', '1998-12-12', 'Y+B6VK5BPIJBo72+pdjlIcwyTV9fvMAP', 'emolto@uji.es', '602345678', 'Castelló', 'Calle Herrero 8', '12002', 'F');
+('30303030C', 'Elena', 'Moltó Ibáñez', '1998-12-12', 'Y+B6VK5BPIJBo72+pdjlIcwyTV9fvMAP', 'emolto@uji.es', '602345678', 'Castelló', 'Calle Herrero 8', '12002', 'F'),
+('44556677X', 'Mario', 'Gómez Soler', '2012-04-10', 'BdrSkiiS5ibGRaxxh0HvugTBVJ6B7bSY', 'mario.gomez@email.com', '699111223', 'Castelló', 'Calle Mayor 45', '12001', 'M'),
+('44556678Y', 'Alba', 'Gómez Soler', '2014-08-22', 'BdrSkiiS5ibGRaxxh0HvugTBVJ6B7bSY', 'alba.gomez@email.com', '699111224', 'Castelló', 'Calle Mayor 45', '12001', 'F'),
+('44556679Z', 'Sara', 'Gómez Soler', '2017-01-05', 'BdrSkiiS5ibGRaxxh0HvugTBVJ6B7bSY', 'sara.gomez@email.com', '699111225', 'Castelló', 'Calle Mayor 45', '12001', 'F');
 
 -- ==========================================
 -- 3. Cuentas base para PAPati
@@ -44,7 +47,8 @@ INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber,
 -- ==========================================
 INSERT INTO Account (dni, name, surname, birthday, password, email, phoneNumber, city, street, zipCode, gender) VALUES
 ('11223344A', 'Pedro', 'Blasco Rius', '1978-04-12', 'tP/ZFLI7/AiRnDL0FEainP84e1VsW0pI', 'pblasco@email.com', '610111222', 'Vila-real', 'Plaza Tetuán 2', '12540', 'M'),
-('55667788B', 'Laura', 'Marín Sol', '1982-09-21', 'tP/ZFLI7/AiRnDL0FEainP84e1VsW0pI', 'lmarin@email.com', '620222333', 'Almassora', 'Carrer Major 33', '12550', 'F');
+('55667788B', 'Laura', 'Marín Sol', '1982-09-21', 'tP/ZFLI7/AiRnDL0FEainP84e1VsW0pI', 'lmarin@email.com', '620222333', 'Almassora', 'Carrer Major 33', '12550', 'F'),
+('99887766A', 'Carlos', 'Gómez Ruiz', '1975-06-15', '6R2Jhozj2jcINeAtGZlVIQsZjFp7rxtG', 'carlos.gomez@email.com', '699111222', 'Castelló', 'Calle Mayor 45', '12001', 'M');
 
 
 -- ==========================================
@@ -59,3 +63,11 @@ UPDATE Account SET status = 'rejected', deniedReason = 'Documentación incomplet
 UPDATE Account SET status = 'accepted' WHERE email = 'mtorres@pap.es'; -- Marcos
 UPDATE Account SET status = 'accepted' WHERE dni = '90909090W';
 UPDATE Account SET status = 'rejected', deniedReason = 'No cumple con los requisitos de zona' WHERE email = 'screspo@pap.es'; -- Sara
+
+-- Tutor Legal: Aceptamos a Carlos
+UPDATE Account SET status = 'accepted' WHERE email = 'carlos.gomez@email.com'; -- Carlos (Tutor)
+
+-- OviUsers: Aceptamos a los 3 menores a cargo de Carlos
+UPDATE Account SET status = 'accepted' WHERE email = 'mario.gomez@email.com'; -- Mario
+UPDATE Account SET status = 'accepted' WHERE email = 'alba.gomez@email.com';  -- Alba
+UPDATE Account SET status = 'accepted' WHERE email = 'sara.gomez@email.com';  -- Sara (oviuser)
