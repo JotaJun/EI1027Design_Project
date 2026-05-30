@@ -93,7 +93,7 @@
             th:classappend="${pageNumber == selectedPage + 1} ? 'active'"
             th:each="pageNumber : ${pageNumbers}">
 
-          <a th:href="@{/contract/all(page=${pageNumber - 1})}"
+          <a th:href="@{/contract/listAll(page=${pageNumber - 1})}"
              th:text="${pageNumber}" class="page-link">1</a>
         </li>
       </ul>

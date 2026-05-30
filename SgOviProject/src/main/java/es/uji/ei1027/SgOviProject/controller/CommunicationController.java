@@ -52,8 +52,8 @@ public class CommunicationController {
             otherUser = accountDao.getAccount(candidacy.getDniPapPati());
         } else if (role == AccountType.PAPPATI) {
             if(request.getDniLegalGuardian()!=null){
-                otherUser = accountDao.getAccount(request.getDniOviUser());
-            } else otherUser = accountDao.getAccount(request.getDniLegalGuardian());
+                otherUser = accountDao.getAccount(request.getDniLegalGuardian());
+            } else otherUser = accountDao.getAccount(request.getDniOviUser());
         }
 
         String otherUserName = "Usuari Desconegut";
