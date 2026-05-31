@@ -88,7 +88,7 @@
         </div>
       </div>
 
-      <h3 class="detail-section-title">Dades del Sol·licitant</h3>
+      <h3 class="detail-section-title">Dades del Usuari Sol·licitant</h3>
 
       <div th:if="${candidacyDto.oviUser.dniLegalGuardian != null}" class="info-box-highlight mb-15" style="padding: 15px; background-color: var(--color-background); border-radius: 8px;">
         <div class="info-box-header" style="margin-bottom:0;">
@@ -112,6 +112,10 @@
         <div class="detail-group">
           <span class="detail-label">Cognoms</span>
           <span class="detail-value" th:text="${candidacyDto.oviUserAccount.surname}">Cognoms</span>
+        </div>
+        <div class="detail-group">
+          <span class="detail-label">Data Naixement</span>
+          <span class="detail-value" th:text="${#temporals.format(candidacyDto.oviUserAccount.birthday, 'dd/MM/yyyy')}">fecha</span>
         </div>
         <div class="detail-group">
           <span class="detail-label">Correu electrònic</span>
